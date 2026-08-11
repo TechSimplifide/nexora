@@ -1,0 +1,44 @@
+// college register 
+
+POST http://localhost:4000/api/v1/auth/college/register
+
+request data:
+
+    {
+  "collegeName": "ABC Institute of Technology",
+  "adminName": "Raja",
+  "email": "admin@abc.edu",
+  "password": "Password@123"
+}
+
+// student registration
+
+POST http://localhost:4000/api/v1/auth/student/register
+
+request data:
+
+{
+  "fullName": "Raja",
+  "email": "raja@student.com",
+  "password": "Password@123",
+  "collegeCode": "ABC-D6YTE"
+}
+
+
+// Student login 
+
+POST http://localhost:4000/api/v1/auth/login
+
+request data:
+
+{
+  "email": "raja@student.com",
+  "password": "Password@123"
+}
+
+
+// Refresh token
+
+POST http://localhost:4000/api/v1/auth/refresh-token
+
+# no body, header required

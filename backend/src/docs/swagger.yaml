@@ -1,0 +1,495 @@
+openapi: 3.0.3
+
+info:
+  title: Nexora API
+  version: 1.0.0
+  description: |
+    Nexora is a Multi-College Academic Project Collaboration Platform.
+
+    This API provides authentication, college management, project management,
+    and collaboration features for students and administrators.
+
+servers:
+  - url: http://localhost:4000/api/v1
+    description: Local Development Server
+
+tags:
+  - name: Authentication
+    description: Authentication and account management APIs
+
+  - name: Projects
+    description: Project management APIs
+
+  - name: Colleges
+    description: College management APIs
+
+  - name: Admin
+    description: Administrator APIs
+
+paths:
+  /auth/college/register:
+    post:
+      tags:
+        - Authentication
+
+      summary: Register College
+      description: >
+        Creates a new college and registers its first administrator.
+        A unique college code is generated automatically and a verification
+        email is sent to the administrator.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - collegeName
+                - adminName
+                - email
+                - password
+
+              properties:
+                collegeName:
+                  type: string
+                  example: Rohit Institute of Technology
+
+                adminName:
+                  type: string
+                  example: Rohit
+
+                email:
+                  type: string
+                  format: email
+                  example: ry0805502@gmail.com
+
+                password:
+                  type: string
+                  format: password
+                  example: rohit0805502
+
+      responses:
+        "201":
+          description: College registered successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 201
+                  success: true
+                  message: Registration successful. Please check your email to verify your account.
+                  data:
+                    collegeCode: ROH-CEJ0H
+                    admin:
+                      id: 6a7376db781cf0fe9cc35d78
+                      fullName: Rohit
+                      email: ry0805502@gmail.com
+                      role: admin
+                      isVerified: false
+
+        "409":
+          description: User already exists
+
+        "500":
+          description: Internal server error
+
+
+  /auth/student/register:
+    post:
+      tags:
+        - Authentication
+
+      summary: Register Student
+      description: >
+        Registers a new student using a valid college code.
+        The student is automatically associated with the corresponding college.
+        A verification email is sent to the student's email address.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fullName
+                - email
+                - password
+                - collegeCode
+
+              properties:
+                fullName:
+                  type: string
+                  example: Raja
+
+                email:
+                  type: string
+                  format: email
+                  example: raja@student.com
+
+                password:
+                  type: string
+                  format: password
+                  example: StrongPassword123
+
+                collegeCode:
+                  type: string
+                  example: ABC-GS1HE
+
+      responses:
+        "201":
+          description: Student registered successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 201
+                  success: true
+                  message: Registration successful. Please check your email to verify your account.
+                  data:
+                    id: 66abc1234567890
+                    fullName: Raja
+                    email: raja@student.com
+                    role: student
+                    isVerified: false
+                    college:
+                      id: 66abc9876543210
+                      name: ABC Institute of Technology
+                      collegeCode: ABC-GS1HE
+
+        "404":
+          description: Invalid college code
+
+        "409":
+          description: User already exists
+
+        "500":
+          description: Internal server error
+
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+
+      summary: Login User
+      description: >
+        Authenticates a student or administrator using email and password.
+        On successful authentication, HTTP-only Access Token and Refresh Token
+        cookies are set. An Access Token is also returned in the response body
+        for API testing and development purposes.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: raja@student.com
+
+                password:
+                  type: string
+                  format: password
+                  example: StrongPassword123
+
+      responses:
+        "200":
+          description: Login successful
+
+          headers:
+            Set-Cookie:
+              description: >
+                Sets HTTP-only Access Token and Refresh Token cookies.
+              schema:
+                type: string
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 200
+                  success: true
+                  message: Login successful
+                  data:
+                    accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                    user:
+                      id: 66abc1234567890
+                      fullName: Raja
+                      email: raja@student.com
+                      role: student
+                      college:
+                        id: 66abc9876543210
+
+        "400":
+          description: Validation failed
+
+        "401":
+          description: Invalid email or password
+
+        "403":
+          description: Email not verified
+
+        "500":
+          description: Internal server error
+
+
+  /auth/refresh-token:
+    post:
+      tags:
+        - Authentication
+
+      summary: Refresh Access Token
+      description: >
+        Generates a new Access Token using a valid Refresh Token.
+        The Refresh Token is primarily read from the HTTP-only cookie.
+        For API testing or non-browser clients, it may also be supplied
+        in the request body.
+
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  description: Optional refresh token if cookies are not used.
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+      responses:
+        "200":
+          description: Access token refreshed successfully
+
+          headers:
+            Set-Cookie:
+              description: >
+                Returns new HTTP-only Access Token and Refresh Token cookies.
+              schema:
+                type: string
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 200
+                  success: true
+                  message: Access token refreshed successfully
+                  data:
+                    accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                    user:
+                      id: 66abc1234567890
+                      fullName: Raja
+                      email: raja@student.com
+                      role: student
+                      college:
+                        id: 66abc9876543210
+
+        "401":
+          description: Refresh token is missing, invalid, or expired
+
+        "404":
+          description: User not found
+
+        "500":
+          description: Internal server error
+
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+
+      summary: Logout User
+      description: >
+        Logs out the currently authenticated user by removing the stored
+        refresh token from the database and clearing the Access Token and
+        Refresh Token cookies.
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        "200":
+          description: Logged out successfully
+
+          headers:
+            Set-Cookie:
+              description: >
+                Clears the Access Token and Refresh Token cookies.
+              schema:
+                type: string
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 200
+                  success: true
+                  message: Logged out successfully
+                  data: {}
+
+        "401":
+          description: Unauthorized request
+
+        "500":
+          description: Internal server error
+
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+
+      summary: Get Current User
+      description: >
+        Returns the profile of the currently authenticated user.
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        "200":
+          description: User fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 200
+                  success: true
+                  message: User fetched successfully
+                  data:
+                    id: 66abc1234567890
+                    fullName: Raja
+                    email: raja@student.com
+                    role: student
+                    isVerified: true
+                    college:
+                      id: 66abc9876543210
+                      name: ABC Institute of Technology
+                      collegeCode: ABC-GS1HE
+
+        "401":
+          description: Unauthorized request
+
+        "500":
+          description: Internal server error
+
+
+  /auth/verify-email/{token}:
+    get:
+      tags:
+        - Authentication
+
+      summary: Verify Email
+      description: >
+        Verifies a user's email address using the verification token sent
+        to their email during registration. If the token is valid and has
+        not expired, the user's account is marked as verified.
+
+      parameters:
+        - name: token
+          in: path
+          required: true
+          description: Email verification token
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Email verified successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 200
+                  success: true
+                  message: Email verified successfully
+                  data:
+                    isVerified: true
+
+        "400":
+          description: Invalid or expired verification token
+
+        "404":
+          description: User not found
+
+        "500":
+          description: Internal server error
+
+
+  /auth/resend-verification-email:
+    post:
+      tags:
+        - Authentication
+
+      summary: Resend Verification Email
+      description: >
+        Sends a new email verification link to a user whose email address
+        has not yet been verified.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: raja@student.com
+
+      responses:
+        "200":
+          description: Verification email sent successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  statusCode: 200
+                  success: true
+                  message: Verification email sent successfully
+                  data: {}
+
+        "400":
+          description: Email is already verified
+
+        "404":
+          description: User not found
+
+        "500":
+          description: Internal server error
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
