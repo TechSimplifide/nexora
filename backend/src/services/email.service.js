@@ -1,22 +1,29 @@
-import { Resend } from "resend";
+import { BrevoClient } from "@getbrevo/brevo";
 
 import verificationEmailTemplate from "../templates/verification-email.template.js";
 import welcomeEmailTemplate from "../templates/welcome-email.template.js";
 
-// console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY);
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+const brevoClient = new BrevoClient({
+  apiKey: process.env.BREVO_API_KEY,
+});
 
 export const sendVerificationEmail = async ({
   to,
   fullName,
   verificationUrl,
 }) => {
-  await resend.emails.send({
-    from: process.env.MAIL_FROM,
-    to,
+  await brevoClient.transactionalEmails.sendTransacEmail({
+    sender: {
+      name: process.env.BREVO_SENDER_NAME,
+      email: process.env.BREVO_SENDER_EMAIL,
+    },
+    to: [
+      {
+        email: to,
+      },
+    ],
     subject: "Verify your Nexora account",
-    html: verificationEmailTemplate({
+    htmlContent: verificationEmailTemplate({
       fullName,
       verificationUrl,
     }),
@@ -24,11 +31,18 @@ export const sendVerificationEmail = async ({
 };
 
 export const sendWelcomeEmail = async ({ to, fullName }) => {
-  await resend.emails.send({
-    from: process.env.MAIL_FROM,
-    to,
+  await brevoClient.transactionalEmails.sendTransacEmail({
+    sender: {
+      name: process.env.BREVO_SENDER_NAME,
+      email: process.env.BREVO_SENDER_EMAIL,
+    },
+    to: [
+      {
+        email: to,
+      },
+    ],
     subject: "Welcome to Nexora 🎉",
-    html: welcomeEmailTemplate({
+    htmlContent: welcomeEmailTemplate({
       fullName,
     }),
   });
