@@ -5,6 +5,7 @@ import generateCollegeCode from "../utils/generateCollegeCode.js";
 import ApiError from "../utils/api-error.js";
 import { USER_ROLES } from "../constants/roles.js";
 import { sendVerificationEmail } from "./email.service.js";
+import mongoose from "mongoose";
 
 export const registerCollegeService = async ({
   collegeName,
@@ -12,70 +13,95 @@ export const registerCollegeService = async ({
   email,
   password,
 }) => {
-  // Check existing admin
-  const existingUser = await User.findOne({
-    email,
-  });
-
-  if (existingUser) {
-    throw new ApiError(409, "User already exists with this email");
-  }
-
-  //   Generate unique college code
-
-  let collegeCode;
-  let existingCollege;
-
-  do {
-    collegeCode = generateCollegeCode(collegeName);
-
-    existingCollege = await College.findOne({
-      collegeCode,
-    });
-  } while (existingCollege);
-
-  const { unHashedToken, hashedToken, tokenExpiry } =
-    new User().generateTemporaryToken();
-
-  //   Create college
-
-  const college = await College.create({
-    name: collegeName,
-    collegeCode,
-  });
-
-  //   Create admin
-
-  const admin = await User.create({
-    fullName: adminName,
-    email,
-    password,
-    role: USER_ROLES.ADMIN,
-    college: college._id,
-    emailVerificationToken: hashedToken,
-    emailVerificationExpiry: tokenExpiry,
-  });
-
-  const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${unHashedToken}`;
+  const session = await mongoose.startSession();
 
   try {
-    await sendVerificationEmail({
-      to: admin.email,
-      fullName: admin.fullName,
-      verificationUrl,
-    });
-  } catch (error) {
-    console.error("Verification email failed:", error);
-  }
+    let result;
 
-  return {
-    college,
-    admin: {
-      id: admin._id,
-      fullName: admin.fullName,
-      email: admin.email,
-      role: admin.role,
-      isVerified: admin.isVerified,
-    },
-  };
+    await session.withTransaction(async () => {
+      // 1. Check existing admin
+      const existingUser = await User.findOne({ email }).session(session);
+
+      if (existingUser) {
+        throw new ApiError(409, "User already exists with this email");
+      }
+
+      // 2. Generate unique college code
+      let collegeCode;
+      let existingCollege;
+
+      do {
+        collegeCode = generateCollegeCode(collegeName);
+
+        existingCollege = await College.findOne({
+          collegeCode,
+        }).session(session);
+      } while (existingCollege);
+
+      // 3. Generate email verification token
+      const { unHashedToken, hashedToken, tokenExpiry } =
+        new User().generateTemporaryToken();
+
+      // 4. Create college
+      const [college] = await College.create(
+        [
+          {
+            name: collegeName,
+            collegeCode,
+          },
+        ],
+        { session },
+      );
+
+      // 5. Create admin
+      const [admin] = await User.create(
+        [
+          {
+            fullName: adminName,
+            email,
+            password,
+            role: USER_ROLES.ADMIN,
+            college: college._id,
+            emailVerificationToken: hashedToken,
+            emailVerificationExpiry: tokenExpiry,
+          },
+        ],
+        { session },
+      );
+
+      result = {
+        college,
+        admin,
+        unHashedToken,
+      };
+    });
+
+    // Transaction has successfully committed at this point.
+
+    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${result.unHashedToken}`;
+
+    // Email is intentionally OUTSIDE the transaction.
+    try {
+      await sendVerificationEmail({
+        to: result.admin.email,
+        fullName: result.admin.fullName,
+        verificationUrl,
+      });
+    } catch (error) {
+      console.error("Verification email failed:", error);
+    }
+
+    return {
+      college: result.college,
+      admin: {
+        id: result.admin._id,
+        fullName: result.admin.fullName,
+        email: result.admin.email,
+        role: result.admin.role,
+        isVerified: result.admin.isVerified,
+      },
+    };
+  } finally {
+    await session.endSession();
+  }
 };
