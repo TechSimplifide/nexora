@@ -2,7 +2,11 @@ import multer from "multer";
 
 const storage = multer.memoryStorage();
 
-const fileFilter = (req, file, cb) => {
+// --------------------------------------------------
+// File filters
+// --------------------------------------------------
+
+const pdfFileFilter = (req, file, cb) => {
   if (file.mimetype === "application/pdf") {
     cb(null, true);
   } else {
@@ -10,12 +14,73 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
+const projectFileFilter = (req, file, cb) => {
+  const imageTypes = ["image/jpeg", "image/png", "image/webp"];
+
+  const pdfTypes = ["application/pdf"];
+
+  if (file.fieldname === "screenshots") {
+    if (imageTypes.includes(file.mimetype)) {
+      return cb(null, true);
+    }
+
+    return cb(
+      new Error("Only JPG, PNG, and WEBP images are allowed for screenshots"),
+      false,
+    );
+  }
+
+  if (file.fieldname === "supportingDocuments") {
+    if (pdfTypes.includes(file.mimetype)) {
+      return cb(null, true);
+    }
+
+    return cb(
+      new Error("Only PDF files are allowed for supporting documents"),
+      false,
+    );
+  }
+
+  cb(new Error("Unexpected file field"), false);
+};
+
+// --------------------------------------------------
+// Multer configurations
+// --------------------------------------------------
+
+const proposalUpload = multer({
   storage,
-  fileFilter,
+  fileFilter: pdfFileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5 MB
   },
 });
 
-export const uploadProposalPdf = upload.single("abstractPdf");
+const projectUpload = multer({
+  storage,
+  fileFilter: projectFileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB per file
+  },
+});
+
+// --------------------------------------------------
+// Project Proposal
+// --------------------------------------------------
+
+export const uploadProposalPdf = proposalUpload.single("abstractPdf");
+
+// --------------------------------------------------
+// Project
+// --------------------------------------------------
+
+export const uploadProjectFiles = projectUpload.fields([
+  {
+    name: "screenshots",
+    maxCount: 5,
+  },
+  {
+    name: "supportingDocuments",
+    maxCount: 5,
+  },
+]);
