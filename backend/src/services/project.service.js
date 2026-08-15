@@ -13,7 +13,7 @@ export const createProjectService = async ({
 
   try {
     const screenshots = [];
-    const supportingDocuments = [];
+    let supportingDocument = null;
 
     // Upload screenshots
 
@@ -38,25 +38,25 @@ export const createProjectService = async ({
 
     // Upload supporting documents
 
-    if (files?.supportingDocuments?.length) {
-      for (const file of files.supportingDocuments) {
-        const uploaded = await uploadToCloudinary(file.buffer, {
-          folder: "nexora/projects/documents",
-          resourceType: "raw",
-        });
+    if (files?.supportingDocument?.length) {
+      const file = files.supportingDocument[0];
 
-        supportingDocuments.push({
-          name: file.originalname,
-          url: uploaded.url,
-          publicId: uploaded.publicId,
-          access: "public",
-        });
+      const uploaded = await uploadToCloudinary(file.buffer, {
+        folder: "nexora/projects/documents",
+        resourceType: "raw",
+      });
 
-        uploadedFiles.push({
-          publicId: uploaded.publicId,
-          resourceType: "raw",
-        });
-      }
+      supportingDocument = {
+        name: file.originalname,
+        url: uploaded.url,
+        publicId: uploaded.publicId,
+        access: "public",
+      };
+
+      uploadedFiles.push({
+        publicId: uploaded.publicId,
+        resourceType: "raw",
+      });
     }
 
     // Create project
@@ -66,7 +66,7 @@ export const createProjectService = async ({
 
       screenshots,
 
-      supportingDocuments,
+      supportingDocument,
 
       createdBy: userId,
 
@@ -97,7 +97,6 @@ export const createProjectService = async ({
     throw new ApiError(500, "Failed to create project");
   }
 };
-
 
 export const getProjectsService = async ({
   collegeId,
@@ -178,7 +177,7 @@ export const getProjectsService = async ({
   const [projects, totalProjects] = await Promise.all([
     Project.find(filter)
       .select(
-        "title summary technologies domain department academicYear teamMembers screenshots github deployedLink supportingDocuments createdBy college createdAt updatedAt",
+        "title summary technologies domain department academicYear teamMembers screenshots github deployedLink supportingDocument createdBy college createdAt updatedAt",
       )
       .populate("createdBy", "fullName username")
       .sort({ createdAt: -1 })
@@ -298,36 +297,33 @@ export const updateProjectService = async ({
 
     // Replace supporting documents
 
-    if (files?.supportingDocuments?.length) {
-      for (const document of project.supportingDocuments) {
+
+    if (files?.supportingDocument?.length) {
+      if (project.supportingDocument?.publicId) {
         filesToDelete.push({
-          publicId: document.publicId,
+          publicId: project.supportingDocument.publicId,
           resourceType: "raw",
         });
       }
 
-      const supportingDocuments = [];
+      const file = files.supportingDocument[0];
 
-      for (const file of files.supportingDocuments) {
-        const uploaded = await uploadToCloudinary(file.buffer, {
-          folder: "nexora/projects/documents",
-          resourceType: "raw",
-        });
+      const uploaded = await uploadToCloudinary(file.buffer, {
+        folder: "nexora/projects/documents",
+        resourceType: "raw",
+      });
 
-        supportingDocuments.push({
-          name: file.originalname,
-          url: uploaded.url,
-          publicId: uploaded.publicId,
-          access: "public",
-        });
+      project.supportingDocument = {
+        name: file.originalname,
+        url: uploaded.url,
+        publicId: uploaded.publicId,
+        access: "public",
+      };
 
-        uploadedFiles.push({
-          publicId: uploaded.publicId,
-          resourceType: "raw",
-        });
-      }
-
-      project.supportingDocuments = supportingDocuments;
+      uploadedFiles.push({
+        publicId: uploaded.publicId,
+        resourceType: "raw",
+      });
     }
 
     // Save project
@@ -416,15 +412,36 @@ export const deleteProjectService = async ({
 
   // Delete supporting documents from Cloudinary
 
-  for (const document of project.supportingDocuments) {
-    try {
-      const result = await cloudinary.uploader.destroy(document.publicId, {
-        resource_type: "raw",
-      });
+  // for (const document of project.supportingDocument) {
+  //   try {
+  //     const result = await cloudinary.uploader.destroy(document.publicId, {
+  //       resource_type: "raw",
+  //     });
 
-      console.log(`🗑️ Deleted project document: ${document.publicId}`, result);
+  //     console.log(`🗑️ Deleted project document: ${document.publicId}`, result);
+  //   } catch (error) {
+  //     console.error(`Failed to delete document ${document.publicId}:`, error);
+  //   }
+  // }
+
+  if (project.supportingDocument?.publicId) {
+    try {
+      const result = await cloudinary.uploader.destroy(
+        project.supportingDocument.publicId,
+        {
+          resource_type: "raw",
+        },
+      );
+
+      console.log(
+        `🗑️ Deleted project document: ${project.supportingDocument.publicId}`,
+        result,
+      );
     } catch (error) {
-      console.error(`Failed to delete document ${document.publicId}:`, error);
+      console.error(
+        `Failed to delete document ${project.supportingDocument.publicId}:`,
+        error,
+      );
     }
   }
 

@@ -57,6 +57,11 @@ const projectSchema = new mongoose.Schema(
       match: /^\d{4}-\d{2}$/,
     },
 
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+
     teamMembers: [
       {
         name: {
@@ -112,31 +117,55 @@ const projectSchema = new mongoose.Schema(
       },
     },
 
-    supportingDocuments: [
-      {
-        name: {
-          type: String,
-          required: true,
-          trim: true,
-        },
+    // supportingDocuments: [
+    //   {
+    //     name: {
+    //       type: String,
+    //       required: true,
+    //       trim: true,
+    //     },
 
-        url: {
-          type: String,
-          required: true,
-        },
+    //     url: {
+    //       type: String,
+    //       required: true,
+    //     },
 
-        publicId: {
-          type: String,
-          required: true,
-        },
+    //     publicId: {
+    //       type: String,
+    //       required: true,
+    //     },
 
-        access: {
-          type: String,
-          enum: ["public", "protected"],
-          default: "public",
-        },
+    //     access: {
+    //       type: String,
+    //       enum: ["public", "protected"],
+    //       default: "public",
+    //     },
+    //   },
+    // ],
+
+    supportingDocument: {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
       },
-    ],
+
+      url: {
+        type: String,
+        required: true,
+      },
+
+      publicId: {
+        type: String,
+        required: true,
+      },
+
+      access: {
+        type: String,
+        enum: ["public", "protected"],
+        default: "public",
+      },
+    },
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

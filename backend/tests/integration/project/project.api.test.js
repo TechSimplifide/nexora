@@ -75,14 +75,12 @@ const mockProject = {
     url: "https://example.vercel.app",
     access: "public",
   },
-  supportingDocuments: [
-    {
-      name: "documentation.pdf",
-      url: "https://cloudinary.com/document.pdf",
-      publicId: "projects/document",
-      access: "public",
-    },
-  ],
+  supportingDocument: {
+    name: "documentation.pdf",
+    url: "https://cloudinary.com/document.pdf",
+    publicId: "projects/document",
+    access: "public",
+  },
   createdBy: "student123",
   college: "college123",
 };
@@ -209,7 +207,7 @@ describe("Project API", () => {
           ]),
         )
         .attach("screenshots", Buffer.from("fake-image"), "screenshot.png")
-        .attach("supportingDocuments", Buffer.from("fake-pdf"), "document.pdf");
+        .attach("supportingDocument", Buffer.from("fake-pdf"), "document.pdf");
 
       expect(response.status).toBe(201);
 
@@ -220,7 +218,7 @@ describe("Project API", () => {
       const serviceCall = mockCreateProjectService.mock.calls[0][0];
 
       expect(serviceCall.files.screenshots).toHaveLength(1);
-      expect(serviceCall.files.supportingDocuments).toHaveLength(1);
+      expect(serviceCall.files.supportingDocument).toHaveLength(1);
     });
 
     test("should return 400 for invalid technologies JSON", async () => {
@@ -414,7 +412,7 @@ describe("Project API", () => {
         .field("title", "Updated Project")
         .attach("screenshots", Buffer.from("new-image"), "new.png")
         .attach(
-          "supportingDocuments",
+          "supportingDocument",
           Buffer.from("new-pdf"),
           "new-document.pdf",
         );
@@ -428,7 +426,7 @@ describe("Project API", () => {
       const serviceCall = mockUpdateProjectService.mock.calls[0][0];
 
       expect(serviceCall.files.screenshots).toHaveLength(1);
-      expect(serviceCall.files.supportingDocuments).toHaveLength(1);
+      expect(serviceCall.files.supportingDocument).toHaveLength(1);
     });
 
     test("should return 404 if student does not own the project", async () => {

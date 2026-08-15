@@ -71,7 +71,7 @@ describe("Project Service", () => {
         _id: "project123",
         ...projectData,
         screenshots: [],
-        supportingDocuments: [],
+        supportingDocument: null,
         createdBy: "user123",
         college: "college123",
       };
@@ -88,7 +88,7 @@ describe("Project Service", () => {
       expect(mockProjectCreate).toHaveBeenCalledWith({
         ...projectData,
         screenshots: [],
-        supportingDocuments: [],
+        supportingDocument: null,
         createdBy: "user123",
         college: "college123",
       });
@@ -96,7 +96,7 @@ describe("Project Service", () => {
       expect(result).toEqual(createdProject);
     });
 
-    test("should upload screenshots and supporting documents", async () => {
+    test("should upload screenshots and supporting document", async () => {
       mockUploadToCloudinary
         .mockResolvedValueOnce({
           url: "https://cloudinary.com/screenshot.png",
@@ -110,6 +110,20 @@ describe("Project Service", () => {
       const createdProject = {
         _id: "project123",
         ...projectData,
+        screenshots: [
+          {
+            url: "https://cloudinary.com/screenshot.png",
+            publicId: "screenshots/project123",
+          },
+        ],
+        supportingDocument: {
+          name: "report.pdf",
+          url: "https://cloudinary.com/document.pdf",
+          publicId: "documents/project123",
+          access: "public",
+        },
+        createdBy: "user123",
+        college: "college123",
       };
 
       mockProjectCreate.mockResolvedValue(createdProject);
@@ -121,7 +135,7 @@ describe("Project Service", () => {
             originalname: "screenshot.png",
           },
         ],
-        supportingDocuments: [
+        supportingDocument: [
           {
             buffer: Buffer.from("pdf"),
             originalname: "report.pdf",
@@ -149,7 +163,7 @@ describe("Project Service", () => {
 
       expect(mockUploadToCloudinary).toHaveBeenNthCalledWith(
         2,
-        files.supportingDocuments[0].buffer,
+        files.supportingDocument[0].buffer,
         {
           folder: "nexora/projects/documents",
           resourceType: "raw",
@@ -164,14 +178,12 @@ describe("Project Service", () => {
             publicId: "screenshots/project123",
           },
         ],
-        supportingDocuments: [
-          {
-            name: "report.pdf",
-            url: "https://cloudinary.com/document.pdf",
-            publicId: "documents/project123",
-            access: "public",
-          },
-        ],
+        supportingDocument: {
+          name: "report.pdf",
+          url: "https://cloudinary.com/document.pdf",
+          publicId: "documents/project123",
+          access: "public",
+        },
         createdBy: "user123",
         college: "college123",
       });
@@ -235,18 +247,23 @@ describe("Project Service", () => {
       ];
 
       const mockLean = jest.fn().mockResolvedValue(projects);
+
       const mockLimit = jest.fn().mockReturnValue({
         lean: mockLean,
       });
+
       const mockSkip = jest.fn().mockReturnValue({
         limit: mockLimit,
       });
+
       const mockSort = jest.fn().mockReturnValue({
         skip: mockSkip,
       });
+
       const mockPopulate = jest.fn().mockReturnValue({
         sort: mockSort,
       });
+
       const mockSelect = jest.fn().mockReturnValue({
         populate: mockPopulate,
       });
@@ -289,18 +306,23 @@ describe("Project Service", () => {
 
     test("should apply search and filters", async () => {
       const mockLean = jest.fn().mockResolvedValue([]);
+
       const mockLimit = jest.fn().mockReturnValue({
         lean: mockLean,
       });
+
       const mockSkip = jest.fn().mockReturnValue({
         limit: mockLimit,
       });
+
       const mockSort = jest.fn().mockReturnValue({
         skip: mockSkip,
       });
+
       const mockPopulate = jest.fn().mockReturnValue({
         sort: mockSort,
       });
+
       const mockSelect = jest.fn().mockReturnValue({
         populate: mockPopulate,
       });
@@ -454,14 +476,12 @@ describe("Project Service", () => {
           publicId: "screenshots/old",
         },
       ],
-      supportingDocuments: [
-        {
-          name: "old.pdf",
-          url: "https://cloudinary.com/old.pdf",
-          publicId: "documents/old",
-          access: "public",
-        },
-      ],
+      supportingDocument: {
+        name: "old.pdf",
+        url: "https://cloudinary.com/old.pdf",
+        publicId: "documents/old",
+        access: "public",
+      },
       save: jest.fn(),
     };
 
@@ -491,7 +511,7 @@ describe("Project Service", () => {
       expect(result).toBe(project);
     });
 
-    test("should replace screenshots and supporting documents", async () => {
+    test("should replace screenshots and supporting document", async () => {
       const project = {
         ...existingProject,
         screenshots: [
@@ -500,14 +520,12 @@ describe("Project Service", () => {
             publicId: "screenshots/old",
           },
         ],
-        supportingDocuments: [
-          {
-            name: "old.pdf",
-            url: "https://cloudinary.com/old.pdf",
-            publicId: "documents/old",
-            access: "public",
-          },
-        ],
+        supportingDocument: {
+          name: "old.pdf",
+          url: "https://cloudinary.com/old.pdf",
+          publicId: "documents/old",
+          access: "public",
+        },
         save: jest.fn().mockResolvedValue(true),
       };
 
@@ -534,7 +552,7 @@ describe("Project Service", () => {
             originalname: "new.png",
           },
         ],
-        supportingDocuments: [
+        supportingDocument: [
           {
             buffer: Buffer.from("new-pdf"),
             originalname: "new.pdf",
@@ -557,14 +575,12 @@ describe("Project Service", () => {
         },
       ]);
 
-      expect(result.supportingDocuments).toEqual([
-        {
-          name: "new.pdf",
-          url: "https://cloudinary.com/new.pdf",
-          publicId: "documents/new",
-          access: "public",
-        },
-      ]);
+      expect(result.supportingDocument).toEqual({
+        name: "new.pdf",
+        url: "https://cloudinary.com/new.pdf",
+        publicId: "documents/new",
+        access: "public",
+      });
 
       expect(mockCloudinaryDestroy).toHaveBeenCalledWith("screenshots/old", {
         resource_type: "image",
@@ -652,11 +668,9 @@ describe("Project Service", () => {
             publicId: "screenshots/project123",
           },
         ],
-        supportingDocuments: [
-          {
-            publicId: "documents/project123",
-          },
-        ],
+        supportingDocument: {
+          publicId: "documents/project123",
+        },
       };
 
       mockProjectFindOne.mockResolvedValue(project);
@@ -728,11 +742,9 @@ describe("Project Service", () => {
             publicId: "screenshots/project123",
           },
         ],
-        supportingDocuments: [
-          {
-            publicId: "documents/project123",
-          },
-        ],
+        supportingDocument: {
+          publicId: "documents/project123",
+        },
       };
 
       mockProjectFindOne.mockResolvedValue(project);

@@ -30,7 +30,7 @@ const projectFileFilter = (req, file, cb) => {
     );
   }
 
-  if (file.fieldname === "supportingDocuments") {
+  if (file.fieldname === "supportingDocument") {
     if (pdfTypes.includes(file.mimetype)) {
       return cb(null, true);
     }
@@ -80,7 +80,7 @@ export const uploadProjectFiles = projectUpload.fields([
     maxCount: 5,
   },
   {
-    name: "supportingDocuments",
-    maxCount: 5,
+    name: "supportingDocument",
+    maxCount: 1,
   },
 ]);
