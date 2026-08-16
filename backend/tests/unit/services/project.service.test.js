@@ -37,6 +37,9 @@ const {
   getProjectByIdService,
   updateProjectService,
   deleteProjectService,
+  featureProjectService,
+  getFeaturedProjectsService,
+  unfeatureProjectService,
 } = await import("../../../src/services/project.service.js");
 
 describe("Project Service", () => {
@@ -769,6 +772,218 @@ describe("Project Service", () => {
       });
 
       expect(result).toBe(project);
+    });
+  });
+
+  describe("Featured Project Services", () => {
+    describe("featureProjectService", () => {
+      test("should feature a current academic year project successfully", async () => {
+        const project = {
+          _id: "project123",
+          college: "college123",
+          academicYear: "2026-27",
+          isFeatured: false,
+          save: jest.fn().mockResolvedValue(true),
+        };
+
+        mockProjectFindOne.mockResolvedValue(project);
+
+        const result = await featureProjectService({
+          projectId: "project123",
+          collegeId: "college123",
+        });
+
+        expect(mockProjectFindOne).toHaveBeenCalledWith({
+          _id: "project123",
+          college: "college123",
+        });
+
+        expect(project.isFeatured).toBe(true);
+        expect(project.save).toHaveBeenCalledTimes(1);
+        expect(result).toBe(project);
+      });
+
+      test("should throw 404 if project does not exist", async () => {
+        mockProjectFindOne.mockResolvedValue(null);
+
+        await expect(
+          featureProjectService({
+            projectId: "project123",
+            collegeId: "college123",
+          }),
+        ).rejects.toMatchObject({
+          statusCode: 404,
+          message: "Project not found",
+        });
+      });
+
+      test("should throw 400 if project is from another academic year", async () => {
+        const project = {
+          _id: "project123",
+          college: "college123",
+          academicYear: "2025-26",
+          isFeatured: false,
+          save: jest.fn(),
+        };
+
+        mockProjectFindOne.mockResolvedValue(project);
+
+        await expect(
+          featureProjectService({
+            projectId: "project123",
+            collegeId: "college123",
+          }),
+        ).rejects.toMatchObject({
+          statusCode: 400,
+          message:
+            "Only projects from the current academic year can be featured",
+        });
+
+        expect(project.save).not.toHaveBeenCalled();
+      });
+
+      test("should throw 409 if project is already featured", async () => {
+        const project = {
+          _id: "project123",
+          college: "college123",
+          academicYear: "2026-27",
+          isFeatured: true,
+          save: jest.fn(),
+        };
+
+        mockProjectFindOne.mockResolvedValue(project);
+
+        await expect(
+          featureProjectService({
+            projectId: "project123",
+            collegeId: "college123",
+          }),
+        ).rejects.toMatchObject({
+          statusCode: 409,
+          message: "Project is already featured",
+        });
+
+        expect(project.save).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("unfeatureProjectService", () => {
+      test("should unfeature a featured project successfully", async () => {
+        const project = {
+          _id: "project123",
+          college: "college123",
+          isFeatured: true,
+          save: jest.fn().mockResolvedValue(true),
+        };
+
+        mockProjectFindOne.mockResolvedValue(project);
+
+        const result = await unfeatureProjectService({
+          projectId: "project123",
+          collegeId: "college123",
+        });
+
+        expect(mockProjectFindOne).toHaveBeenCalledWith({
+          _id: "project123",
+          college: "college123",
+        });
+
+        expect(project.isFeatured).toBe(false);
+        expect(project.save).toHaveBeenCalledTimes(1);
+        expect(result).toBe(project);
+      });
+
+      test("should throw 404 if project does not exist", async () => {
+        mockProjectFindOne.mockResolvedValue(null);
+
+        await expect(
+          unfeatureProjectService({
+            projectId: "project123",
+            collegeId: "college123",
+          }),
+        ).rejects.toMatchObject({
+          statusCode: 404,
+          message: "Project not found",
+        });
+      });
+
+      test("should throw 409 if project is not currently featured", async () => {
+        const project = {
+          _id: "project123",
+          college: "college123",
+          isFeatured: false,
+          save: jest.fn(),
+        };
+
+        mockProjectFindOne.mockResolvedValue(project);
+
+        await expect(
+          unfeatureProjectService({
+            projectId: "project123",
+            collegeId: "college123",
+          }),
+        ).rejects.toMatchObject({
+          statusCode: 409,
+          message: "Project is not currently featured",
+        });
+
+        expect(project.save).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("getFeaturedProjectsService", () => {
+      test("should return current academic year featured projects", async () => {
+        const featuredProjects = [
+          {
+            _id: "project123",
+            title: "Library Management System",
+            academicYear: "2026-27",
+            isFeatured: true,
+          },
+        ];
+
+        const lean = jest.fn().mockResolvedValue(featuredProjects);
+        const sort = jest.fn().mockReturnValue({ lean });
+        const populate = jest.fn().mockReturnValue({ sort });
+
+        mockProjectFind.mockReturnValue({
+          populate,
+        });
+
+        const result = await getFeaturedProjectsService({
+          collegeId: "college123",
+        });
+
+        expect(mockProjectFind).toHaveBeenCalledWith({
+          college: "college123",
+          academicYear: "2026-27",
+          isFeatured: true,
+        });
+
+        expect(populate).toHaveBeenCalledWith("createdBy", "fullName username");
+
+        expect(sort).toHaveBeenCalledWith({
+          updatedAt: -1,
+        });
+
+        expect(result).toEqual(featuredProjects);
+      });
+
+      test("should return empty array when no featured projects exist", async () => {
+        const lean = jest.fn().mockResolvedValue([]);
+        const sort = jest.fn().mockReturnValue({ lean });
+        const populate = jest.fn().mockReturnValue({ sort });
+
+        mockProjectFind.mockReturnValue({
+          populate,
+        });
+
+        const result = await getFeaturedProjectsService({
+          collegeId: "college123",
+        });
+
+        expect(result).toEqual([]);
+      });
     });
   });
 });

@@ -6,15 +6,23 @@ const mockGetProjectByIdService = jest.fn();
 const mockUpdateProjectService = jest.fn();
 const mockDeleteProjectService = jest.fn();
 
+const mockFeatureProjectService = jest.fn();
+const mockUnfeatureProjectService = jest.fn();
+const mockGetFeaturedProjectsService = jest.fn();
+
+import { USER_ROLES } from "../../../src/constants/roles.js";
+
 // --------------------------------------------------
 // Mock Authentication Middleware
 // --------------------------------------------------
+
+let mockUserRole = USER_ROLES.STUDENT;
 
 jest.unstable_mockModule("../../../src/middlewares/auth.middleware.js", () => ({
   verifyJWT: (req, res, next) => {
     req.user = {
       _id: "student123",
-      role: "student",
+      role: mockUserRole,
       college: "college123",
     };
 
@@ -32,6 +40,9 @@ jest.unstable_mockModule("../../../src/services/project.service.js", () => ({
   getProjectByIdService: mockGetProjectByIdService,
   updateProjectService: mockUpdateProjectService,
   deleteProjectService: mockDeleteProjectService,
+  featureProjectService: mockFeatureProjectService,
+  unfeatureProjectService: mockUnfeatureProjectService,
+  getFeaturedProjectsService: mockGetFeaturedProjectsService,
 }));
 
 // Import app AFTER mocks
@@ -92,6 +103,9 @@ const mockProject = {
 describe("Project API", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Default authenticated user for normal project operations
+    mockUserRole = USER_ROLES.STUDENT;
   });
 
   // ==================================================
@@ -485,6 +499,225 @@ describe("Project API", () => {
       expect(response.body.message).toBe(
         "Project not found or you do not have permission to delete it",
       );
+    });
+  });
+
+  // ==================================================
+  // FEATURED PROJECT API
+  // ==================================================
+
+  describe("Featured Project API", () => {
+    // ==================================================
+    // GET /api/v1/projects/featured
+    // ==================================================
+
+    describe("GET /api/v1/projects/featured", () => {
+      test("should return featured projects successfully", async () => {
+        const featuredProjects = [
+          {
+            _id: "project123",
+            title: "Library Management System",
+            summary: "Library Management System Web based",
+            domain: "WEB",
+            department: "IT",
+            academicYear: "2026-27",
+            isFeatured: true,
+            createdBy: {
+              _id: "student123",
+              fullName: "Raja",
+              username: "raja",
+            },
+            college: "college123",
+          },
+        ];
+
+        mockGetFeaturedProjectsService.mockResolvedValue(featuredProjects);
+
+        const response = await request(app).get("/api/v1/projects/featured");
+
+        expect(response.status).toBe(200);
+
+        expect(response.body.message).toBe(
+          "Featured projects fetched successfully",
+        );
+
+        expect(response.body.data).toEqual(featuredProjects);
+
+        expect(mockGetFeaturedProjectsService).toHaveBeenCalledTimes(1);
+
+        expect(mockGetFeaturedProjectsService).toHaveBeenCalledWith({
+          collegeId: "college123",
+        });
+      });
+
+      test("should return empty array when no featured projects exist", async () => {
+        mockGetFeaturedProjectsService.mockResolvedValue([]);
+
+        const response = await request(app).get("/api/v1/projects/featured");
+
+        expect(response.status).toBe(200);
+
+        expect(response.body.data).toEqual([]);
+
+        expect(mockGetFeaturedProjectsService).toHaveBeenCalledWith({
+          collegeId: "college123",
+        });
+      });
+    });
+
+    // ==================================================
+    // PATCH /api/v1/projects/:projectId/feature
+    // ==================================================
+
+    describe("PATCH /api/v1/projects/:projectId/feature", () => {
+      beforeEach(() => {
+        // Feature/unfeature operations are ADMIN-only
+        mockUserRole = USER_ROLES.ADMIN;
+      });
+
+      test("should feature project successfully", async () => {
+        const featuredProject = {
+          _id: "project123",
+          title: "Library Management System",
+          academicYear: "2026-27",
+          isFeatured: true,
+          college: "college123",
+        };
+
+        mockFeatureProjectService.mockResolvedValue(featuredProject);
+
+        const response = await request(app).patch(
+          "/api/v1/projects/project123/feature",
+        );
+
+        expect(response.status).toBe(200);
+
+        expect(response.body.message).toBe("Project featured successfully");
+
+        expect(response.body.data).toEqual(featuredProject);
+
+        expect(mockFeatureProjectService).toHaveBeenCalledTimes(1);
+
+        expect(mockFeatureProjectService).toHaveBeenCalledWith({
+          projectId: "project123",
+          collegeId: "college123",
+        });
+      });
+
+      test("should return 404 if project does not exist", async () => {
+        mockFeatureProjectService.mockRejectedValue(
+          new ApiError(404, "Project not found"),
+        );
+
+        const response = await request(app).patch(
+          "/api/v1/projects/project123/feature",
+        );
+
+        expect(response.status).toBe(404);
+
+        expect(response.body.message).toBe("Project not found");
+      });
+
+      test("should return 400 if project is from another academic year", async () => {
+        mockFeatureProjectService.mockRejectedValue(
+          new ApiError(
+            400,
+            "Only projects from the current academic year can be featured",
+          ),
+        );
+
+        const response = await request(app).patch(
+          "/api/v1/projects/project123/feature",
+        );
+
+        expect(response.status).toBe(400);
+
+        expect(response.body.message).toBe(
+          "Only projects from the current academic year can be featured",
+        );
+      });
+
+      test("should return 409 if project is already featured", async () => {
+        mockFeatureProjectService.mockRejectedValue(
+          new ApiError(409, "Project is already featured"),
+        );
+
+        const response = await request(app).patch(
+          "/api/v1/projects/project123/feature",
+        );
+
+        expect(response.status).toBe(409);
+
+        expect(response.body.message).toBe("Project is already featured");
+      });
+    });
+
+    // ==================================================
+    // PATCH /api/v1/projects/:projectId/unfeature
+    // ==================================================
+
+    describe("PATCH /api/v1/projects/:projectId/unfeature", () => {
+      beforeEach(() => {
+        // Feature/unfeature operations are ADMIN-only
+        mockUserRole = USER_ROLES.ADMIN;
+      });
+
+      test("should unfeature project successfully", async () => {
+        const unfeaturedProject = {
+          _id: "project123",
+          title: "Library Management System",
+          academicYear: "2026-27",
+          isFeatured: false,
+          college: "college123",
+        };
+
+        mockUnfeatureProjectService.mockResolvedValue(unfeaturedProject);
+
+        const response = await request(app).patch(
+          "/api/v1/projects/project123/unfeature",
+        );
+
+        expect(response.status).toBe(200);
+
+        expect(response.body.message).toBe("Project unfeatured successfully");
+
+        expect(response.body.data).toEqual(unfeaturedProject);
+
+        expect(mockUnfeatureProjectService).toHaveBeenCalledTimes(1);
+
+        expect(mockUnfeatureProjectService).toHaveBeenCalledWith({
+          projectId: "project123",
+          collegeId: "college123",
+        });
+      });
+
+      test("should return 404 if project does not exist", async () => {
+        mockUnfeatureProjectService.mockRejectedValue(
+          new ApiError(404, "Project not found"),
+        );
+
+        const response = await request(app).patch(
+          "/api/v1/projects/project123/unfeature",
+        );
+
+        expect(response.status).toBe(404);
+
+        expect(response.body.message).toBe("Project not found");
+      });
+
+      test("should return 409 if project is not currently featured", async () => {
+        mockUnfeatureProjectService.mockRejectedValue(
+          new ApiError(409, "Project is not currently featured"),
+        );
+
+        const response = await request(app).patch(
+          "/api/v1/projects/project123/unfeature",
+        );
+
+        expect(response.status).toBe(409);
+
+        expect(response.body.message).toBe("Project is not currently featured");
+      });
     });
   });
 });

@@ -10,6 +10,9 @@ import {
   getProjects,
   updateProject,
   deleteProject,
+  featureProject,
+  unfeatureProject,
+  getFeaturedProjects,
 } from "../controllers/project.controller.js";
 
 const router = Router();
@@ -32,6 +35,14 @@ router
   );
 
 router
+  .route("/featured")
+  .get(
+    verifyJWT,
+    authorizeRoles(USER_ROLES.STUDENT, USER_ROLES.ADMIN),
+    getFeaturedProjects,
+  );
+
+router
   .route("/:id")
   .get(
     verifyJWT,
@@ -50,10 +61,14 @@ router
 
 router
   .route("/:id")
-  .delete(
-    verifyJWT, 
-    authorizeRoles(USER_ROLES.STUDENT), 
-    deleteProject
-  );
+  .delete(verifyJWT, authorizeRoles(USER_ROLES.STUDENT), deleteProject);
+
+router
+  .route("/:projectId/feature")
+  .patch(verifyJWT, authorizeRoles(USER_ROLES.ADMIN), featureProject);
+
+router
+  .route("/:projectId/unfeature")
+  .patch(verifyJWT, authorizeRoles(USER_ROLES.ADMIN), unfeatureProject);
 
 export default router;

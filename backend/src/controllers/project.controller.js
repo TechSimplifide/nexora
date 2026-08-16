@@ -11,6 +11,9 @@ import {
   getProjectByIdService,
   updateProjectService,
   deleteProjectService,
+  featureProjectService,
+  unfeatureProjectService,
+  getFeaturedProjectsService,
 } from "../services/project.service.js";
 
 export const createProject = asyncHandler(async (req, res) => {
@@ -256,4 +259,38 @@ export const deleteProject = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Project deleted successfully"));
+});
+
+export const featureProject = asyncHandler(async (req, res) => {
+  const project = await featureProjectService({
+    projectId: req.params.projectId,
+    collegeId: req.user.college,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, project, "Project featured successfully"));
+});
+
+export const unfeatureProject = asyncHandler(async (req, res) => {
+  const project = await unfeatureProjectService({
+    projectId: req.params.projectId,
+    collegeId: req.user.college,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, project, "Project unfeatured successfully"));
+});
+
+export const getFeaturedProjects = asyncHandler(async (req, res) => {
+  const projects = await getFeaturedProjectsService({
+    collegeId: req.user.college,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, projects, "Featured projects fetched successfully"),
+    );
 });

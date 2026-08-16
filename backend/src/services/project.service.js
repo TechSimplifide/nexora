@@ -297,7 +297,6 @@ export const updateProjectService = async ({
 
     // Replace supporting documents
 
-
     if (files?.supportingDocument?.length) {
       if (project.supportingDocument?.publicId) {
         filesToDelete.push({
@@ -412,18 +411,6 @@ export const deleteProjectService = async ({
 
   // Delete supporting documents from Cloudinary
 
-  // for (const document of project.supportingDocument) {
-  //   try {
-  //     const result = await cloudinary.uploader.destroy(document.publicId, {
-  //       resource_type: "raw",
-  //     });
-
-  //     console.log(`🗑️ Deleted project document: ${document.publicId}`, result);
-  //   } catch (error) {
-  //     console.error(`Failed to delete document ${document.publicId}:`, error);
-  //   }
-  // }
-
   if (project.supportingDocument?.publicId) {
     try {
       const result = await cloudinary.uploader.destroy(
@@ -452,4 +439,74 @@ export const deleteProjectService = async ({
   });
 
   return project;
+};
+
+export const featureProjectService = async ({ projectId, collegeId }) => {
+  const project = await Project.findOne({
+    _id: projectId,
+    college: collegeId,
+  });
+
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  const currentYear = new Date().getFullYear();
+  const nextYear = String(currentYear + 1).slice(-2);
+  const currentAcademicYear = `${currentYear}-${nextYear}`;
+
+  if (project.academicYear !== currentAcademicYear) {
+    throw new ApiError(
+      400,
+      "Only projects from the current academic year can be featured",
+    );
+  }
+
+  if (project.isFeatured) {
+    throw new ApiError(409, "Project is already featured");
+  }
+
+  project.isFeatured = true;
+
+  await project.save();
+
+  return project;
+};
+
+export const unfeatureProjectService = async ({ projectId, collegeId }) => {
+  const project = await Project.findOne({
+    _id: projectId,
+    college: collegeId,
+  });
+
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  if (!project.isFeatured) {
+    throw new ApiError(409, "Project is not currently featured");
+  }
+
+  project.isFeatured = false;
+
+  await project.save();
+
+  return project;
+};
+
+export const getFeaturedProjectsService = async ({ collegeId }) => {
+  const currentYear = new Date().getFullYear();
+  const nextYear = String(currentYear + 1).slice(-2);
+  const currentAcademicYear = `${currentYear}-${nextYear}`;
+
+  const projects = await Project.find({
+    college: collegeId,
+    academicYear: currentAcademicYear,
+    isFeatured: true,
+  })
+    .populate("createdBy", "fullName username")
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  return projects;
 };
