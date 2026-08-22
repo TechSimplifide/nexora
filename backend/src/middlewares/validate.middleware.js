@@ -5,7 +5,7 @@ const validate = (schema) => {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
-      throw new ApiError(400, "Validation failed", result.error.errors);
+      throw new ApiError(400, "Validation failed", result.error.issues);
     }
 
     req.body = result.data;
