@@ -28,6 +28,8 @@ import authRouter from "./routes/auth.routes.js";
 import projectProposalRouter from "./routes/project-proposal.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import projectAccessRequestRouter from "./routes/project-access-request.routes.js";
+import recommendationRoutes from "./routes/recommendation.routes.js";
+
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
 swaggerDocs(app);
@@ -36,6 +38,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/project-proposals", projectProposalRouter);
 app.use("/api/v1/projects", projectRoutes);
 app.use("/api/v1/projects", projectAccessRequestRouter);
+app.use("/api/v1/recommendations", recommendationRoutes);
 
 app.get("/", (req, res) => {
   res.send(`Welcome to Nexora...`);

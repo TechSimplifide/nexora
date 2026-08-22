@@ -210,6 +210,9 @@ importers:
       '@getbrevo/brevo':
         specifier: ^6.0.3
         version: 6.0.3
+      '@google/generative-ai':
+        specifier: ^0.24.1
+        version: 0.24.1
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -514,6 +517,10 @@ packages:
 
   '@getbrevo/brevo@6.0.3':
     resolution: {integrity: sha512-yWBLKoHC8P5HLZ8z6iRuqDYLpCRKPTUETnZOLZzNDWGFYL78y4SHOTxQVrKH5ROX7f4q+SQ19LD3GWtJlIuNXA==}
+    engines: {node: '>=18.0.0'}
+
+  '@google/generative-ai@0.24.1':
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
     engines: {node: '>=18.0.0'}
 
   '@humanfs/core@0.19.2':
@@ -2755,6 +2762,8 @@ snapshots:
       levn: 0.4.1
 
   '@getbrevo/brevo@6.0.3': {}
+
+  '@google/generative-ai@0.24.1': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
