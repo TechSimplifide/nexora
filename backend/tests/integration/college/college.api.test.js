@@ -57,7 +57,9 @@ describe("College API", () => {
 
       expect(response.status).toBe(201);
 
-      expect(response.body.message).toBe("College registered successfully");
+      expect(response.body.message).toBe(
+        "College registered successfully. Please check your email to verify the account.",
+      );
 
       expect(response.body.data).toEqual({
         collegeCode: "NEX001",

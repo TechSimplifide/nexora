@@ -13,7 +13,7 @@ export const registerCollege = asyncHandler(async (req, res) => {
         collegeCode: result.college.collegeCode,
         admin: result.admin,
       },
-      "College registered successfully",
+      "College registered successfully. Please check your email to verify the account.",
     ),
   );
 });
