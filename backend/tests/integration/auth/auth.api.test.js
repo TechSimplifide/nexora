@@ -89,7 +89,9 @@ describe("Auth API", () => {
 
       expect(response.status).toBe(201);
 
-      expect(response.body.message).toBe("Student registered successfully");
+      expect(response.body.message).toBe(
+        "Student registered successfully. Please check your email to verify your account.",
+      );
 
       expect(response.body.data).toEqual({
         id: "student123",

@@ -21,7 +21,13 @@ export const registerStudent = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, student, "Student registered successfully"));
+    .json(
+      new ApiResponse(
+        201,
+        student,
+        "Student registered successfully. Please check your email to verify your account.",
+      ),
+    );
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
