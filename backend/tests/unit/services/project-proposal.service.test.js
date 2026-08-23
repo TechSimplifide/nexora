@@ -7,10 +7,17 @@ import { jest } from "@jest/globals";
 const mockProjectProposalCreate = jest.fn();
 const mockProjectProposalFind = jest.fn();
 const mockProjectProposalFindOne = jest.fn();
-
+const mockUserFindOne = jest.fn();
+const mockCreateNotificationService = jest.fn();
 const mockUploadToCloudinary = jest.fn();
 const mockCloudinaryDestroy = jest.fn();
 
+// Mock User model
+jest.unstable_mockModule("../../../src/models/user.model.js", () => ({
+  User: {
+    findOne: mockUserFindOne,
+  },
+}));
 // Mock ProjectProposal model
 jest.unstable_mockModule(
   "../../../src/models/project-proposal.model.js",
@@ -20,6 +27,13 @@ jest.unstable_mockModule(
       find: mockProjectProposalFind,
       findOne: mockProjectProposalFindOne,
     },
+  }),
+);
+
+jest.unstable_mockModule(
+  "../../../src/services/notification.service.js",
+  () => ({
+    createNotificationService: mockCreateNotificationService,
   }),
 );
 
@@ -62,8 +76,14 @@ const {
 // Reset mocks
 // -----------------------------
 
+// beforeEach(() => {
+//   jest.clearAllMocks();
+// });
+
 beforeEach(() => {
   jest.clearAllMocks();
+
+  mockCreateNotificationService.mockResolvedValue({});
 });
 
 // ============================================================
@@ -102,6 +122,14 @@ describe("createProjectProposalService", () => {
     mockUploadToCloudinary.mockResolvedValue(uploadedPdf);
     mockProjectProposalCreate.mockResolvedValue(createdProposal);
 
+    const mockSelect = jest.fn().mockResolvedValue({
+      _id: "admin123",
+    });
+
+    mockUserFindOne.mockReturnValue({
+      select: mockSelect,
+    });
+
     const result = await createProjectProposalService({
       title: "AI Project",
       team: {
@@ -130,6 +158,14 @@ describe("createProjectProposalService", () => {
     });
 
     expect(result).toEqual(createdProposal);
+
+    expect(mockCreateNotificationService).toHaveBeenCalledWith({
+      recipient: "admin123",
+      type: "PROJECT_PROPOSAL_SUBMITTED",
+      title: "New Project Proposal",
+      message: `A new project proposal "${createdProposal.title}" has been submitted for review.`,
+      relatedResource: createdProposal._id,
+    });
   });
 
   test("should throw error when abstract PDF is missing", async () => {
@@ -154,6 +190,55 @@ describe("createProjectProposalService", () => {
 // getMyProjectProposalsService
 // ============================================================
 
+// describe("getMyProjectProposalsService", () => {
+//   test("should return proposals created by the student", async () => {
+//     const proposals = [
+//       {
+//         _id: "proposal1",
+//         title: "AI Project",
+//       },
+//       {
+//         _id: "proposal2",
+//         title: "Web Project",
+//       },
+//     ];
+
+//     const mockSort = jest.fn().mockResolvedValue(proposals);
+//     const mockPopulateReviewedBy = jest.fn().mockReturnValue({
+//       sort: mockSort,
+//     });
+
+//     const mockPopulateCollege = jest.fn().mockReturnValue({
+//       populate: mockPopulateReviewedBy,
+//     });
+
+//     mockProjectProposalFind.mockReturnValue({
+//       populate: mockPopulateCollege,
+//     });
+
+//     const result = await getMyProjectProposalsService("user123");
+
+//     expect(mockProjectProposalFind).toHaveBeenCalledWith({
+//       createdBy: "user123",
+//     });
+
+//     expect(mockPopulateCollege).toHaveBeenCalledWith(
+//       "college",
+//       "name collegeCode",
+//     );
+
+//     expect(mockPopulateReviewedBy).toHaveBeenCalledWith(
+//       "reviewedBy",
+//       "fullName email",
+//     );
+
+//     expect(mockSort).toHaveBeenCalledWith({
+//       createdAt: -1,
+//     });
+
+//     expect(result).toEqual(proposals);
+//   });
+// });
 describe("getMyProjectProposalsService", () => {
   test("should return proposals created by the student", async () => {
     const proposals = [
@@ -168,6 +253,7 @@ describe("getMyProjectProposalsService", () => {
     ];
 
     const mockSort = jest.fn().mockResolvedValue(proposals);
+
     const mockPopulateReviewedBy = jest.fn().mockReturnValue({
       sort: mockSort,
     });
@@ -182,24 +268,29 @@ describe("getMyProjectProposalsService", () => {
 
     const result = await getMyProjectProposalsService("user123");
 
+    // Verify query
     expect(mockProjectProposalFind).toHaveBeenCalledWith({
       createdBy: "user123",
     });
 
+    // Verify college population
     expect(mockPopulateCollege).toHaveBeenCalledWith(
       "college",
       "name collegeCode",
     );
 
+    // Verify reviewer population
     expect(mockPopulateReviewedBy).toHaveBeenCalledWith(
       "reviewedBy",
       "fullName email",
     );
 
+    // Verify sorting
     expect(mockSort).toHaveBeenCalledWith({
       createdAt: -1,
     });
 
+    // Verify result
     expect(result).toEqual(proposals);
   });
 });

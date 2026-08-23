@@ -2,6 +2,10 @@ import cloudinary from "../config/cloudinary.js";
 import { ProjectProposal } from "../models/project-proposal.model.js";
 import { uploadToCloudinary } from "../utils/cloudinary-upload.js";
 import ApiError from "../utils/api-error.js";
+import { User } from "../models/user.model.js";
+import { createNotificationService } from "./notification.service.js";
+import { NOTIFICATION_TYPES } from "../constants/notification-types.js";
+import { USER_ROLES } from "../constants/roles.js";
 
 export const createProjectProposalService = async ({
   title,
@@ -32,6 +36,26 @@ export const createProjectProposalService = async ({
 
     status: "pending",
   });
+
+  // Notify the admin about new proposal
+  const collegeAdmin = await User.findOne({
+    college: user.college,
+    role: USER_ROLES.ADMIN,
+  }).select("_id");
+
+  if (collegeAdmin) {
+    try {
+      await createNotificationService({
+        recipient: collegeAdmin._id,
+        type: NOTIFICATION_TYPES.PROJECT_PROPOSAL_SUBMITTED,
+        title: "New Project Proposal",
+        message: `A new project proposal "${proposal.title}" has been submitted for review.`,
+        relatedResource: proposal._id,
+      });
+    } catch (error) {
+      console.error(`Failed to create proposal notification: ${error}`);
+    }
+  }
 
   return proposal;
 };
@@ -81,6 +105,19 @@ export const approveProjectProposalService = async ({
 
   await proposal.save();
 
+  // notify student about proposal approval
+  try {
+    await createNotificationService({
+      recipient: proposal.createdBy,
+      type: NOTIFICATION_TYPES.PROJECT_PROPOSAL_APPROVED,
+      title: "Project Proposal Approved",
+      message: `Your project proposal "${proposal.title}" has been approved by the college admin.`,
+      relatedResource: proposal._id,
+    });
+  } catch (error) {
+    console.error("Failed to create approval notification:", error);
+  }
+
   return proposal;
 };
 
@@ -106,6 +143,19 @@ export const rejectProjectProposalService = async ({
   proposal.reviewedAt = new Date();
 
   await proposal.save();
+
+  // Notify student about proposal reject
+  try {
+    await createNotificationService({
+      recipient: proposal.createdBy,
+      type: NOTIFICATION_TYPES.PROJECT_PROPOSAL_REJECTED,
+      title: "Project Proposal Rejected",
+      message: `Your project proposal "${proposal.title}" has been rejected. Please review the admin's remarks and update your proposal.`,
+      relatedResource: proposal._id,
+    });
+  } catch (error) {
+    console.error("Failed to create rejection notification:", error);
+  }
 
   return proposal;
 };
@@ -165,6 +215,25 @@ export const updateRejectedProjectProposalService = async ({
   proposal.reviewedAt = null;
 
   await proposal.save();
+
+  const collegeAdmin = await User.findOne({
+    college: proposal.college,
+    role: USER_ROLES.ADMIN,
+  }).select("_id");
+
+  if (collegeAdmin) {
+    try {
+      await createNotificationService({
+        recipient: collegeAdmin._id,
+        type: NOTIFICATION_TYPES.PROJECT_PROPOSAL_RESUBMITTED,
+        title: "Project Proposal Resubmitted",
+        message: `The project proposal "${proposal.title}" has been updated and resubmitted for review.`,
+        relatedResource: proposal._id,
+      });
+    } catch (error) {
+      console.error("Failed to create resubmission notification:", error);
+    }
+  }
 
   return proposal;
 };

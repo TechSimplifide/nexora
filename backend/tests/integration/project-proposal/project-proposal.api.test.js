@@ -14,6 +14,14 @@ const mockCloudinaryDestroy = jest.fn();
 
 const mockUserFindById = jest.fn();
 const mockJwtVerify = jest.fn();
+const mockUserFindOne = jest.fn();
+
+const mockCreateNotificationService = jest.fn();
+const mockGetMyNotificationsService = jest.fn();
+const mockGetUnreadNotificationCountService = jest.fn();
+const mockMarkNotificationAsReadService = jest.fn();
+const mockMarkAllNotificationsAsReadService = jest.fn();
+const mockDeleteNotificationService = jest.fn();
 
 jest.unstable_mockModule(
   "../../../src/models/project-proposal.model.js",
@@ -41,6 +49,7 @@ jest.unstable_mockModule("../../../src/config/cloudinary.js", () => ({
 jest.unstable_mockModule("../../../src/models/user.model.js", () => ({
   User: {
     findById: mockUserFindById,
+    findOne: mockUserFindOne,
   },
 }));
 
@@ -49,6 +58,21 @@ jest.unstable_mockModule("jsonwebtoken", () => ({
     verify: mockJwtVerify,
   },
 }));
+
+// --------------------------------------------------
+// Mock Notification Service
+// --------------------------------------------------
+jest.unstable_mockModule(
+  "../../../src/services/notification.service.js",
+  () => ({
+    createNotificationService: mockCreateNotificationService,
+    getMyNotificationsService: mockGetMyNotificationsService,
+    getUnreadNotificationCountService: mockGetUnreadNotificationCountService,
+    markNotificationAsReadService: mockMarkNotificationAsReadService,
+    markAllNotificationsAsReadService: mockMarkAllNotificationsAsReadService,
+    deleteNotificationService: mockDeleteNotificationService,
+  }),
+);
 
 const { default: app } = await import("../../../src/app.js");
 
@@ -166,6 +190,10 @@ describe("Project Proposal API", () => {
       });
 
       mockProjectProposalCreate.mockResolvedValue(proposal);
+
+      mockUserFindOne.mockReturnValue({
+        select: jest.fn().mockResolvedValue(adminUser),
+      });
 
       const response = await request(app)
         .post("/api/v1/project-proposals")
@@ -513,6 +541,10 @@ describe("Project Proposal API", () => {
 
       mockProjectProposalFindOne.mockResolvedValue(mockProposal);
 
+      mockUserFindOne.mockReturnValue({
+        select: jest.fn().mockResolvedValue(adminUser),
+      });
+
       const response = await request(app)
         .patch("/api/v1/project-proposals/proposal123")
         .set("Authorization", `Bearer ${AUTH_TOKEN}`)
@@ -556,6 +588,10 @@ describe("Project Proposal API", () => {
       };
 
       mockProjectProposalFindOne.mockResolvedValue(mockProposal);
+
+      mockUserFindOne.mockReturnValue({
+        select: jest.fn().mockResolvedValue(adminUser),
+      });
 
       mockUploadToCloudinary.mockResolvedValue({
         url: "https://cloudinary.com/new-proposal.pdf",
