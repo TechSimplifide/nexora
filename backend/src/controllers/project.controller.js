@@ -127,12 +127,9 @@ export const getProjects = asyncHandler(async (req, res) => {
     limit,
   });
 
-  return res.status(200).json({
-    statusCode: 200,
-    success: true,
-    message: "Projects fetched successfully",
-    data: result,
-  });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "Projects fetched successfully"));
 });
 
 export const getProjectById = asyncHandler(async (req, res) => {
