@@ -2,6 +2,9 @@ import { Project } from "../models/project.model.js";
 import { ProjectAccessRequest } from "../models/project-access-request.model.js";
 import ApiError from "../utils/api-error.js";
 
+import { createNotificationService } from "./notification.service.js";
+import { NOTIFICATION_TYPES } from "../constants/notification-types.js";
+
 export const createProjectAccessRequestService = async ({
   projectId,
   requestedBy,
@@ -83,6 +86,18 @@ export const createProjectAccessRequestService = async ({
     requestedBy,
     resourceType,
   });
+
+  try {
+    await createNotificationService({
+      recipient: project.createdBy,
+      type: NOTIFICATION_TYPES.PROJECT_ACCESS_REQUESTED,
+      title: "New Project Access Request",
+      message: `A student has requested access to the protected ${resourceType} of your project "${project.title}".`,
+      relatedResource: accessRequest._id,
+    });
+  } catch (error) {
+    console.error("Failed to create access request notification:", error);
+  }
 
   return accessRequest;
 };
@@ -179,6 +194,18 @@ export const approveProjectAccessRequestService = async ({
 
   await accessRequest.save();
 
+  try {
+    await createNotificationService({
+      recipient: accessRequest.requestedBy,
+      type: NOTIFICATION_TYPES.PROJECT_ACCESS_APPROVED,
+      title: "Project Access Approved",
+      message: `Your request for ${accessRequest.resourceType} access has been approved for the project "${project.title}".`,
+      relatedResource: accessRequest.project,
+    });
+  } catch (error) {
+    console.error("Failed to create access approval notification:", error);
+  }
+
   return accessRequest;
 };
 
@@ -219,6 +246,18 @@ export const rejectProjectAccessRequestService = async ({
   accessRequest.respondedAt = new Date();
 
   await accessRequest.save();
+
+  try {
+    await createNotificationService({
+      recipient: accessRequest.requestedBy,
+      type: NOTIFICATION_TYPES.PROJECT_ACCESS_REJECTED,
+      title: "Project Access Rejected",
+      message: `Your request for ${accessRequest.resourceType} access has been rejected for the project "${project.title}".`,
+      relatedResource: accessRequest.project,
+    });
+  } catch (error) {
+    console.error("Failed to create access rejection notification:", error);
+  }
 
   return accessRequest;
 };
