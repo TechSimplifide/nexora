@@ -30,6 +30,7 @@ import projectRoutes from "./routes/project.routes.js";
 import projectAccessRequestRouter from "./routes/project-access-request.routes.js";
 import recommendationRoutes from "./routes/recommendation.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 
 app.use("/api/v1/healthcheck", healthCheckRouter);
@@ -41,6 +42,7 @@ app.use("/api/v1/projects", projectRoutes);
 app.use("/api/v1/projects", projectAccessRequestRouter);
 app.use("/api/v1/recommendations", recommendationRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send(`Welcome to Nexora...`);
