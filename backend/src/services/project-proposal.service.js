@@ -19,7 +19,7 @@ export const createProjectProposalService = async ({
 
   const uploadedPdf = await uploadToCloudinary(abstractPdf.buffer, {
     folder: "nexora/project-proposals",
-    resourceType: "raw",
+    resourceType: "image", 
   });
 
   const proposal = await ProjectProposal.create({
@@ -190,13 +190,13 @@ export const updateRejectedProjectProposalService = async ({
   if (abstractPdf) {
     const uploadedPdf = await uploadToCloudinary(abstractPdf.buffer, {
       folder: "nexora/project-proposals",
-      resourceType: "raw",
+      resourceType: "image", 
     });
 
     // Delete old PDF from Cloudinary
     try {
       await cloudinary.uploader.destroy(proposal.abstractPdf.publicId, {
-        resource_type: "raw",
+        resource_type: "image", 
       });
     } catch (error) {
       console.error("Failed to delete old project proposal PDF:", error);
@@ -253,7 +253,7 @@ export const deleteProjectProposalService = async ({ proposalId, userId }) => {
   if (proposal.abstractPdf?.publicId) {
     try {
       await cloudinary.uploader.destroy(proposal.abstractPdf.publicId, {
-        resource_type: "raw",
+        resource_type: "image", 
       });
     } catch (error) {
       console.error(

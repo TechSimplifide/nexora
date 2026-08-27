@@ -365,6 +365,7 @@ describe("Project API", () => {
       expect(mockGetProjectByIdService).toHaveBeenCalledWith({
         projectId: "project123",
         collegeId: "college123",
+        userId: "student123",
       });
     });
 

@@ -222,7 +222,7 @@ describe("Project Proposal API", () => {
 
       expect(mockUploadToCloudinary).toHaveBeenCalledWith(expect.any(Buffer), {
         folder: "nexora/project-proposals",
-        resourceType: "raw",
+        resourceType: "image",
       });
 
       expect(mockProjectProposalCreate).toHaveBeenCalledWith({
@@ -627,13 +627,13 @@ describe("Project Proposal API", () => {
 
       expect(mockUploadToCloudinary).toHaveBeenCalledWith(expect.any(Buffer), {
         folder: "nexora/project-proposals",
-        resourceType: "raw",
+        resourceType: "image",
       });
 
       expect(mockCloudinaryDestroy).toHaveBeenCalledWith(
         "nexora/project-proposals/test123",
         {
-          resource_type: "raw",
+          resource_type: "image",
         },
       );
 
@@ -711,7 +711,7 @@ describe("Project Proposal API", () => {
       expect(mockCloudinaryDestroy).toHaveBeenCalledWith(
         "nexora/project-proposals/test123",
         {
-          resource_type: "raw",
+          resource_type: "image",
         },
       );
 

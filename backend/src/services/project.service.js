@@ -1,4 +1,5 @@
 import { Project } from "../models/project.model.js";
+import { ProjectAccessRequest } from "../models/project-access-request.model.js";
 import { uploadToCloudinary } from "../utils/cloudinary-upload.js";
 import cloudinary from "../config/cloudinary.js";
 import ApiError from "../utils/api-error.js";
@@ -43,7 +44,7 @@ export const createProjectService = async ({
 
       const uploaded = await uploadToCloudinary(file.buffer, {
         folder: "nexora/projects/documents",
-        resourceType: "raw",
+        resourceType: "image", // p - raw
       });
 
       supportingDocument = {
@@ -55,7 +56,7 @@ export const createProjectService = async ({
 
       uploadedFiles.push({
         publicId: uploaded.publicId,
-        resourceType: "raw",
+        resourceType: "image", // p - raw
       });
     }
 
@@ -203,7 +204,48 @@ export const getProjectsService = async ({
   };
 };
 
-export const getProjectByIdService = async ({ projectId, collegeId }) => {
+// export const getProjectByIdService = async ({ projectId, collegeId }) => {
+//   const project = await Project.findOne({
+//     _id: projectId,
+//     college: collegeId,
+//   })
+//     .populate("createdBy", "fullName username")
+//     .lean();
+
+//   if (!project) {
+//     throw new ApiError(404, "Project not found");
+//   }
+
+//   return project;
+// };
+
+const sanitizeResource = (resource, hasAccess) => {
+  if (!resource) {
+    return null;
+  }
+
+  // Public resources are always accessible
+  if (resource.access === "public") {
+    return resource;
+  }
+
+  // Protected resource + approved access
+  if (hasAccess) {
+    return resource;
+  }
+
+  // Protected resource + no approval
+  return {
+    ...resource,
+    url: null,
+  };
+};
+
+export const getProjectByIdService = async ({
+  projectId,
+  collegeId,
+  userId,
+}) => {
   const project = await Project.findOne({
     _id: projectId,
     college: collegeId,
@@ -215,7 +257,44 @@ export const getProjectByIdService = async ({ projectId, collegeId }) => {
     throw new ApiError(404, "Project not found");
   }
 
-  return project;
+  // Project owner has access to all project resources
+  const ownerId = project.createdBy?._id?.toString();
+
+  if (ownerId === userId.toString()) {
+    return project;
+  }
+
+  // Find approved resource-level access requests for this student
+  const approvedRequests = await ProjectAccessRequest.find({
+    project: projectId,
+    requestedBy: userId,
+    status: "approved",
+  })
+    .select("resourceType")
+    .lean();
+
+  const approvedResources = new Set(
+    approvedRequests.map((request) => request.resourceType),
+  );
+
+  // Protect individual resources
+  const protectedProject = {
+    ...project,
+
+    github: sanitizeResource(project.github, approvedResources.has("github")),
+
+    deployedLink: sanitizeResource(
+      project.deployedLink,
+      approvedResources.has("deployedLink"),
+    ),
+
+    supportingDocument: sanitizeResource(
+      project.supportingDocument,
+      approvedResources.has("supportingDocument"),
+    ),
+  };
+
+  return protectedProject;
 };
 
 export const updateProjectService = async ({
@@ -301,7 +380,7 @@ export const updateProjectService = async ({
       if (project.supportingDocument?.publicId) {
         filesToDelete.push({
           publicId: project.supportingDocument.publicId,
-          resourceType: "raw",
+          resourceType: "image", // p - raw
         });
       }
 
@@ -309,7 +388,7 @@ export const updateProjectService = async ({
 
       const uploaded = await uploadToCloudinary(file.buffer, {
         folder: "nexora/projects/documents",
-        resourceType: "raw",
+        resourceType: "image", // p- raw
       });
 
       project.supportingDocument = {
@@ -321,7 +400,7 @@ export const updateProjectService = async ({
 
       uploadedFiles.push({
         publicId: uploaded.publicId,
-        resourceType: "raw",
+        resourceType: "image", // p - raw
       });
     }
 
@@ -416,7 +495,7 @@ export const deleteProjectService = async ({
       const result = await cloudinary.uploader.destroy(
         project.supportingDocument.publicId,
         {
-          resource_type: "raw",
+          resource_type: "image", // p - raw
         },
       );
 

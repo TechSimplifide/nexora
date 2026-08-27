@@ -169,7 +169,7 @@ describe("Project Service", () => {
         files.supportingDocument[0].buffer,
         {
           folder: "nexora/projects/documents",
-          resourceType: "raw",
+          resourceType: "image",
         },
       );
 
@@ -402,6 +402,9 @@ describe("Project Service", () => {
       const project = {
         _id: "project123",
         title: "Hospital Management System",
+        createdBy: {
+          _id: "user123",
+        },
       };
 
       const mockLean = jest.fn().mockResolvedValue(project);
@@ -416,6 +419,7 @@ describe("Project Service", () => {
 
       const result = await getProjectByIdService({
         projectId: "project123",
+        userId: "user123",
         collegeId: "college123",
       });
 
@@ -590,7 +594,7 @@ describe("Project Service", () => {
       });
 
       expect(mockCloudinaryDestroy).toHaveBeenCalledWith("documents/old", {
-        resource_type: "raw",
+        resource_type: "image",
       });
 
       expect(project.save).toHaveBeenCalled();
@@ -709,7 +713,7 @@ describe("Project Service", () => {
       expect(mockCloudinaryDestroy).toHaveBeenCalledWith(
         "documents/project123",
         {
-          resource_type: "raw",
+          resource_type: "image",
         },
       );
 

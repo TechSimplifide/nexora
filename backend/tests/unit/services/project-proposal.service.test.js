@@ -76,10 +76,6 @@ const {
 // Reset mocks
 // -----------------------------
 
-// beforeEach(() => {
-//   jest.clearAllMocks();
-// });
-
 beforeEach(() => {
   jest.clearAllMocks();
 
@@ -142,7 +138,7 @@ describe("createProjectProposalService", () => {
 
     expect(mockUploadToCloudinary).toHaveBeenCalledWith(abstractPdf.buffer, {
       folder: "nexora/project-proposals",
-      resourceType: "raw",
+      resourceType: "image",
     });
 
     expect(mockProjectProposalCreate).toHaveBeenCalledWith({
@@ -190,55 +186,6 @@ describe("createProjectProposalService", () => {
 // getMyProjectProposalsService
 // ============================================================
 
-// describe("getMyProjectProposalsService", () => {
-//   test("should return proposals created by the student", async () => {
-//     const proposals = [
-//       {
-//         _id: "proposal1",
-//         title: "AI Project",
-//       },
-//       {
-//         _id: "proposal2",
-//         title: "Web Project",
-//       },
-//     ];
-
-//     const mockSort = jest.fn().mockResolvedValue(proposals);
-//     const mockPopulateReviewedBy = jest.fn().mockReturnValue({
-//       sort: mockSort,
-//     });
-
-//     const mockPopulateCollege = jest.fn().mockReturnValue({
-//       populate: mockPopulateReviewedBy,
-//     });
-
-//     mockProjectProposalFind.mockReturnValue({
-//       populate: mockPopulateCollege,
-//     });
-
-//     const result = await getMyProjectProposalsService("user123");
-
-//     expect(mockProjectProposalFind).toHaveBeenCalledWith({
-//       createdBy: "user123",
-//     });
-
-//     expect(mockPopulateCollege).toHaveBeenCalledWith(
-//       "college",
-//       "name collegeCode",
-//     );
-
-//     expect(mockPopulateReviewedBy).toHaveBeenCalledWith(
-//       "reviewedBy",
-//       "fullName email",
-//     );
-
-//     expect(mockSort).toHaveBeenCalledWith({
-//       createdAt: -1,
-//     });
-
-//     expect(result).toEqual(proposals);
-//   });
-// });
 describe("getMyProjectProposalsService", () => {
   test("should return proposals created by the student", async () => {
     const proposals = [
@@ -534,11 +481,11 @@ describe("updateRejectedProjectProposalService", () => {
 
     expect(mockUploadToCloudinary).toHaveBeenCalledWith(newPdf.buffer, {
       folder: "nexora/project-proposals",
-      resourceType: "raw",
+      resourceType: "image",
     });
 
     expect(mockCloudinaryDestroy).toHaveBeenCalledWith("old-public-id", {
-      resource_type: "raw",
+      resource_type: "image",
     });
 
     expect(proposal.abstractPdf).toEqual(uploadedPdf);
@@ -599,7 +546,7 @@ describe("deleteProjectProposalService", () => {
     });
 
     expect(mockCloudinaryDestroy).toHaveBeenCalledWith("proposal-pdf-123", {
-      resource_type: "raw",
+      resource_type: "image",
     });
 
     expect(proposal.deleteOne).toHaveBeenCalled();
