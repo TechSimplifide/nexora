@@ -991,3 +991,17 @@ describe("Project Service", () => {
     });
   });
 });
+
+import escapeRegex from "../../../src/utils/escape-regex.js";
+
+describe("escapeRegex", () => {
+  test("should escape regex special characters", () => {
+    expect(escapeRegex(".*+?^${}()|[]\\")).toBe(
+      "\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\\\",
+    );
+  });
+
+  test("should leave normal text unchanged", () => {
+    expect(escapeRegex("react javascript")).toBe("react javascript");
+  });
+});

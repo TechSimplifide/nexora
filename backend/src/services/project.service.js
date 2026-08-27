@@ -3,6 +3,7 @@ import { ProjectAccessRequest } from "../models/project-access-request.model.js"
 import { uploadToCloudinary } from "../utils/cloudinary-upload.js";
 import cloudinary from "../config/cloudinary.js";
 import ApiError from "../utils/api-error.js";
+import escapeRegex from "../utils/escape-regex.js";
 
 export const createProjectService = async ({
   projectData,
@@ -116,28 +117,29 @@ export const getProjectsService = async ({
   // Search
 
   if (search) {
+    const escapedSearch = escapeRegex(search);
     filter.$or = [
       {
         title: {
-          $regex: search,
+          $regex: escapedSearch,
           $options: "i",
         },
       },
       {
         summary: {
-          $regex: search,
+          $regex: escapedSearch,
           $options: "i",
         },
       },
       {
         technologies: {
-          $regex: search,
+          $regex: escapedSearch,
           $options: "i",
         },
       },
       {
         domain: {
-          $regex: search,
+          $regex: escapedSearch,
           $options: "i",
         },
       },
@@ -148,21 +150,21 @@ export const getProjectsService = async ({
 
   if (technology) {
     filter.technologies = {
-      $regex: technology,
+      $regex: escapeRegex(technology),
       $options: "i",
     };
   }
 
   if (domain) {
     filter.domain = {
-      $regex: domain,
+      $regex: escapeRegex(domain),
       $options: "i",
     };
   }
 
   if (department) {
     filter.department = {
-      $regex: department,
+      $regex: escapeRegex(department),
       $options: "i",
     };
   }
@@ -203,21 +205,6 @@ export const getProjectsService = async ({
     },
   };
 };
-
-// export const getProjectByIdService = async ({ projectId, collegeId }) => {
-//   const project = await Project.findOne({
-//     _id: projectId,
-//     college: collegeId,
-//   })
-//     .populate("createdBy", "fullName username")
-//     .lean();
-
-//   if (!project) {
-//     throw new ApiError(404, "Project not found");
-//   }
-
-//   return project;
-// };
 
 const sanitizeResource = (resource, hasAccess) => {
   if (!resource) {
