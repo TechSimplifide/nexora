@@ -6,38 +6,68 @@ info:
   description: |
     Nexora is a Multi-College Academic Project Collaboration Platform.
 
-    This API provides authentication, college management, project management,
-    and collaboration features for students and administrators.
+    This API provides multi-tenant authentication, college management, project proposal submissions and reviews, 
+    project repository management, granular resource-level access requests, AI-powered project recommendations,
+    real-time notification tracking, and analytical dashboards for students and administrators.
 
 servers:
-  - url: http://localhost:4000/api/v1
+  - url: http://localhost:3000/api/v1
     description: Local Development Server
+  - url: /api/v1
+    description: Current Host Relative Base URL
 
 tags:
+  - name: Health Check
+    description: System status and liveness checks
   - name: Authentication
-    description: Authentication and account management APIs
-
+    description: Authentication, registration, email verification, and session management
+  - name: College Management
+    description: College registration and multi-tenant setup
   - name: Projects
-    description: Project management APIs
-
-  - name: Colleges
-    description: College management APIs
-
-  - name: Admin
-    description: Administrator APIs
+    description: Project creation, discovery, filtering, updates, deletion, and featuring
+  - name: Project Resources
+    description: Granular access control for GitHub repositories, live demos, and documentation
+  - name: Project Access Requests
+    description: Resource-level access request submission, review, and cancellation workflows
+  - name: Project Proposals
+    description: Academic proposal submission, PDF abstracts, and administrative review workflows
+  - name: Recommendations
+    description: AI-assisted project idea generation and management using Google Gemini
+  - name: Notifications
+    description: User notification delivery, read state tracking, and deletion
+  - name: Dashboard
+    description: Role-specific analytical metrics and summary feeds for students and admins
 
 paths:
+  /healthcheck:
+    get:
+      tags:
+        - Health Check
+      summary: Health Check
+      description: Returns server operational status.
+      responses:
+        "200":
+          description: Server is healthy and running
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Success
+                data:
+                  message: Server is running
+
   /auth/college/register:
     post:
       tags:
+        - College Management
         - Authentication
-
-      summary: Register College
+      summary: Register College and Administrator
       description: >
-        Creates a new college and registers its first administrator.
-        A unique college code is generated automatically and a verification
-        email is sent to the administrator.
-
+        Atomically creates a new college tenant and registers its primary administrator account.
+        Generates a unique college code and sends a verification link to the administrator's email.
       requestBody:
         required: true
         content:
@@ -49,65 +79,68 @@ paths:
                 - adminName
                 - email
                 - password
-
               properties:
                 collegeName:
                   type: string
-                  example: Rohit Institute of Technology
-
+                  minLength: 3
+                  maxLength: 100
+                  example: Institute of Technology & Science
                 adminName:
                   type: string
-                  example: Rohit
-
+                  minLength: 3
+                  maxLength: 50
+                  example: John Admin
                 email:
                   type: string
                   format: email
-                  example: ry0805502@gmail.com
-
+                  example: admin@college.edu
                 password:
                   type: string
                   format: password
-                  example: rohit0805502
-
+                  minLength: 8
+                  maxLength: 32
+                  example: SuperSecret123!
       responses:
         "201":
-          description: College registered successfully
-
+          description: College and administrator registered successfully
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 201
-                  success: true
-                  message: Registration successful. Please check your email to verify your account.
-                  data:
-                    collegeCode: ROH-CEJ0H
-                    admin:
-                      id: 6a7376db781cf0fe9cc35d78
-                      fullName: Rohit
-                      email: ry0805502@gmail.com
-                      role: admin
-                      isVerified: false
-
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 201
+                success: true
+                message: College registered successfully. Please check your email to verify the account.
+                data:
+                  collegeCode: INS-K79A2
+                  admin:
+                    id: 67be01a2b3c4d5e6f7a8b9c0
+                    fullName: John Admin
+                    email: admin@college.edu
+                    role: admin
+                    isVerified: false
+        "400":
+          $ref: "#/components/responses/ValidationError"
         "409":
-          description: User already exists
-
-        "500":
-          description: Internal server error
-
+          description: User already exists with this email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              example:
+                statusCode: 409
+                success: false
+                message: User already exists with this email
+                errors: []
 
   /auth/student/register:
     post:
       tags:
         - Authentication
-
-      summary: Register Student
+      summary: Register Student Account
       description: >
-        Registers a new student using a valid college code.
-        The student is automatically associated with the corresponding college.
-        A verification email is sent to the student's email address.
-
+        Registers a new student user under an existing college using the corresponding college code.
+        Sends an email verification token expiring in 20 minutes.
       requestBody:
         required: true
         content:
@@ -119,71 +152,71 @@ paths:
                 - email
                 - password
                 - collegeCode
-
               properties:
                 fullName:
                   type: string
-                  example: Raja
-
+                  minLength: 3
+                  maxLength: 50
+                  example: Jane Doe
                 email:
                   type: string
                   format: email
-                  example: raja@student.com
-
+                  example: jane.doe@student.edu
                 password:
                   type: string
                   format: password
-                  example: StrongPassword123
-
+                  minLength: 8
+                  maxLength: 32
+                  example: Password123!
                 collegeCode:
                   type: string
-                  example: ABC-GS1HE
-
+                  minLength: 5
+                  maxLength: 15
+                  example: INS-K79A2
       responses:
         "201":
           description: Student registered successfully
-
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 201
-                  success: true
-                  message: Registration successful. Please check your email to verify your account.
-                  data:
-                    id: 66abc1234567890
-                    fullName: Raja
-                    email: raja@student.com
-                    role: student
-                    isVerified: false
-                    college:
-                      id: 66abc9876543210
-                      name: ABC Institute of Technology
-                      collegeCode: ABC-GS1HE
-
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 201
+                success: true
+                message: Student registered successfully. Please check your email to verify your account.
+                data:
+                  id: 67be02a2b3c4d5e6f7a8b9c1
+                  fullName: Jane Doe
+                  email: jane.doe@student.edu
+                  role: student
+                  college:
+                    id: 67be01a2b3c4d5e6f7a8b9c0
+                    name: Institute of Technology & Science
+                    collegeCode: INS-K79A2
+        "400":
+          $ref: "#/components/responses/ValidationError"
         "404":
           description: Invalid college code
-
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "409":
-          description: User already exists
-
-        "500":
-          description: Internal server error
-
+          description: User already exists with this email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
 
   /auth/login:
     post:
       tags:
         - Authentication
-
-      summary: Login User
+      summary: User Login
       description: >
-        Authenticates a student or administrator using email and password.
-        On successful authentication, HTTP-only Access Token and Refresh Token
-        cookies are set. An Access Token is also returned in the response body
-        for API testing and development purposes.
-
+        Authenticates a user using email and password. Returns access token in response body and sets
+        httpOnly cookies for both accessToken (1 day) and refreshToken (10 days).
+        Requires the user to have a verified email address.
       requestBody:
         required: true
         content:
@@ -193,261 +226,98 @@ paths:
               required:
                 - email
                 - password
-
               properties:
                 email:
                   type: string
                   format: email
-                  example: raja@student.com
-
+                  example: jane.doe@student.edu
                 password:
                   type: string
                   format: password
-                  example: StrongPassword123
-
+                  minLength: 8
+                  example: Password123!
       responses:
         "200":
           description: Login successful
-
           headers:
             Set-Cookie:
-              description: >
-                Sets HTTP-only Access Token and Refresh Token cookies.
+              description: Sets accessToken and refreshToken httpOnly cookies.
               schema:
                 type: string
-
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 200
-                  success: true
-                  message: Login successful
-                  data:
-                    accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-                    user:
-                      id: 66abc1234567890
-                      fullName: Raja
-                      email: raja@student.com
-                      role: student
-                      college:
-                        id: 66abc9876543210
-
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Login successful
+                data:
+                  user:
+                    id: 67be02a2b3c4d5e6f7a8b9c1
+                    fullName: Jane Doe
+                    email: jane.doe@student.edu
+                    role: student
+                    college: 67be01a2b3c4d5e6f7a8b9c0
+                  accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         "400":
-          description: Validation failed
-
+          $ref: "#/components/responses/ValidationError"
         "401":
           description: Invalid email or password
-
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "403":
           description: Email not verified
-
-        "500":
-          description: Internal server error
-
-
-  /auth/refresh-token:
-    post:
-      tags:
-        - Authentication
-
-      summary: Refresh Access Token
-      description: >
-        Generates a new Access Token using a valid Refresh Token.
-        The Refresh Token is primarily read from the HTTP-only cookie.
-        For API testing or non-browser clients, it may also be supplied
-        in the request body.
-
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                refreshToken:
-                  type: string
-                  description: Optional refresh token if cookies are not used.
-                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-      responses:
-        "200":
-          description: Access token refreshed successfully
-
-          headers:
-            Set-Cookie:
-              description: >
-                Returns new HTTP-only Access Token and Refresh Token cookies.
-              schema:
-                type: string
-
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 200
-                  success: true
-                  message: Access token refreshed successfully
-                  data:
-                    accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-                    user:
-                      id: 66abc1234567890
-                      fullName: Raja
-                      email: raja@student.com
-                      role: student
-                      college:
-                        id: 66abc9876543210
-
-        "401":
-          description: Refresh token is missing, invalid, or expired
-
-        "404":
-          description: User not found
-
-        "500":
-          description: Internal server error
-
-
-  /auth/logout:
-    post:
-      tags:
-        - Authentication
-
-      summary: Logout User
-      description: >
-        Logs out the currently authenticated user by removing the stored
-        refresh token from the database and clearing the Access Token and
-        Refresh Token cookies.
-
-      security:
-        - bearerAuth: []
-
-      responses:
-        "200":
-          description: Logged out successfully
-
-          headers:
-            Set-Cookie:
-              description: >
-                Clears the Access Token and Refresh Token cookies.
-              schema:
-                type: string
-
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  statusCode: 200
-                  success: true
-                  message: Logged out successfully
-                  data: {}
-
-        "401":
-          description: Unauthorized request
-
-        "500":
-          description: Internal server error
-
-
-  /auth/me:
-    get:
-      tags:
-        - Authentication
-
-      summary: Get Current User
-      description: >
-        Returns the profile of the currently authenticated user.
-
-      security:
-        - bearerAuth: []
-
-      responses:
-        "200":
-          description: User fetched successfully
-
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  statusCode: 200
-                  success: true
-                  message: User fetched successfully
-                  data:
-                    id: 66abc1234567890
-                    fullName: Raja
-                    email: raja@student.com
-                    role: student
-                    isVerified: true
-                    college:
-                      id: 66abc9876543210
-                      name: ABC Institute of Technology
-                      collegeCode: ABC-GS1HE
-
-        "401":
-          description: Unauthorized request
-
-        "500":
-          description: Internal server error
-
+                $ref: "#/components/schemas/ApiErrorResponse"
+              example:
+                statusCode: 403
+                success: false
+                message: Please verify your email first.
+                errors: []
 
   /auth/verify-email/{token}:
     get:
       tags:
         - Authentication
-
-      summary: Verify Email
-      description: >
-        Verifies a user's email address using the verification token sent
-        to their email during registration. If the token is valid and has
-        not expired, the user's account is marked as verified.
-
+      summary: Verify Email Address
+      description: Validates the SHA-256 hashed verification token from the email link and marks user as verified.
       parameters:
         - name: token
           in: path
           required: true
-          description: Email verification token
+          description: Unhashed token sent via verification email
           schema:
             type: string
-
       responses:
         "200":
           description: Email verified successfully
-
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 200
-                  success: true
-                  message: Email verified successfully
-                  data:
-                    isVerified: true
-
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Email verified successfully
+                data: {}
         "400":
-          description: Invalid or expired verification token
-
-        "404":
-          description: User not found
-
-        "500":
-          description: Internal server error
-
+          description: Invalid or expired verification link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
 
   /auth/resend-verification-email:
     post:
       tags:
         - Authentication
-
       summary: Resend Verification Email
-      description: >
-        Sends a new email verification link to a user whose email address
-        has not yet been verified.
-
+      description: Generates a new 20-minute verification token and resends the verification link.
       requestBody:
         required: true
         content:
@@ -456,36 +326,1860 @@ paths:
               type: object
               required:
                 - email
-
               properties:
                 email:
                   type: string
                   format: email
-                  example: raja@student.com
-
+                  example: jane.doe@student.edu
       responses:
         "200":
           description: Verification email sent successfully
-
           content:
             application/json:
               schema:
-                type: object
-                example:
-                  statusCode: 200
-                  success: true
-                  message: Verification email sent successfully
-                  data: {}
-
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Verification email sent successfully
+                data: {}
         "400":
           description: Email is already verified
-
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
         "404":
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
 
-        "500":
-          description: Internal server error
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get Current User Profile
+      description: Returns the authenticated user's profile and populated college details.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Current user profile fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Current user fetched successfully
+                data:
+                  id: 67be02a2b3c4d5e6f7a8b9c1
+                  fullName: Jane Doe
+                  email: jane.doe@student.edu
+                  role: student
+                  isVerified: true
+                  avatar:
+                    publicId: null
+                    url: https://placehold.co/200x200
+                  college:
+                    id: 67be01a2b3c4d5e6f7a8b9c0
+                    name: Institute of Technology & Science
+                    collegeCode: INS-K79A2
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
 
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout User
+      description: Invalidates active refresh token in database and clears authentication cookies.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Logged out successfully
+          headers:
+            Set-Cookie:
+              description: Clears accessToken and refreshToken cookies.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Logged out successfully
+                data: {}
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /auth/refresh-token:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh Access Token
+      description: >
+        Rotates and issues new access and refresh tokens using the incoming refreshToken cookie.
+      parameters:
+        - in: cookie
+          name: refreshToken
+          required: true
+          schema:
+            type: string
+          description: HTTP-only refresh token cookie
+      responses:
+        "200":
+          description: Access token refreshed successfully
+          headers:
+            Set-Cookie:
+              description: Sets rotated accessToken and refreshToken cookies.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Access token refreshed successfully
+                data:
+                  user:
+                    id: 67be02a2b3c4d5e6f7a8b9c1
+                    fullName: Jane Doe
+                    email: jane.doe@student.edu
+                    role: student
+                    college: 67be01a2b3c4d5e6f7a8b9c0
+        "401":
+          description: Missing, invalid, or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /project-proposals:
+    post:
+      tags:
+        - Project Proposals
+      summary: Submit Project Proposal
+      description: >
+        Submits an academic project proposal with a PDF abstract. Uploads PDF to Cloudinary and notifies
+        the college administrator.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - team
+                - abstractPdf
+              properties:
+                title:
+                  type: string
+                  minLength: 5
+                  maxLength: 150
+                  example: Autonomous Drone Navigation System
+                team:
+                  type: string
+                  description: JSON string representation of team object with size matching members length
+                  example: '{"size":2,"members":[{"name":"Jane Doe"},{"name":"John Smith"}]}'
+                abstractPdf:
+                  type: string
+                  format: binary
+                  description: PDF abstract document (Max 5MB)
+      responses:
+        "201":
+          description: Project proposal submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 201
+                success: true
+                message: Project proposal submitted successfully
+                data:
+                  _id: 67be03a2b3c4d5e6f7a8b9c2
+                  title: Autonomous Drone Navigation System
+                  team:
+                    size: 2
+                    members:
+                      - name: Jane Doe
+                      - name: John Smith
+                  abstractPdf:
+                    url: https://res.cloudinary.com/.../abstract.pdf
+                    publicId: nexora/project-proposals/abc123
+                  createdBy: 67be02a2b3c4d5e6f7a8b9c1
+                  college: 67be01a2b3c4d5e6f7a8b9c0
+                  status: pending
+                  adminRemarks: null
+                  reviewedBy: null
+                  reviewedAt: null
+                  createdAt: "2026-08-27T10:00:00.000Z"
+                  updatedAt: "2026-08-27T10:00:00.000Z"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+  /project-proposals/my:
+    get:
+      tags:
+        - Project Proposals
+      summary: Get Student Proposals
+      description: Retrieves all project proposals submitted by the authenticated student.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Proposals fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project proposals fetched successfully
+                data:
+                  - _id: 67be03a2b3c4d5e6f7a8b9c2
+                    title: Autonomous Drone Navigation System
+                    team:
+                      size: 2
+                      members:
+                        - name: Jane Doe
+                        - name: John Smith
+                    abstractPdf:
+                      url: https://res.cloudinary.com/.../abstract.pdf
+                      publicId: nexora/project-proposals/abc123
+                    createdBy: 67be02a2b3c4d5e6f7a8b9c1
+                    college:
+                      _id: 67be01a2b3c4d5e6f7a8b9c0
+                      name: Institute of Technology & Science
+                      collegeCode: INS-K79A2
+                    status: pending
+                    adminRemarks: null
+                    reviewedBy: null
+                    reviewedAt: null
+                    createdAt: "2026-08-27T10:00:00.000Z"
+                    updatedAt: "2026-08-27T10:00:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+  /project-proposals/pending:
+    get:
+      tags:
+        - Project Proposals
+      summary: Get Pending Proposals (Admin)
+      description: Retrieves all pending proposals submitted by students within the admin's college.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Pending proposals fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Pending project proposals fetched successfully
+                data:
+                  - _id: 67be03a2b3c4d5e6f7a8b9c2
+                    title: Autonomous Drone Navigation System
+                    team:
+                      size: 2
+                      members:
+                        - name: Jane Doe
+                        - name: John Smith
+                    abstractPdf:
+                      url: https://res.cloudinary.com/.../abstract.pdf
+                      publicId: nexora/project-proposals/abc123
+                    createdBy:
+                      _id: 67be02a2b3c4d5e6f7a8b9c1
+                      fullName: Jane Doe
+                      email: jane.doe@student.edu
+                    college:
+                      _id: 67be01a2b3c4d5e6f7a8b9c0
+                      name: Institute of Technology & Science
+                      collegeCode: INS-K79A2
+                    status: pending
+                    createdAt: "2026-08-27T10:00:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+  /project-proposals/{id}/approve:
+    patch:
+      tags:
+        - Project Proposals
+      summary: Approve Project Proposal (Admin)
+      description: Marks a pending proposal in the admin's college as approved and notifies the submitting student.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Proposal ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Proposal approved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project proposal approved successfully
+                data:
+                  _id: 67be03a2b3c4d5e6f7a8b9c2
+                  status: approved
+                  reviewedBy: 67be01a2b3c4d5e6f7a8b9c0
+                  reviewedAt: "2026-08-27T10:15:00.000Z"
+                  adminRemarks: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Pending project proposal not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /project-proposals/{id}/reject:
+    patch:
+      tags:
+        - Project Proposals
+      summary: Reject Project Proposal (Admin)
+      description: Rejects a pending proposal with required feedback remarks and notifies the student.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Proposal ObjectId
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - adminRemarks
+              properties:
+                adminRemarks:
+                  type: string
+                  minLength: 5
+                  maxLength: 800
+                  example: Please clarify the dataset collection methodology.
+      responses:
+        "200":
+          description: Proposal rejected successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project proposal rejected successfully
+                data:
+                  _id: 67be03a2b3c4d5e6f7a8b9c2
+                  status: rejected
+                  adminRemarks: Please clarify the dataset collection methodology.
+                  reviewedBy: 67be01a2b3c4d5e6f7a8b9c0
+                  reviewedAt: "2026-08-27T10:15:00.000Z"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Pending project proposal not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /project-proposals/{id}:
+    patch:
+      tags:
+        - Project Proposals
+      summary: Update & Resubmit Rejected Proposal
+      description: >
+        Allows a student to update their rejected proposal (title, team, or abstract PDF).
+        Resets status to pending and notifies college admin.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Proposal ObjectId
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 5
+                  maxLength: 150
+                  example: Autonomous Drone Navigation System - Revised
+                team:
+                  type: string
+                  description: Optional JSON string of team
+                  example: '{"size":2,"members":[{"name":"Jane Doe"},{"name":"John Smith"}]}'
+                abstractPdf:
+                  type: string
+                  format: binary
+                  description: Optional replacement PDF
+      responses:
+        "200":
+          description: Proposal updated and resubmitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project proposal updated and resubmitted successfully
+                data:
+                  _id: 67be03a2b3c4d5e6f7a8b9c2
+                  status: pending
+                  adminRemarks: null
+                  reviewedBy: null
+                  reviewedAt: null
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Rejected project proposal not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+    delete:
+      tags:
+        - Project Proposals
+      summary: Delete Proposal
+      description: Deletes a proposal (only allowed if status is pending or rejected) and removes PDF from Cloudinary.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Proposal ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Proposal deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project proposal deleted successfully
+                data:
+                  id: 67be03a2b3c4d5e6f7a8b9c2
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Project proposal not found or cannot be deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects:
+    post:
+      tags:
+        - Projects
+      summary: Create Project
+      description: >
+        Creates a completed academic project under the student's college with screenshots, supporting PDF,
+        and configurable access levels for GitHub repository and deployed demo URL.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - summary
+                - description
+                - technologies
+                - domain
+                - department
+                - academicYear
+                - teamMembers
+              properties:
+                title:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                  example: AI-Driven Crop Disease Detection
+                summary:
+                  type: string
+                  minLength: 20
+                  maxLength: 500
+                  example: Deep learning platform for identifying plant leaf diseases in real-time.
+                description:
+                  type: string
+                  minLength: 50
+                  maxLength: 5000
+                  example: Comprehensive agricultural support system using Convolutional Neural Networks...
+                technologies:
+                  type: string
+                  description: JSON array string of technology names
+                  example: '["TensorFlow", "React", "FastAPI", "MongoDB"]'
+                domain:
+                  type: string
+                  minLength: 2
+                  maxLength: 50
+                  example: Machine Learning
+                department:
+                  type: string
+                  minLength: 2
+                  maxLength: 100
+                  example: Computer Science
+                academicYear:
+                  type: string
+                  pattern: '^\d{4}-\d{2}$'
+                  example: "2025-26"
+                teamMembers:
+                  type: string
+                  description: JSON array string of team member objects
+                  example: '[{"name":"Jane Doe","role":"ML Engineer"},{"name":"Bob","role":"Frontend"}]'
+                github:
+                  type: string
+                  description: JSON object string with url and access ('public' | 'protected')
+                  example: '{"url":"https://github.com/nexora/crop-ai","access":"protected"}'
+                deployedLink:
+                  type: string
+                  description: JSON object string with url and access ('public' | 'protected')
+                  example: '{"url":"https://crop-ai.nexora.app","access":"public"}'
+                screenshots:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Up to 5 screenshot images (JPEG, PNG, WEBP, max 5MB each)
+                supportingDocument:
+                  type: string
+                  format: binary
+                  description: Single supporting PDF document (max 5MB)
+      responses:
+        "201":
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 201
+                success: true
+                message: Project created successfully
+                data:
+                  _id: 67be04a2b3c4d5e6f7a8b9c3
+                  title: AI-Driven Crop Disease Detection
+                  summary: Deep learning platform for identifying plant leaf diseases in real-time.
+                  domain: Machine Learning
+                  department: Computer Science
+                  academicYear: "2025-26"
+                  isFeatured: false
+                  technologies:
+                    - TensorFlow
+                    - React
+                    - FastAPI
+                  teamMembers:
+                    - name: Jane Doe
+                      role: ML Engineer
+                  screenshots:
+                    - url: https://res.cloudinary.com/.../screen1.png
+                      publicId: nexora/projects/screenshots/s1
+                  github:
+                    url: https://github.com/nexora/crop-ai
+                    access: protected
+                  deployedLink:
+                    url: https://crop-ai.nexora.app
+                    access: public
+                  supportingDocument:
+                    name: project-report.pdf
+                    url: https://res.cloudinary.com/.../report.pdf
+                    publicId: nexora/projects/documents/d1
+                    access: public
+                  createdBy: 67be02a2b3c4d5e6f7a8b9c1
+                  college: 67be01a2b3c4d5e6f7a8b9c0
+                  createdAt: "2026-08-27T10:00:00.000Z"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+    get:
+      tags:
+        - Projects
+      summary: Get Projects with Search, Filtering, and Pagination
+      description: Retrieves projects scoped to the authenticated user's college with multi-field search and filters.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: false
+          description: Case-insensitive search on title, summary, technologies, and domain
+          schema:
+            type: string
+        - name: technology
+          in: query
+          required: false
+          description: Filter by exact technology name
+          schema:
+            type: string
+        - name: domain
+          in: query
+          required: false
+          description: Filter by domain
+          schema:
+            type: string
+        - name: department
+          in: query
+          required: false
+          description: Filter by department
+          schema:
+            type: string
+        - name: academicYear
+          in: query
+          required: false
+          description: Filter by academic year (e.g. 2025-26)
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          description: Page number (min 1, default 1)
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          description: Number of projects per page (min 1, max 50, default 10)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Projects fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Projects fetched successfully
+                data:
+                  projects:
+                    - _id: 67be04a2b3c4d5e6f7a8b9c3
+                      title: AI-Driven Crop Disease Detection
+                      summary: Deep learning platform for identifying plant leaf diseases in real-time.
+                      domain: Machine Learning
+                      department: Computer Science
+                      academicYear: "2025-26"
+                      technologies:
+                        - TensorFlow
+                        - React
+                      isFeatured: false
+                      screenshots:
+                        - url: https://res.cloudinary.com/.../screen1.png
+                          publicId: nexora/projects/screenshots/s1
+                      createdBy:
+                        _id: 67be02a2b3c4d5e6f7a8b9c1
+                        fullName: Jane Doe
+                      createdAt: "2026-08-27T10:00:00.000Z"
+                  pagination:
+                    totalProjects: 1
+                    totalPages: 1
+                    currentPage: 1
+                    limit: 10
+                    hasNextPage: false
+                    hasPrevPage: false
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /projects/featured:
+    get:
+      tags:
+        - Projects
+      summary: Get Featured Projects
+      description: Returns featured projects for the current academic year within the authenticated user's college.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Featured projects fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Featured projects fetched successfully
+                data:
+                  - _id: 67be04a2b3c4d5e6f7a8b9c3
+                    title: AI-Driven Crop Disease Detection
+                    academicYear: "2025-26"
+                    isFeatured: true
+                    createdBy:
+                      _id: 67be02a2b3c4d5e6f7a8b9c1
+                      fullName: Jane Doe
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /projects/{id}:
+    get:
+      tags:
+        - Projects
+      summary: Get Project Details by ID
+      description: >
+        Returns detailed project data. Sanitizes protected resource URLs (github, deployedLink, supportingDocument)
+        unless the requester is the project owner or holds an approved access request for that specific resource.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Project ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project details fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project fetched successfully
+                data:
+                  _id: 67be04a2b3c4d5e6f7a8b9c3
+                  title: AI-Driven Crop Disease Detection
+                  summary: Deep learning platform for identifying plant leaf diseases in real-time.
+                  description: Comprehensive agricultural support system using Convolutional Neural Networks...
+                  domain: Machine Learning
+                  department: Computer Science
+                  academicYear: "2025-26"
+                  technologies:
+                    - TensorFlow
+                    - React
+                  teamMembers:
+                    - name: Jane Doe
+                      role: ML Engineer
+                  github:
+                    url: null
+                    access: protected
+                    isAccessible: false
+                  deployedLink:
+                    url: https://crop-ai.nexora.app
+                    access: public
+                    isAccessible: true
+                  supportingDocument:
+                    name: project-report.pdf
+                    url: null
+                    access: protected
+                    isAccessible: false
+                  createdBy:
+                    _id: 67be02a2b3c4d5e6f7a8b9c1
+                    fullName: Jane Doe
+                  college: 67be01a2b3c4d5e6f7a8b9c0
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+    patch:
+      tags:
+        - Projects
+      summary: Update Project
+      description: Updates project metadata, screenshots, and supporting document. Only allowed by the project owner.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Project ObjectId
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                summary:
+                  type: string
+                  minLength: 20
+                  maxLength: 500
+                description:
+                  type: string
+                  minLength: 50
+                  maxLength: 5000
+                technologies:
+                  type: string
+                  description: Optional JSON string array of technologies
+                domain:
+                  type: string
+                department:
+                  type: string
+                academicYear:
+                  type: string
+                  pattern: '^\d{4}-\d{2}$'
+                teamMembers:
+                  type: string
+                  description: Optional JSON string array of team member objects
+                github:
+                  type: string
+                  description: Optional JSON object string with url and access
+                deployedLink:
+                  type: string
+                  description: Optional JSON object string with url and access
+                screenshots:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                supportingDocument:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project updated successfully
+                data:
+                  _id: 67be04a2b3c4d5e6f7a8b9c3
+                  title: AI-Driven Crop Disease Detection (Updated)
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Project not found or you do not have permission to update it
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+    delete:
+      tags:
+        - Projects
+      summary: Delete Project
+      description: Deletes a project and its associated Cloudinary screenshots and documents. Only allowed by project owner.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Project ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project deleted successfully
+                data: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Project not found or you do not have permission to delete it
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects/{projectId}/resources/{resourceType}:
+    get:
+      tags:
+        - Project Resources
+      summary: Get Protected Resource Direct URL
+      description: >
+        Fetches the direct URL for a specific resource ('github', 'deployedLink', 'supportingDocument').
+        Access is granted if resource is public, if requester is the owner, or if requester holds an approved access request.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          description: Project ObjectId
+          schema:
+            type: string
+        - name: resourceType
+          in: path
+          required: true
+          description: Resource type
+          schema:
+            type: string
+            enum:
+              - github
+              - deployedLink
+              - supportingDocument
+      responses:
+        "200":
+          description: Resource URL fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project resource fetched successfully
+                data:
+                  resourceType: github
+                  url: https://github.com/nexora/crop-ai
+                  accessStatus: approved
+        "400":
+          description: Invalid resource type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          description: Access denied or access request not approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "404":
+          description: Project or resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects/{projectId}/feature:
+    patch:
+      tags:
+        - Projects
+      summary: Feature Project (Admin)
+      description: Marks a project as featured. Project must belong to the current academic year and the admin's college.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          description: Project ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project featured successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project featured successfully
+                data:
+                  _id: 67be04a2b3c4d5e6f7a8b9c3
+                  isFeatured: true
+        "400":
+          description: Only projects from the current academic year can be featured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Project is already featured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects/{projectId}/unfeature:
+    patch:
+      tags:
+        - Projects
+      summary: Unfeature Project (Admin)
+      description: Removes featured status from a project within the admin's college.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          description: Project ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project unfeatured successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project unfeatured successfully
+                data:
+                  _id: 67be04a2b3c4d5e6f7a8b9c3
+                  isFeatured: false
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Project is not currently featured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects/{projectId}/access-requests:
+    post:
+      tags:
+        - Project Access Requests
+      summary: Submit Access Request
+      description: >
+        Requests access to a specific protected resource of another student's project within the same college.
+        Sends notification to the project owner.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          description: Target Project ObjectId
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resourceType
+              properties:
+                resourceType:
+                  type: string
+                  enum:
+                    - github
+                    - deployedLink
+                    - supportingDocument
+                  example: github
+      responses:
+        "201":
+          description: Access request created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 201
+                success: true
+                message: Project access request created successfully
+                data:
+                  _id: 67be05a2b3c4d5e6f7a8b9c4
+                  project: 67be04a2b3c4d5e6f7a8b9c3
+                  requestedBy: 67be02a2b3c4d5e6f7a8b9c1
+                  resourceType: github
+                  status: pending
+                  respondedAt: null
+                  createdAt: "2026-08-27T10:00:00.000Z"
+        "400":
+          description: Cannot request own project or resource is already public
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Project or resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Access request already exists or has already been granted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+    get:
+      tags:
+        - Project Access Requests
+      summary: Get Access Requests for Owned Project
+      description: Returns list of student access requests for the specified project. Only accessible by project owner.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          description: Project ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Access requests fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project access requests fetched successfully
+                data:
+                  - _id: 67be05a2b3c4d5e6f7a8b9c4
+                    project: 67be04a2b3c4d5e6f7a8b9c3
+                    resourceType: github
+                    status: pending
+                    requestedBy:
+                      _id: 67be08a2b3c4d5e6f7a8b9c7
+                      fullName: Bob Ross
+                      email: bob@student.edu
+                    createdAt: "2026-08-27T10:00:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Project not found or you do not have permission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects/access-requests/my:
+    get:
+      tags:
+        - Project Access Requests
+      summary: Get My Submitted Access Requests
+      description: Returns list of access requests submitted by the authenticated student across projects in their college.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Access requests fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Your project access requests fetched successfully
+                data:
+                  - _id: 67be05a2b3c4d5e6f7a8b9c4
+                    resourceType: github
+                    status: pending
+                    project:
+                      _id: 67be04a2b3c4d5e6f7a8b9c3
+                      title: AI-Driven Crop Disease Detection
+                      domain: Machine Learning
+                      department: Computer Science
+                      academicYear: "2025-26"
+                      createdBy: 67be09a2b3c4d5e6f7a8b9c8
+                      college: 67be01a2b3c4d5e6f7a8b9c0
+                    createdAt: "2026-08-27T10:00:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /projects/access-requests/{requestId}/approve:
+    patch:
+      tags:
+        - Project Access Requests
+      summary: Approve Access Request (Owner)
+      description: Approves a pending access request for the owner's project and notifies the requester.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: Access Request ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Access request approved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project access request approved successfully
+                data:
+                  _id: 67be05a2b3c4d5e6f7a8b9c4
+                  status: approved
+                  respondedAt: "2026-08-27T10:15:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Access request or project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Access request has already been approved or rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects/access-requests/{requestId}/reject:
+    patch:
+      tags:
+        - Project Access Requests
+      summary: Reject Access Request (Owner)
+      description: Rejects a pending access request and notifies the requester.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: Access Request ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Access request rejected successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project access request rejected successfully
+                data:
+                  _id: 67be05a2b3c4d5e6f7a8b9c4
+                  status: rejected
+                  respondedAt: "2026-08-27T10:15:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Access request or project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Access request has already been approved or rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /projects/access-requests/{requestId}:
+    delete:
+      tags:
+        - Project Access Requests
+      summary: Cancel Access Request (Requester)
+      description: Allows a student to cancel their own pending access request.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: Access Request ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Access request cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project access request cancelled successfully
+                data: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Access request not found or unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "409":
+          description: Cannot cancel an already resolved request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /recommendations:
+    post:
+      tags:
+        - Recommendations
+      summary: Generate AI Project Recommendation
+      description: >
+        Invokes Google Gemini generative AI to create a comprehensive, structured project recommendation
+        tailored to student skills, domain, difficulty, and team size.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - skills
+                - domain
+                - teamSize
+                - difficulty
+                - projectType
+              properties:
+                skills:
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 50
+                  minItems: 1
+                  maxItems: 15
+                  example: ["Python", "OpenCV", "TensorFlow"]
+                domain:
+                  type: string
+                  minLength: 2
+                  maxLength: 50
+                  example: Computer Vision
+                teamSize:
+                  type: integer
+                  minimum: 1
+                  maximum: 2
+                  example: 2
+                difficulty:
+                  type: string
+                  enum:
+                    - BEGINNER
+                    - INTERMEDIATE
+                    - ADVANCED
+                  example: INTERMEDIATE
+                projectType:
+                  type: string
+                  enum:
+                    - ACADEMIC
+                    - REAL_WORLD
+                    - INNOVATIVE
+                    - RESEARCH
+                  example: REAL_WORLD
+      responses:
+        "201":
+          description: Project recommendation generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 201
+                success: true
+                message: Project recommendation generated successfully
+                data:
+                  _id: 67be06a2b3c4d5e6f7a8b9c5
+                  student: 67be02a2b3c4d5e6f7a8b9c1
+                  college: 67be01a2b3c4d5e6f7a8b9c0
+                  skills: ["Python", "OpenCV", "TensorFlow"]
+                  domain: Computer Vision
+                  teamSize: 2
+                  difficulty: INTERMEDIATE
+                  projectType: REAL_WORLD
+                  title: Smart Classroom Attention and Emotion Analyzer
+                  whyRecommended: Leverages your Python and OpenCV skills to solve real-world lecture monitoring.
+                  introduction: A lightweight computer vision system to monitor student engagement...
+                  problemStatement: Teachers struggle to assess engagement in large lecture halls...
+                  proposedSolution: Analyzes facial landmarks and posture to estimate attention indices...
+                  keyFeatures:
+                    - Real-time video stream facial emotion recognition
+                    - Aggregate engagement heatmap dashboard
+                    - Privacy-preserving on-device frame processing
+                  technologies:
+                    - Python
+                    - OpenCV
+                    - FastAPI
+                    - React
+                  expectedOutcome: A functional web portal displaying lecture attention statistics...
+                  conclusion: Provides actionable insights for educators while fulfilling academic rigor.
+                  createdAt: "2026-08-27T10:00:00.000Z"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "502":
+          description: Invalid response received from recommendation service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+        "503":
+          description: Project recommendation service is currently unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+    get:
+      tags:
+        - Recommendations
+      summary: Get Student Saved Recommendations
+      description: Retrieves all previously generated recommendations for the authenticated student.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Recommendations fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project recommendations fetched successfully
+                data:
+                  - _id: 67be06a2b3c4d5e6f7a8b9c5
+                    title: Smart Classroom Attention and Emotion Analyzer
+                    domain: Computer Vision
+                    difficulty: INTERMEDIATE
+                    createdAt: "2026-08-27T10:00:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /recommendations/{id}:
+    delete:
+      tags:
+        - Recommendations
+      summary: Delete Recommendation
+      description: Deletes a saved recommendation belonging to the authenticated student.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Recommendation ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Recommendation deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Project recommendation deleted successfully
+                data: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Recommendation not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Get User Notifications
+      description: Retrieves all notifications for the authenticated user, sorted in descending order by creation date.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Notifications fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Notifications fetched successfully
+                data:
+                  - _id: 67be07a2b3c4d5e6f7a8b9c6
+                    recipient: 67be02a2b3c4d5e6f7a8b9c1
+                    type: PROJECT_ACCESS_APPROVED
+                    title: Project Access Approved
+                    message: Your request for github access has been approved for the project "Smart Campus".
+                    relatedResource: 67be04a2b3c4d5e6f7a8b9c3
+                    isRead: false
+                    createdAt: "2026-08-27T10:00:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /notifications/unread-count:
+    get:
+      tags:
+        - Notifications
+      summary: Get Unread Notification Count
+      description: Returns the total count of unread notifications for the authenticated user.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Unread notification count fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Unread notification count fetched successfully
+                data:
+                  count: 3
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /notifications/{id}/read:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark Notification as Read
+      description: Sets isRead to true for the specified notification belonging to the authenticated user.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Notification ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notification marked as read successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Notification marked as read successfully
+                data:
+                  _id: 67be07a2b3c4d5e6f7a8b9c6
+                  isRead: true
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /notifications/read-all:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark All Notifications as Read
+      description: Sets isRead to true across all unread notifications for the authenticated user.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: All notifications marked as read successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: All notifications marked as read successfully
+                data: null
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /notifications/{id}:
+    delete:
+      tags:
+        - Notifications
+      summary: Delete Notification
+      description: Deletes a single notification belonging to the authenticated user.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Notification ObjectId
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notification deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Notification deleted successfully
+                data:
+                  id: 67be07a2b3c4d5e6f7a8b9c6
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+
+  /dashboard/admin:
+    get:
+      tags:
+        - Dashboard
+      summary: Get Admin Dashboard Analytics
+      description: >
+        Returns comprehensive college-level analytical KPIs, project distributions by academic year,
+        proposal status breakdowns, popular technologies, and trending domains.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Dashboard analytics fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Dashboard analytics fetched successfully
+                data:
+                  kpis:
+                    totalStudents: 150
+                    totalProjects: 45
+                    pendingProposals: 8
+                    featuredProjects: 5
+                  projectsByAcademicYear:
+                    - academicYear: "2024-25"
+                      count: 20
+                    - academicYear: "2025-26"
+                      count: 25
+                  proposalOverview:
+                    pending: 8
+                    approved: 32
+                    rejected: 5
+                  popularTechnologies:
+                    - technology: React
+                      count: 28
+                    - technology: Node.js
+                      count: 25
+                  trendingDomains:
+                    - domain: Web Development
+                      count: 18
+                    - domain: Artificial Intelligence
+                      count: 12
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+  /dashboard/student:
+    get:
+      tags:
+        - Dashboard
+      summary: Get Student Dashboard Overview
+      description: >
+        Returns personal project contribution count, access requests sent and received, proposal summary,
+        and discovery recommendations within the student's college.
+      security:
+        - bearerAuth: []
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Student dashboard fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                statusCode: 200
+                success: true
+                message: Student dashboard fetched successfully
+                data:
+                  kpis:
+                    projectContributions: 2
+                    accessRequestsSent: 4
+                    accessRequestsReceived: 3
+                  proposal:
+                    exists: true
+                    id: 67be03a2b3c4d5e6f7a8b9c2
+                    title: Autonomous Drone Navigation System
+                    teamSize: 2
+                    status: approved
+                    adminRemarks: null
+                    createdAt: "2026-08-27T10:00:00.000Z"
+                    updatedAt: "2026-08-27T10:05:00.000Z"
+                  discoverProjects:
+                    - _id: 67be04a2b3c4d5e6f7a8b9c3
+                      title: Smart Campus System
+                      summary: An IoT and Web-based automation platform.
+                      technologies:
+                        - React
+                        - Node.js
+                      domain: Web Development
+                      department: Computer Engineering
+                      academicYear: "2025-26"
+                      isFeatured: true
+                      createdAt: "2026-08-27T10:00:00.000Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
 components:
   securitySchemes:
@@ -493,3 +2187,93 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: Bearer JSON Web Token provided via Authorization header
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: accessToken
+      description: HTTP-only Access Token cookie
+
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - statusCode
+        - success
+        - message
+        - data
+      properties:
+        statusCode:
+          type: integer
+          example: 200
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Success
+        data:
+          type: object
+          nullable: true
+
+    ApiErrorResponse:
+      type: object
+      required:
+        - statusCode
+        - success
+        - message
+        - errors
+      properties:
+        statusCode:
+          type: integer
+          example: 400
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Something went wrong
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized request or invalid / expired access token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiErrorResponse"
+          example:
+            statusCode: 401
+            success: false
+            message: Unauthorized request
+            errors: []
+
+    ForbiddenError:
+      description: Forbidden - Insufficient role permissions
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiErrorResponse"
+          example:
+            statusCode: 403
+            success: false
+            message: You do not have permission to perform this action
+            errors: []
+
+    ValidationError:
+      description: Validation failed on request parameters or body
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiErrorResponse"
+          example:
+            statusCode: 400
+            success: false
+            message: Validation failed
+            errors:
+              - path: ["email"]
+                message: Invalid email address
