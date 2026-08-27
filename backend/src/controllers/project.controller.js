@@ -141,9 +141,16 @@ export const getProjectById = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User is not associated with a college");
   }
 
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
   const project = await getProjectByIdService({
     projectId,
     collegeId,
+    userId,
   });
 
   return res

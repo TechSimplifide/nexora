@@ -4,6 +4,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import authorizeRoles from "../middlewares/role.middleware.js";
 import { uploadProjectFiles } from "../middlewares/upload.middleware.js";
 import { USER_ROLES } from "../constants/roles.js";
+import { getProjectResource } from "../controllers/project-resource.controller.js";
 import {
   createProject,
   getProjectById,
@@ -40,6 +41,14 @@ router
     verifyJWT,
     authorizeRoles(USER_ROLES.STUDENT, USER_ROLES.ADMIN),
     getFeaturedProjects,
+  );
+
+router
+  .route("/:projectId/resources/:resourceType")
+  .get(
+    verifyJWT,
+    authorizeRoles(USER_ROLES.STUDENT, USER_ROLES.ADMIN),
+    getProjectResource,
   );
 
 router
