@@ -9,7 +9,10 @@ import {
   verifyEmail,
   resendVerificationEmail,
 } from "../controllers/auth.controller.js";
-
+import {
+  authLimiter,
+  verificationLimiter,
+} from "../middlewares/rate-limit.middleware.js";
 import validate from "../middlewares/validate.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -23,15 +26,19 @@ const router = Router();
 
 router
   .route("/student/register")
-  .post(validate(studentRegisterSchema), registerStudent);
+  .post(authLimiter, validate(studentRegisterSchema), registerStudent);
 
-router.route("/login").post(validate(loginSchema), loginUser);
+router.route("/login").post(authLimiter, validate(loginSchema), loginUser);
 
 router.route("/verify-email/:token").get(verifyEmail);
 
 router
   .route("/resend-verification-email")
-  .post(validate(resendVerificationEmailSchema), resendVerificationEmail);
+  .post(
+    verificationLimiter,
+    validate(resendVerificationEmailSchema),
+    resendVerificationEmail,
+  );
 
 router.route("/me").get(verifyJWT, getCurrentUser);
 

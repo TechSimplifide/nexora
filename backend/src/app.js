@@ -4,7 +4,11 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
 import errorHandler from "./middlewares/error.middleware.js";
-import { limiter } from "./middlewares/rate-limit.middleware.js";
+import {
+  limiter,
+  aiReviewLimiter,
+  aiRecommendationLimiter,
+} from "./middlewares/rate-limit.middleware.js";
 
 import healthCheckRouter from "./routes/healthcheck.routes.js";
 import { swaggerDocs } from "./docs/swagger.js";
@@ -79,9 +83,14 @@ app.use("/api/v1/projects", projectRoutes);
 app.use("/api/v1/projects", projectAccessRequestRouter);
 
 app.use("/api/v1/project-review-criteria", projectReviewCriteriaRoutes);
-app.use("/api/v1/ai-proposal-review/", aiProposalReviewRoutes);
 
-app.use("/api/v1/recommendations", recommendationRoutes);
+app.use("/api/v1/ai-proposal-review/", aiReviewLimiter, aiProposalReviewRoutes);
+
+app.use(
+  "/api/v1/recommendations",
+  aiRecommendationLimiter,
+  recommendationRoutes,
+);
 
 app.use("/api/v1/notifications", notificationRoutes);
 
