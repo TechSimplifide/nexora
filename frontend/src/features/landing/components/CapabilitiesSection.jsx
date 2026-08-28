@@ -15,12 +15,16 @@ import {
   Lightbulb,
   GraduationCap,
   Users,
+  SlidersHorizontal,
+  AlertTriangle,
+  X,
+  ShieldCheck,
 } from "lucide-react";
 import { motion } from "motion/react";
 
 /**
  * CapabilitiesSection
- * High-fidelity, product-led demonstration of the 5 core Nexora platform capabilities with scroll reveals.
+ * High-fidelity, product-led demonstration of the 6 core Nexora platform capabilities with scroll reveals.
  */
 function CapabilitiesSection() {
   return (
@@ -365,10 +369,174 @@ function CapabilitiesSection() {
           </motion.div>
 
           {/* ============================================================ */}
-          {/* CAPABILITY 4 & 5 (2-Column Grid)                            */}
+          {/* CAPABILITY 4: AI-ASSISTED PROPOSAL REVIEW                  */}
+          {/* ============================================================ */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-border bg-surface p-6 sm:p-8 lg:p-10 shadow-nexora-sm transition-all hover:shadow-nexora-md"
+          >
+            <div className="lg:col-span-5 space-y-4 lg:order-2">
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                <span>04 — AI Proposal Review</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
+                AI-assisted evaluation against college review criteria.
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Analyze student project proposals against your college&apos;s standard or custom review criteria. Surface instant recommendations, confidence scores, criteria breakdowns, and actionable feedback before faculty make the final decision.
+              </p>
+
+              {/* Differentiator & Governance note */}
+              <div className="rounded-xl border border-border bg-surface-secondary/50 p-3.5 text-xs space-y-1.5">
+                <div className="flex items-center gap-1.5 font-bold text-foreground">
+                  <SlidersHorizontal className="h-3.5 w-3.5 text-primary" />
+                  <span>College-Configured Review Criteria</span>
+                </div>
+                <p className="text-muted-foreground leading-relaxed text-[11px]">
+                  Use Nexora&apos;s standard criteria or configure custom evaluation standards specific to your institution. AI assists the review — faculty makes the final decision.
+                </p>
+              </div>
+
+              {/* Sub-lifecycle contextual indicator */}
+              <div className="pt-1">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                  Review & Decision Flow
+                </p>
+                <div className="flex flex-wrap items-center gap-1.5 text-xs text-foreground-secondary font-medium">
+                  <span className="px-2 py-0.5 rounded bg-surface-secondary">
+                    Submission
+                  </span>
+                  <span className="text-muted-foreground">→</span>
+                  <span className="px-2 py-0.5 rounded bg-primary-50 text-primary font-semibold border border-primary/20">
+                    AI Analysis
+                  </span>
+                  <span className="text-muted-foreground">→</span>
+                  <span className="px-2 py-0.5 rounded bg-surface-secondary">
+                    Faculty Decision
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Visual UI Fragment: Authentic AI Review Card */}
+            <div className="lg:col-span-7 rounded-xl border border-border bg-surface-secondary/40 p-4 sm:p-5 lg:order-1 space-y-3">
+              <article className="rounded-xl border border-border bg-surface p-5 shadow-nexora-sm space-y-3.5">
+                {/* Header & Badges */}
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary border border-primary/20">
+                        <Sparkles className="h-3 w-3" />
+                        AI Proposal Review
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        #PR-2026-084
+                      </span>
+                    </div>
+                    <h4 className="text-base font-bold text-foreground">
+                      Neural Network Compression for Microcontroller Deployments
+                    </h4>
+                  </div>
+
+                  {/* Recommendation Badge */}
+                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-warning-200 bg-warning-50 px-2.5 py-1 text-xs font-bold text-warning-800">
+                      <AlertTriangle className="h-3 w-3" />
+                      NEEDS IMPROVEMENT
+                    </span>
+                    <span className="rounded-md border border-border bg-surface-secondary px-2 py-1 text-[11px] font-semibold text-muted-foreground">
+                      87% Confidence
+                    </span>
+                  </div>
+                </div>
+
+                {/* Criteria Breakdown Grid */}
+                <div className="space-y-1.5 pt-1">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                    <span>Evaluated Criteria</span>
+                    <span className="text-[10px] font-normal lowercase text-muted-foreground">
+                      institutional criteria
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {[
+                      { name: "Clear Problem", result: "PASS" },
+                      { name: "Technical Depth", result: "PARTIAL" },
+                      { name: "Scope & Feasibility", result: "PASS" },
+                      { name: "Working Prototype", result: "FAIL", custom: true },
+                    ].map((c) => (
+                      <div
+                        key={c.name}
+                        className="flex items-center justify-between rounded-lg border border-border/70 bg-surface-secondary/40 px-2.5 py-1.5 text-xs"
+                      >
+                        <div className="flex items-center gap-1.5 truncate mr-2">
+                          <span className="font-medium text-foreground text-xs truncate">
+                            {c.name}
+                          </span>
+                          {c.custom && (
+                            <span className="rounded bg-primary-50 px-1 py-0.2 text-[9px] font-semibold text-primary">
+                              Custom
+                            </span>
+                          )}
+                        </div>
+                        {c.result === "PASS" && (
+                          <span className="inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-bold bg-success-50 text-success-700 border border-success-200 shrink-0">
+                            <Check className="h-2.5 w-2.5" /> PASS
+                          </span>
+                        )}
+                        {c.result === "PARTIAL" && (
+                          <span className="inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-bold bg-warning-50 text-warning-800 border border-warning-200 shrink-0">
+                            <AlertTriangle className="h-2.5 w-2.5" /> PARTIAL
+                          </span>
+                        )}
+                        {c.result === "FAIL" && (
+                          <span className="inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-bold bg-danger-50 text-danger-700 border border-danger-200 shrink-0">
+                            <X className="h-2.5 w-2.5" /> FAIL
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Evaluation Summary Callout */}
+                <div className="rounded-lg border border-border/80 bg-surface-secondary/60 p-3 text-xs space-y-1">
+                  <div className="font-semibold text-muted-foreground text-[11px]">
+                    AI Evaluation Summary:
+                  </div>
+                  <p className="text-foreground-secondary leading-relaxed text-xs">
+                    The proposal has strong potential and realistic scope, but requires greater technical depth in microcontroller quantization benchmarks and a concrete prototype demonstration plan.
+                  </p>
+                </div>
+
+                {/* Advisory Footer */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-border/70 text-xs">
+                  <div className="flex items-center gap-1.5 text-muted-foreground text-[11px]">
+                    <ShieldCheck className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <span>AI assists the review. Faculty makes the final decision.</span>
+                  </div>
+                  <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                    <span className="rounded-md border border-danger-200 bg-danger-50 px-2.5 py-1 text-xs font-semibold text-danger-700">
+                      Reject
+                    </span>
+                    <span className="rounded-md bg-success-600 px-2.5 py-1 text-xs font-semibold text-white shadow-2xs">
+                      Approve
+                    </span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </motion.div>
+
+          {/* ============================================================ */}
+          {/* CAPABILITY 5 & 6 (2-Column Grid)                            */}
           {/* ============================================================ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {/* Capability 4: Secure Resources & Document Viewing */}
+            {/* Capability 5: Secure Resources & Document Viewing */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -379,7 +547,7 @@ function CapabilitiesSection() {
               <div className="space-y-3">
                 <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
                   <Lock className="h-4 w-4" aria-hidden="true" />
-                  <span>04 — Secure Resources</span>
+                  <span>05 — Secure Resources</span>
                 </div>
                 <h3 className="text-lg font-bold text-foreground">
                   In-App PDF viewing and access permission control.
@@ -437,7 +605,7 @@ function CapabilitiesSection() {
               </div>
             </motion.div>
 
-            {/* Capability 5: Curriculum Intelligence */}
+            {/* Capability 6: Curriculum Intelligence */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -448,7 +616,7 @@ function CapabilitiesSection() {
               <div className="space-y-3">
                 <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
                   <Layers className="h-4 w-4" aria-hidden="true" />
-                  <span>05 — Curriculum Intelligence</span>
+                  <span>06 — Curriculum Intelligence</span>
                 </div>
                 <h3 className="text-lg font-bold text-foreground">
                   Technology adoption and research domain analytics.

@@ -4,15 +4,14 @@ import {
   Archive,
   Users,
   FileText,
-  Clock,
   CheckCircle2,
-  MessageSquare,
+  Sparkles,
 } from "lucide-react";
 import { motion } from "motion/react";
 
 /**
  * HowItWorksSection
- * 3-stage continuous institutional workflow from student proposal submission to faculty review and permanent preservation with subtle entrance motion.
+ * 3-stage continuous institutional workflow from student proposal submission to AI-assisted faculty review and permanent preservation with subtle entrance motion.
  */
 function HowItWorksSection() {
   const steps = [
@@ -54,9 +53,9 @@ function HowItWorksSection() {
     {
       number: "02",
       phase: "Review",
-      title: "Faculty Review & Governance",
+      title: "AI-Assisted Faculty Review",
       description:
-        "Department administrators inspect abstracts in-app, provide formal review feedback remarks, and approve or request modifications.",
+        "Nexora AI analyzes proposals against college criteria. Faculty review AI findings, inspect abstracts in-app, and make the final decision.",
       icon: ClipboardCheck,
       renderVisual: () => (
         <div className="rounded-xl border border-border bg-surface-secondary/40 p-3.5 space-y-2.5 text-xs">
@@ -64,29 +63,38 @@ function HowItWorksSection() {
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-mono">
               Proposal Review
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-[10px] font-semibold text-warning-800 border border-warning-200">
-              <Clock className="h-3 w-3" />
-              Under Review
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+              <Sparkles className="h-2.5 w-2.5" />
+              AI Evaluated
             </span>
           </div>
 
-          <div className="rounded bg-surface p-2 border border-border/70 text-[10px] text-foreground-secondary space-y-0.5">
-            <div className="flex items-center gap-1 font-semibold text-muted-foreground">
-              <MessageSquare className="h-3 w-3 text-primary" />
-              <span>Faculty Remarks:</span>
+          <div className="rounded bg-surface p-2 border border-border/70 text-[10px] text-foreground-secondary space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-foreground truncate mr-2">
+                Decentralized Healthcare
+              </span>
+              <span className="font-bold text-[9px] px-1.5 py-0.2 rounded bg-success-50 text-success-700 border border-success-200 shrink-0">
+                APPROVE · 92%
+              </span>
             </div>
-            <p className="line-clamp-1 text-muted-foreground">
-              Quantization benchmarks look solid. Proceed with testnet validation.
+            <p className="line-clamp-1 text-muted-foreground text-[10px]">
+              Meets all institutional criteria. Faculty decision pending.
             </p>
           </div>
 
-          <div className="flex items-center justify-end gap-1.5 pt-0.5">
-            <span className="rounded border border-border bg-surface px-2 py-0.5 text-[9px] font-medium text-foreground-secondary">
-              Remarks
+          <div className="flex items-center justify-between pt-0.5 text-[10px]">
+            <span className="text-muted-foreground text-[9px]">
+              AI analyzes. Faculty decides.
             </span>
-            <span className="rounded bg-primary px-2 py-0.5 text-[9px] font-semibold text-primary-foreground shadow-2xs">
-              Approve
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="rounded border border-border bg-surface px-2 py-0.5 text-[9px] font-medium text-foreground-secondary">
+                Remarks
+              </span>
+              <span className="rounded bg-success-600 px-2 py-0.5 text-[9px] font-semibold text-white shadow-2xs">
+                Approve
+              </span>
+            </div>
           </div>
         </div>
       ),

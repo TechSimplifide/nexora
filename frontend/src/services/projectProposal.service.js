@@ -271,3 +271,40 @@ export async function rejectProjectProposal({ proposalId, adminRemarks }) {
 
   return data;
 }
+
+/**
+ * Analyze a pending project proposal using AI (Admin only).
+ * @param {string} proposalId
+ * @returns {Promise<Object>} API response data with AI review breakdown in data
+ */
+export async function analyzeProposalWithAI(proposalId) {
+  const response = await fetch(
+    `${API_BASE_URL}/ai-proposal-review/${encodeURIComponent(proposalId)}/analyze`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok) {
+    const error = new Error(
+      data?.message || "Failed to analyze project proposal with AI"
+    );
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+
+  return data;
+}
+

@@ -9,6 +9,7 @@ import {
   Sparkles,
   Bell,
   ClipboardCheck,
+  SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
   X,
@@ -33,6 +34,8 @@ const adminNavItems = [
   { name: "Projects", href: "/app/admin/projects", icon: FolderKanban },
   { name: "Featured Projects", href: "/app/admin/featured-projects", icon: Star },
   { name: "Project Approvals", href: "/app/admin/approvals", icon: ClipboardCheck },
+  { name: "AI Review", href: "/app/admin/ai-review", icon: Sparkles },
+  { name: "Review Criteria", href: "/app/admin/review-criteria", icon: SlidersHorizontal },
   { name: "Notifications", href: "/app/admin/notifications", icon: Bell },
 ];
 

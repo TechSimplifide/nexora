@@ -35,6 +35,8 @@ const routeTitleMap = {
   "/app/admin/projects": "Projects",
   "/app/admin/featured-projects": "Featured Projects",
   "/app/admin/approvals": "Project Approvals",
+  "/app/admin/ai-review": "AI Proposal Review",
+  "/app/admin/review-criteria": "Review Criteria",
   "/app/admin/notifications": "Notifications",
   "/app/admin/profile": "Profile",
 };

@@ -81,6 +81,12 @@ const AdminFeaturedProjectsPage = lazy(
 const AdminApprovalsPage = lazy(
   () => import("@/features/admin/AdminApprovalsPage")
 );
+const AdminAIReviewPage = lazy(
+  () => import("@/features/admin/AdminAIReviewPage")
+);
+const AdminReviewCriteriaPage = lazy(
+  () => import("@/features/admin/AdminReviewCriteriaPage")
+);
 const AdminNotificationsPage = lazy(
   () => import("@/features/admin/AdminNotificationsPage")
 );
@@ -239,6 +245,14 @@ export const router = createBrowserRouter([
               {
                 path: "admin/approvals",
                 element: withSuspense(AdminApprovalsPage),
+              },
+              {
+                path: "admin/ai-review",
+                element: withSuspense(AdminAIReviewPage),
+              },
+              {
+                path: "admin/review-criteria",
+                element: withSuspense(AdminReviewCriteriaPage),
               },
               {
                 path: "admin/notifications",

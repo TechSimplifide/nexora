@@ -4,12 +4,13 @@ import {
   Clock,
   Star,
 } from "lucide-react";
+import AdminAiReviewPreview from "./AdminAiReviewPreview";
 import AdminChartsPreview from "./AdminChartsPreview";
 
 /**
  * AdminWorkspacePreview
  * Unified, single-view preview of the authentic Administrator Workspace / Institutional Control Center.
- * Integrates 4 KPIs, Proposal Pipeline distribution, SVG Technology column chart, Domain treemap, and Year volume trendline.
+ * Integrates KPIs, Proposal Review Pipeline, AI-Assisted Proposal Review panel, and Curriculum analytics.
  */
 function AdminWorkspacePreview() {
   return (
@@ -78,7 +79,10 @@ function AdminWorkspacePreview() {
         </div>
       </div>
 
-      {/* 2. Proposal Review Pipeline Overview (Matches AdminProposalOverview.jsx) */}
+      {/* 2. AI-Assisted Proposal Review Panel (New Core Capability) */}
+      <AdminAiReviewPreview />
+
+      {/* 3. Proposal Review Pipeline Overview (Matches AdminProposalOverview.jsx) */}
       <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-nexora-sm space-y-3.5">
         <div className="flex items-center justify-between">
           <div>
@@ -130,7 +134,7 @@ function AdminWorkspacePreview() {
         </div>
       </div>
 
-      {/* 3. Authentic SVG Analytics Charts (Tech adoption column chart, Domain treemap, Volume trendline) */}
+      {/* 4. Authentic SVG Analytics Charts (Tech adoption column chart, Domain treemap, Volume trendline) */}
       <AdminChartsPreview />
     </div>
   );
