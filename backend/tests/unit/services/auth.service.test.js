@@ -493,17 +493,11 @@ describe("logoutService", () => {
 
     await logoutService("user123");
 
-    expect(mockUserFindByIdAndUpdate).toHaveBeenCalledWith(
-      "user123",
-      {
-        $unset: {
-          refreshToken: 1,
-        },
+    expect(mockUserFindByIdAndUpdate).toHaveBeenCalledWith("user123", {
+      $unset: {
+        refreshToken: 1,
       },
-      {
-        new: true,
-      },
-    );
+    });
   });
 });
 

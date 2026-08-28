@@ -168,17 +168,11 @@ export const refreshTokenService = async (incomingRefreshToken) => {
 };
 
 export const logoutService = async (userId) => {
-  await User.findByIdAndUpdate(
-    userId,
-    {
-      $unset: {
-        refreshToken: 1,
-      },
+  await User.findByIdAndUpdate(userId, {
+    $unset: {
+      refreshToken: 1,
     },
-    {
-      new: true,
-    },
-  );
+  });
 };
 
 export const getCurrentUserService = async (userId) => {
@@ -245,7 +239,6 @@ export const verifyEmailService = async (token) => {
 
   return user;
 };
-
 
 export const resendVerificationEmailService = async (email) => {
   const user = await User.findOne({ email });

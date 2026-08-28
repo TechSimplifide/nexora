@@ -441,17 +441,11 @@ describe("POST /api/v1/auth/logout", () => {
       process.env.ACCESS_TOKEN_SECRET,
     );
 
-    expect(mockUserFindByIdAndUpdate).toHaveBeenCalledWith(
-      "student123",
-      {
-        $unset: {
-          refreshToken: 1,
-        },
+    expect(mockUserFindByIdAndUpdate).toHaveBeenCalledWith("student123", {
+      $unset: {
+        refreshToken: 1,
       },
-      {
-        new: true,
-      },
-    );
+    });
   });
 });
 
