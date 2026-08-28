@@ -151,7 +151,7 @@ function CollegeRegistrationPage() {
                   {copied ? (
                     <>
                       <Check className="h-3.5 w-3.5 text-success-600" />
-                      <span className="text-success-600">Copied!</span>
+                      <span className="text-success-600 font-semibold">Copied!</span>
                     </>
                   ) : (
                     <>
@@ -161,19 +161,18 @@ function CollegeRegistrationPage() {
                   )}
                 </button>
               </div>
-              <p className="mt-1.5 font-mono text-xl font-bold tracking-widest text-foreground">
+              <div className="mt-2 font-mono text-xl font-bold tracking-wider text-foreground">
                 {collegeCode}
-              </p>
+              </div>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                Save this code and share it with your students. Students will need this code
-                when creating their Nexora student accounts.
+                Share this code with students from your college so they can join your workspace during registration.
               </p>
             </div>
           )}
 
           <div className="mt-6 border-t border-border pt-6">
             <Link to="/login" className="block w-full">
-              <Button variant="primary" size="md" className="w-full justify-center">
+              <Button variant="primary" size="md" className="w-full justify-center shadow-nexora-sm">
                 Go to Login
               </Button>
             </Link>
@@ -206,10 +205,10 @@ function CollegeRegistrationPage() {
         </Link>
 
         <h1 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          College Registration
+          Register College
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          Set up your college workspace and administrator account.
+          Create your college workspace and administrator account.
         </p>
       </div>
 
@@ -217,28 +216,34 @@ function CollegeRegistrationPage() {
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm sm:p-8">
         {/* Server Error Alert */}
         {serverError && (
-          <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700">
+          <div
+            role="alert"
+            className="mb-5 flex items-start gap-2.5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
+          >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-500" />
             <span>{serverError}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {/* Field 1 — College Name */}
+          {/* College Name */}
           <div>
             <label
               htmlFor="collegeName"
               className="mb-1 block text-xs font-semibold text-foreground"
             >
-              College Name
+              College / Institution Name
             </label>
             <input
               id="collegeName"
               name="collegeName"
               type="text"
+              autoComplete="organization"
               value={formData.collegeName}
               onChange={handleChange}
               disabled={isSubmitting}
+              aria-invalid={errors.collegeName ? "true" : undefined}
+              aria-describedby={errors.collegeName ? "collegeName-error" : undefined}
               className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 errors.collegeName
                   ? "border-danger-500"
@@ -247,17 +252,19 @@ function CollegeRegistrationPage() {
               placeholder="e.g. Stanford University"
             />
             {errors.collegeName && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.collegeName}</p>
+              <p id="collegeName-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.collegeName}
+              </p>
             )}
           </div>
 
-          {/* Field 2 — Admin Name */}
+          {/* Admin Name */}
           <div>
             <label
               htmlFor="adminName"
               className="mb-1 block text-xs font-semibold text-foreground"
             >
-              Admin Name
+              Administrator Full Name
             </label>
             <input
               id="adminName"
@@ -267,22 +274,24 @@ function CollegeRegistrationPage() {
               value={formData.adminName}
               onChange={handleChange}
               disabled={isSubmitting}
+              aria-invalid={errors.adminName ? "true" : undefined}
+              aria-describedby={errors.adminName ? "adminName-error" : undefined}
               className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                errors.adminName
-                  ? "border-danger-500"
-                  : "border-border hover:border-border-strong"
+                errors.adminName ? "border-danger-500" : "border-border hover:border-border-strong"
               }`}
-              placeholder="e.g. Raja Kumar"
+              placeholder="e.g. Dr. John Doe"
             />
             {errors.adminName && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.adminName}</p>
+              <p id="adminName-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.adminName}
+              </p>
             )}
           </div>
 
-          {/* Field 3 — Email */}
+          {/* Email */}
           <div>
             <label htmlFor="email" className="mb-1 block text-xs font-semibold text-foreground">
-              Email Address
+              Official Email Address
             </label>
             <input
               id="email"
@@ -292,17 +301,21 @@ function CollegeRegistrationPage() {
               value={formData.email}
               onChange={handleChange}
               disabled={isSubmitting}
+              aria-invalid={errors.email ? "true" : undefined}
+              aria-describedby={errors.email ? "email-error" : undefined}
               className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 errors.email ? "border-danger-500" : "border-border hover:border-border-strong"
               }`}
               placeholder="admin@college.edu"
             />
             {errors.email && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.email}</p>
+              <p id="email-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.email}
+              </p>
             )}
           </div>
 
-          {/* Field 4 — Password */}
+          {/* Password */}
           <div>
             <label htmlFor="password" className="mb-1 block text-xs font-semibold text-foreground">
               Password
@@ -316,6 +329,8 @@ function CollegeRegistrationPage() {
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isSubmitting}
+                aria-invalid={errors.password ? "true" : undefined}
+                aria-describedby={errors.password ? "password-error" : undefined}
                 className={`w-full rounded-md border bg-surface px-3 py-2 pr-10 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   errors.password ? "border-danger-500" : "border-border hover:border-border-strong"
                 }`}
@@ -324,18 +339,20 @@ function CollegeRegistrationPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.password}</p>
+              <p id="password-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.password}
+              </p>
             )}
           </div>
 
-          {/* Field 5 — Confirm Password */}
+          {/* Confirm Password */}
           <div>
             <label
               htmlFor="confirmPassword"
@@ -352,6 +369,8 @@ function CollegeRegistrationPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 disabled={isSubmitting}
+                aria-invalid={errors.confirmPassword ? "true" : undefined}
+                aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
                 className={`w-full rounded-md border bg-surface px-3 py-2 pr-10 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   errors.confirmPassword
                     ? "border-danger-500"
@@ -362,7 +381,7 @@ function CollegeRegistrationPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
                 aria-label={
                   showConfirmPassword ? "Hide confirm password" : "Show confirm password"
                 }
@@ -375,7 +394,9 @@ function CollegeRegistrationPage() {
               </button>
             </div>
             {errors.confirmPassword && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.confirmPassword}</p>
+              <p id="confirmPassword-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.confirmPassword}
+              </p>
             )}
           </div>
 
@@ -387,9 +408,9 @@ function CollegeRegistrationPage() {
               size="md"
               loading={isSubmitting}
               disabled={isSubmitting}
-              className="w-full justify-center"
+              className="w-full justify-center shadow-nexora-sm"
             >
-              Create College Account
+              Register College & Admin
             </Button>
           </div>
         </form>

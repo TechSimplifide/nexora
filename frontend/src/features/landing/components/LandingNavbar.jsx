@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Sun, Moon } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import Button from "@/components/ui/Button";
 import Logo from "@/components/common/Logo";
 import { useTheme } from "@/hooks/useTheme";
@@ -8,6 +9,17 @@ import { useTheme } from "@/hooks/useTheme";
 function LandingNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
+
+  // Close mobile drawer on Escape key press
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [mobileMenuOpen]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-surface/80 backdrop-blur-md transition-colors">
@@ -30,10 +42,10 @@ function LandingNavbar() {
             Product
           </a>
           <a
-            href="#how-it-works"
+            href="#capabilities"
             className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
           >
-            How It Works
+            Capabilities
           </a>
           <a
             href="#for-colleges"
@@ -42,10 +54,16 @@ function LandingNavbar() {
             For Colleges
           </a>
           <a
-            href="#capabilities"
+            href="#how-it-works"
             className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
           >
-            Projects
+            How It Works
+          </a>
+          <a
+            href="#trust"
+            className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+          >
+            Trust
           </a>
         </nav>
 
@@ -70,7 +88,7 @@ function LandingNavbar() {
             </Button>
           </Link>
           <Link to="/register">
-            <Button variant="primary" size="sm" className="text-xs font-semibold">
+            <Button variant="primary" size="sm" className="text-xs font-semibold shadow-nexora-sm">
               Get Started
             </Button>
           </Link>
@@ -88,71 +106,86 @@ function LandingNavbar() {
         </button>
       </div>
 
-      {/* Mobile Navigation Drawer */}
-      {mobileMenuOpen && (
-        <div className="border-b border-border bg-surface px-4 pb-6 pt-3 md:hidden animate-in fade-in duration-150">
-          <nav className="flex flex-col space-y-1" aria-label="Mobile navigation">
-            <a
-              href="#product"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
-            >
-              Product
-            </a>
-            <a
-              href="#how-it-works"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
-            >
-              How It Works
-            </a>
-            <a
-              href="#for-colleges"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
-            >
-              For Colleges
-            </a>
-            <a
-              href="#capabilities"
-              onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
-            >
-              Projects
-            </a>
-            <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
+      {/* Mobile Navigation Drawer with Smooth AnimatePresence */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="overflow-hidden border-b border-border bg-surface px-4 pb-6 pt-2 md:hidden"
+          >
+            <nav className="flex flex-col space-y-1" aria-label="Mobile navigation">
+              <a
+                href="#product"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
               >
-                <span>Theme</span>
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
-                  {isDark ? (
-                    <>
-                      <Sun className="h-3.5 w-3.5" /> Dark
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="h-3.5 w-3.5" /> Light
-                    </>
-                  )}
-                </span>
-              </button>
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" size="md" className="w-full justify-center text-xs">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="primary" size="md" className="w-full justify-center text-xs font-semibold">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </nav>
-        </div>
-      )}
+                Product
+              </a>
+              <a
+                href="#capabilities"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
+              >
+                Capabilities
+              </a>
+              <a
+                href="#for-colleges"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
+              >
+                For Colleges
+              </a>
+              <a
+                href="#how-it-works"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
+              >
+                How It Works
+              </a>
+              <a
+                href="#trust"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
+              >
+                Trust
+              </a>
+              <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
+                >
+                  <span>Theme</span>
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
+                    {isDark ? (
+                      <>
+                        <Sun className="h-3.5 w-3.5" /> Dark
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="h-3.5 w-3.5" /> Light
+                      </>
+                    )}
+                  </span>
+                </button>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" size="md" className="w-full justify-center text-xs">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="primary" size="md" className="w-full justify-center text-xs font-semibold">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

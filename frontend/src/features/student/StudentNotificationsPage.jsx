@@ -16,7 +16,7 @@ import {
   markAllNotificationsAsRead,
   deleteNotification,
 } from "@/services/notification.service";
-import NotificationCard from "@/features/student/components/NotificationCard";
+import NotificationCard from "@/components/common/NotificationCard";
 
 function StudentNotificationsPage() {
   const [notifications, setNotifications] = useState([]);

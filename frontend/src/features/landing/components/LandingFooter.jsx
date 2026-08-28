@@ -38,10 +38,10 @@ function LandingFooter() {
                 </li>
                 <li>
                   <a
-                    href="#how-it-works"
+                    href="#capabilities"
                     className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:underline"
                   >
-                    How It Works
+                    Capabilities
                   </a>
                 </li>
                 <li>
@@ -54,10 +54,18 @@ function LandingFooter() {
                 </li>
                 <li>
                   <a
-                    href="#capabilities"
+                    href="#how-it-works"
                     className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:underline"
                   >
-                    Capabilities
+                    How It Works
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#trust"
+                    className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:underline"
+                  >
+                    Institutional Trust
                   </a>
                 </li>
               </ul>

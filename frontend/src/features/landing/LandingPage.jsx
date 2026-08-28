@@ -1,3 +1,4 @@
+import { MotionConfig } from "motion/react";
 import LandingNavbar from "./components/LandingNavbar";
 import HeroSection from "./components/HeroSection";
 import ProductPreview from "./components/ProductPreview";
@@ -10,19 +11,21 @@ import LandingFooter from "./components/LandingFooter";
 
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
-      <LandingNavbar />
-      <main>
-        <HeroSection />
-        <ProductPreview />
-        <CapabilitiesSection />
-        <MultiCollegeSection />
-        <HowItWorksSection />
-        <WhyNexoraSection />
-        <FinalCTASection />
-      </main>
-      <LandingFooter />
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
+        <LandingNavbar />
+        <main>
+          <HeroSection />
+          <ProductPreview />
+          <CapabilitiesSection />
+          <MultiCollegeSection />
+          <HowItWorksSection />
+          <WhyNexoraSection />
+          <FinalCTASection />
+        </main>
+        <LandingFooter />
+      </div>
+    </MotionConfig>
   );
 }
 

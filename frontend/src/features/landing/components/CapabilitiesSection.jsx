@@ -9,44 +9,68 @@ import {
   ArrowRight,
   Code2,
   Layers,
-  Bookmark,
-  ChevronDown,
-  Info,
+  Search,
+  CheckCircle2,
+  Check,
+  Lightbulb,
+  GraduationCap,
+  Users,
 } from "lucide-react";
+import { motion } from "motion/react";
 
+/**
+ * CapabilitiesSection
+ * High-fidelity, product-led demonstration of the 5 core Nexora platform capabilities with scroll reveals.
+ */
 function CapabilitiesSection() {
   return (
-    <section id="capabilities" className="border-t border-border bg-background py-16 md:py-28 transition-colors">
+    <section
+      id="capabilities"
+      className="scroll-mt-20 border-t border-border bg-background py-16 md:py-28 transition-colors"
+      aria-label="Platform Capabilities"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center mb-12 md:mb-18">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.45 }}
+          className="mx-auto max-w-3xl text-center mb-12 md:mb-18"
+        >
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs">
             Platform Capabilities
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-4xl">
             Everything your college needs to discover, review, and archive student projects.
           </h2>
           <p className="mt-4 text-base text-muted-foreground leading-relaxed">
-            From initial AI idea discovery and proposal evaluation to permanent institutional preservation.
+            From AI-guided idea discovery and faculty proposal evaluation to permanent institutional preservation and curriculum intelligence.
           </p>
-        </div>
+        </motion.div>
 
         {/* Editorial Feature Blocks */}
         <div className="space-y-8 md:space-y-12">
           {/* ============================================================ */}
           {/* CAPABILITY 1: AI IDEA DISCOVERY                             */}
           {/* ============================================================ */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-border bg-surface p-6 sm:p-8 lg:p-10 shadow-nexora-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-border bg-surface p-6 sm:p-8 lg:p-10 shadow-nexora-sm transition-all hover:shadow-nexora-md"
+          >
             <div className="lg:col-span-5 space-y-4">
               <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
                 <span>01 — AI Idea Discovery</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-                Turn interests into project directions worth building.
+                Turn student interests into viable, research-backed project directions.
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Students describe what they want to explore, choose their preferred technologies, and get structured project directions to move from a blank page to a viable idea.
+                Students input their interests, domain focus, and preferred technology stacks to generate structured capstone proposals complete with rationale and feasibility guidance.
               </p>
 
               {/* Sub-lifecycle contextual indicator */}
@@ -74,106 +98,87 @@ function CapabilitiesSection() {
               </div>
             </div>
 
-            {/* Visual UI Fragment: Real Nexora Discovery Interface */}
-            <div className="lg:col-span-7 rounded-xl border border-border bg-surface-secondary/40 p-4 sm:p-5 space-y-4">
-              <div className="rounded-xl border border-border bg-surface p-5 shadow-nexora-sm space-y-4">
-                {/* Discovery Form Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-border/70">
-                  <span className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                    AI Project Idea Discovery
-                  </span>
-                  <span className="text-[10px] font-mono text-muted-foreground">
-                    Student Workspace
+            {/* Visual UI Fragment: Authentic AI Recommendation Card */}
+            <div className="lg:col-span-7 rounded-xl border border-border bg-surface-secondary/40 p-4 sm:p-5">
+              <article className="rounded-xl border border-border bg-surface p-5 shadow-nexora-sm space-y-3.5">
+                {/* Header & Badges */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary border border-primary/20">
+                        AI Recommended
+                      </span>
+                      <span className="rounded bg-surface-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground border border-border/60">
+                        Intermediate · Real World
+                      </span>
+                    </div>
+                    <h4 className="text-base font-bold text-foreground">
+                      Intelligent Campus Resource Assistant
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary font-mono shrink-0">
+                    AI & ML
                   </span>
                 </div>
 
-                {/* Form Inputs Mock */}
-                <div className="space-y-3 text-xs">
-                  <div>
-                    <label className="block text-[11px] font-medium text-muted-foreground mb-1">
-                      Research Domain
-                    </label>
-                    <div className="flex items-center justify-between rounded-lg border border-border bg-surface px-3 py-2 text-foreground font-medium">
-                      <span>Artificial Intelligence & Machine Learning</span>
-                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-                    </div>
+                {/* Metadata */}
+                <div className="flex flex-wrap items-center gap-2 text-xs border-t border-border/60 pt-2 text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>Domain: Computer Science</span>
                   </div>
-
-                  <div>
-                    <label className="block text-[11px] font-medium text-muted-foreground mb-1">
-                      Preferred Technologies
-                    </label>
-                    <div className="flex flex-wrap gap-1.5">
-                      <span className="rounded-md border border-primary/30 bg-primary-50 px-2 py-1 text-[11px] font-semibold text-primary">
-                        Python
-                      </span>
-                      <span className="rounded-md border border-primary/30 bg-primary-50 px-2 py-1 text-[11px] font-semibold text-primary">
-                        PyTorch
-                      </span>
-                      <span className="rounded-md border border-primary/30 bg-primary-50 px-2 py-1 text-[11px] font-semibold text-primary">
-                        FastAPI
-                      </span>
-                      <span className="rounded-md border border-border/70 bg-surface-secondary px-2 py-1 text-[11px] text-muted-foreground">
-                        + Add skill
-                      </span>
-                    </div>
+                  <span>•</span>
+                  <div className="flex items-center gap-1">
+                    <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>Team of 3–4 Members</span>
                   </div>
                 </div>
 
-                {/* Generated Idea Result Card */}
-                <div className="rounded-xl border border-border/80 bg-surface-secondary/50 p-4 space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <span className="rounded bg-primary-50 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
-                          Intermediate
-                        </span>
-                        <span className="rounded bg-surface px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/60">
-                          Real World
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-bold text-foreground">
-                        Edge-Optimized Plant Pathology Classification System
-                      </h4>
-                    </div>
-                    <span className="rounded-md border border-border/80 bg-surface px-2 py-1 text-[10px] font-bold text-foreground-secondary shrink-0">
-                      Idea #01
-                    </span>
+                {/* Why Recommended Callout (Authentic Nexora Rationale) */}
+                <div className="rounded-lg border border-primary/20 bg-primary-50/40 p-3 text-xs space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-primary">
+                    <Lightbulb className="h-3.5 w-3.5" />
+                    <span>Why Recommended For You</span>
                   </div>
-
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    A lightweight computer-vision system for identifying crop anomalies in resource-constrained agricultural environments.
+                  <p className="leading-relaxed text-foreground-secondary">
+                    Matches your interest in AI and full-stack development while providing strong opportunities for academic research and measurable campus impact.
                   </p>
+                </div>
 
-                  {/* Why this direction reasoning box */}
-                  <div className="rounded-lg border border-border/60 bg-surface p-2.5 text-[11px] text-foreground-secondary flex items-start gap-2">
-                    <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
-                    <div>
-                      <strong className="font-semibold text-foreground">Why this direction: </strong>
-                      Matches your selected AI/ML domain, computer-vision interest, and preferred Python/PyTorch stack.
-                    </div>
-                  </div>
-
-                  {/* Footer Actions */}
-                  <div className="flex items-center justify-between pt-1 text-xs">
-                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
-                      <span>Python · PyTorch · FastAPI</span>
-                    </div>
-                    <span className="inline-flex items-center gap-1 font-semibold text-primary hover:underline cursor-pointer">
-                      <Bookmark className="h-3.5 w-3.5" />
-                      <span>Save to Ideas</span>
+                {/* Tech Stack */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/60 text-xs">
+                  <span className="text-[11px] font-medium text-muted-foreground">
+                    Suggested Stack:
+                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="rounded-md border border-primary/20 bg-primary-50/50 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                      React
+                    </span>
+                    <span className="rounded-md border border-primary/20 bg-primary-50/50 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                      FastAPI
+                    </span>
+                    <span className="rounded-md border border-primary/20 bg-primary-50/50 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                      PostgreSQL
+                    </span>
+                    <span className="rounded-md border border-primary/20 bg-primary-50/50 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                      PyTorch
                     </span>
                   </div>
                 </div>
-              </div>
+              </article>
             </div>
-          </div>
+          </motion.div>
 
           {/* ============================================================ */}
           {/* CAPABILITY 2: INSTITUTIONAL PROJECT ARCHIVE                 */}
           {/* ============================================================ */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-border bg-surface p-6 sm:p-8 lg:p-10 shadow-nexora-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-border bg-surface p-6 sm:p-8 lg:p-10 shadow-nexora-sm transition-all hover:shadow-nexora-md"
+          >
             <div className="lg:col-span-5 space-y-4 lg:order-2">
               <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
                 <FolderKanban className="h-4 w-4" aria-hidden="true" />
@@ -187,14 +192,35 @@ function CapabilitiesSection() {
               </p>
             </div>
 
-            {/* Visual UI Fragment: Catalog Card */}
-            <div className="lg:col-span-7 rounded-xl border border-border bg-surface-secondary/40 p-4 sm:p-5 lg:order-1">
+            {/* Visual UI Fragment: Archive Search & Discover Card */}
+            <div className="lg:col-span-7 rounded-xl border border-border bg-surface-secondary/40 p-4 sm:p-5 lg:order-1 space-y-3">
+              {/* Archive Search Facets Filter Bar */}
+              <div className="rounded-lg border border-border bg-surface p-2.5 shadow-2xs space-y-2">
+                <div className="flex items-center gap-2 rounded-md bg-surface-secondary px-2.5 py-1.5 text-xs text-muted-foreground">
+                  <Search className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                  <span className="truncate">Search projects by title, stack, or domain...</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <span className="font-semibold text-foreground-secondary">Filters:</span>
+                  <span className="rounded bg-surface-secondary px-2 py-0.5 border border-border/60">
+                    Domain: Distributed Systems
+                  </span>
+                  <span className="rounded bg-surface-secondary px-2 py-0.5 border border-border/60">
+                    Year: 2025–26
+                  </span>
+                  <span className="rounded bg-primary-50 px-2 py-0.5 text-primary font-semibold border border-primary/20">
+                    Stack: Rust
+                  </span>
+                </div>
+              </div>
+
+              {/* Authentic DiscoverProjectCard Representation */}
               <div className="rounded-xl border border-border bg-surface p-5 shadow-nexora-sm space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
                     Cloud & Distributed Systems
                   </span>
-                  <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-1 text-[11px] text-muted-foreground font-mono">
                     <Calendar className="h-3 w-3" />
                     <span>2025–2026</span>
                   </div>
@@ -209,7 +235,14 @@ function CapabilitiesSection() {
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 pt-1">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <GraduationCap className="h-3 w-3 text-muted-foreground" />
+                    <span>Computer Science & Engineering</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 pt-1 border-t border-border/60">
                   <span className="rounded-md border border-border/60 bg-surface-secondary px-2 py-0.5 text-[10px] font-medium text-foreground-secondary">
                     Rust
                   </span>
@@ -218,6 +251,9 @@ function CapabilitiesSection() {
                   </span>
                   <span className="rounded-md border border-border/60 bg-surface-secondary px-2 py-0.5 text-[10px] font-medium text-foreground-secondary">
                     Docker
+                  </span>
+                  <span className="rounded-md border border-border/60 bg-surface-secondary px-2 py-0.5 text-[10px] font-medium text-foreground-secondary">
+                    PostgreSQL
                   </span>
                 </div>
 
@@ -235,135 +271,250 @@ function CapabilitiesSection() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* ============================================================ */}
           {/* CAPABILITY 3: STRUCTURED PROPOSAL APPROVAL PIPELINE        */}
           {/* ============================================================ */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-border bg-surface p-6 sm:p-8 lg:p-10 shadow-nexora-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.45 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-border bg-surface p-6 sm:p-8 lg:p-10 shadow-nexora-sm transition-all hover:shadow-nexora-md"
+          >
             <div className="lg:col-span-5 space-y-4">
               <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
                 <FileText className="h-4 w-4" aria-hidden="true" />
                 <span>03 — Proposal Pipeline</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-                Structured proposal review & faculty feedback.
+                Structured proposal review & faculty governance.
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Students submit project proposals with team members and abstracts. Faculty administrators evaluate submissions, request modifications, or approve them with formal remarks.
+                Students track proposals along a 4-stage lifecycle while faculty evaluate submissions, review attached abstracts, and leave formal review remarks before development begins.
               </p>
             </div>
 
-            {/* Visual UI Fragment: Proposal Card */}
+            {/* Visual UI Fragment: Proposal Card with Lifecycle Timeline */}
             <div className="lg:col-span-7 rounded-xl border border-border bg-surface-secondary/40 p-4 sm:p-5">
-              <div className="rounded-xl border border-border bg-surface p-5 shadow-nexora-sm space-y-3.5">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <div className="rounded-xl border border-border bg-surface p-5 shadow-nexora-sm space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-mono">
                       Proposal #PR-2026-084
                     </span>
-                    <h4 className="text-sm font-bold text-foreground mt-0.5">
+                    <h4 className="text-base font-bold text-foreground">
                       Neural Network Compression for Microcontroller Deployments
                     </h4>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>Team of 4</span>
+                      <span>•</span>
+                      <span>Submitted Feb 24, 2026</span>
+                    </div>
                   </div>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-warning-200 bg-warning-50 px-2.5 py-0.5 text-xs font-semibold text-warning-800 shrink-0">
-                    <Clock className="h-3 w-3" />
+                  <span className="inline-flex items-center gap-1 rounded-full border border-warning-200 bg-warning-50 px-2.5 py-0.5 text-xs font-semibold text-warning-800 shrink-0 self-start sm:self-auto">
+                    <Clock className="h-3.5 w-3.5" />
                     <span>Under Review</span>
                   </span>
                 </div>
 
+                {/* Abstract PDF Attachment */}
+                <div className="flex items-center justify-between rounded-lg border border-border/80 bg-surface-secondary/50 p-2.5 text-xs">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <span className="font-semibold text-foreground">abstract_proposal_v2.pdf</span>
+                    <span className="text-[10px] text-muted-foreground font-mono hidden sm:inline">(1.2 MB)</span>
+                  </div>
+                  <span className="text-xs font-semibold text-primary">
+                    Abstract Verified
+                  </span>
+                </div>
+
+                {/* Faculty Remarks Callout */}
                 <div className="rounded-lg border border-border/80 bg-surface-secondary/60 p-3 text-xs">
                   <div className="font-semibold text-muted-foreground mb-1">Faculty Feedback:</div>
                   <p className="text-foreground-secondary leading-relaxed">
-                    Quantization benchmarks are solid. Please attach the supporting architecture PDF before final committee sign-off.
+                    Quantization benchmarks are solid. Ensure database schema supports multi-tenant isolation before production deployment.
                   </p>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-1">
-                  <span className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-foreground-secondary">
-                    View Abstract PDF
-                  </span>
-                  <span className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
-                    Approve Submission
-                  </span>
+                {/* 4-Stage Lifecycle Timeline */}
+                <div className="space-y-2 pt-2 border-t border-border/70">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Review Stage</span>
+                    <span className="text-[11px]">2 of 4 Complete</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2 text-center text-[10px] font-medium">
+                    <div className="rounded bg-primary-50 p-1.5 text-primary border border-primary/20 font-bold flex items-center justify-center gap-1">
+                      <Check className="h-3 w-3" /> Submitted
+                    </div>
+                    <div className="rounded bg-warning-50 p-1.5 text-warning-800 border border-warning-200 font-bold flex items-center justify-center gap-1">
+                      <Clock className="h-3 w-3" /> Review
+                    </div>
+                    <div className="rounded bg-surface-secondary p-1.5 text-muted-foreground border border-border/60">
+                      Approved
+                    </div>
+                    <div className="rounded bg-surface-secondary p-1.5 text-muted-foreground border border-border/60">
+                      Development
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* ============================================================ */}
           {/* CAPABILITY 4 & 5 (2-Column Grid)                            */}
           {/* ============================================================ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {/* Capability 4: Protected Resources */}
-            <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-nexora-sm space-y-4">
-              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
-                <Lock className="h-4 w-4" aria-hidden="true" />
-                <span>04 — Secure Resources</span>
-              </div>
-              <h3 className="text-lg font-bold text-foreground">
-                In-App PDF viewing and access permission control.
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Project code, supporting documentation, and live links are guarded with role-based access. Supporting PDFs render seamlessly inside Nexora with zero external redirection.
-              </p>
-
-              <div className="rounded-xl border border-border bg-surface-secondary/40 p-3.5 space-y-2 text-xs">
-                <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-2.5">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <span className="font-semibold text-foreground">Technical Specification (PDF)</span>
-                  </div>
-                  <span className="rounded bg-success-50 px-2 py-0.5 text-[10px] font-bold text-success-700 border border-success-200">
-                    In-App Viewer
-                  </span>
+            {/* Capability 4: Secure Resources & Document Viewing */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.45 }}
+              className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-nexora-sm space-y-4 transition-all hover:shadow-nexora-md flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
+                  <Lock className="h-4 w-4" aria-hidden="true" />
+                  <span>04 — Secure Resources</span>
                 </div>
+                <h3 className="text-lg font-bold text-foreground">
+                  In-App PDF viewing and access permission control.
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Project assets, code repositories, and supporting documentation are governed by role-based access requests. Attached PDFs open seamlessly in an in-app viewer.
+                </p>
+              </div>
+
+              {/* Visual Mock: Document Viewer & Access Status Badges */}
+              <div className="rounded-xl border border-border bg-surface-secondary/40 p-3.5 space-y-2.5 text-xs">
+                {/* PDF Viewer Frame Mock */}
+                <div className="rounded-lg border border-border bg-surface p-3 space-y-2 shadow-2xs">
+                  <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span className="font-semibold text-foreground text-xs">
+                        technical_specification_v2.pdf
+                      </span>
+                    </div>
+                    <span className="rounded bg-success-50 px-2 py-0.5 text-[10px] font-bold text-success-700 border border-success-200">
+                      In-App Viewer
+                    </span>
+                  </div>
+                  <div className="rounded bg-surface-secondary/60 p-2 space-y-1 text-[11px] text-muted-foreground">
+                    <div className="font-semibold text-foreground">1. System Architecture & Edge Topology</div>
+                    <p className="text-[10px] line-clamp-2 leading-relaxed">
+                      Detailed hardware specifications, quantization thresholds, and micro-controller memory limits.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Access Request Status Badges (Matches ProjectAccessRequestCard.jsx) */}
                 <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-2.5">
                   <div className="flex items-center gap-2">
                     <Code2 className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium text-foreground-secondary">Source Code Repository</span>
+                    <span className="font-medium text-foreground text-xs">Source Code Repository</span>
                   </div>
-                  <span className="rounded bg-surface-secondary px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border">
-                    Access on Request
+                  <span className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-[10px] font-semibold text-warning-800 border border-warning-200">
+                    <Clock className="h-3 w-3" />
+                    Access Pending
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-2.5">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-foreground text-xs">Benchmark Dataset</span>
+                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-success-50 px-2 py-0.5 text-[10px] font-semibold text-success-700 border border-success-200">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Access Approved
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Capability 5: Institutional Insights */}
-            <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-nexora-sm space-y-4">
-              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
-                <Layers className="h-4 w-4" aria-hidden="true" />
-                <span>05 — Curriculum Intelligence</span>
+            {/* Capability 5: Curriculum Intelligence */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.45 }}
+              className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-nexora-sm space-y-4 transition-all hover:shadow-nexora-md flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
+                  <Layers className="h-4 w-4" aria-hidden="true" />
+                  <span>05 — Curriculum Intelligence</span>
+                </div>
+                <h3 className="text-lg font-bold text-foreground">
+                  Technology adoption and research domain analytics.
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Gain instant institutional visibility into emerging technology trends, domain adoption proportions, and academic research volume across cohorts.
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-foreground">
-                Technology adoption and research domain trends.
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Gain instant visibility into emerging technologies, departmental project distributions, and year-over-year research volume across your entire college.
-              </p>
 
-              <div className="rounded-xl border border-border bg-surface-secondary/40 p-3.5 space-y-2 text-xs">
-                <div className="space-y-1">
-                  <div className="flex justify-between font-semibold text-foreground text-[11px]">
-                    <span>AI / Machine Learning</span>
-                    <span className="text-muted-foreground">38 Projects</span>
+              {/* Visual Mock: Authentic SVG Mini-Chart & Proportional Treemap */}
+              <div className="rounded-xl border border-border bg-surface-secondary/40 p-3.5 space-y-3 text-xs">
+                {/* SVG Mini Column Chart */}
+                <div className="rounded-lg border border-border bg-surface p-3 space-y-2 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Curriculum Tech Adoption
+                    </span>
+                    <span className="text-[10px] font-mono text-muted-foreground">144 Projects</span>
                   </div>
-                  <div className="h-1.5 w-full rounded-full bg-surface overflow-hidden">
-                    <div style={{ width: "75%" }} className="h-full bg-primary rounded-full" />
+
+                  <div className="pt-1 select-none">
+                    <svg viewBox="0 0 320 65" className="w-full h-16 overflow-visible" aria-label="Curriculum tech chart">
+                      <line x1="0" y1="52" x2="320" y2="52" className="stroke-border" strokeWidth="1" />
+                      {[
+                        { name: "React/TS", h: 42, count: "42" },
+                        { name: "Python", h: 36, count: "36" },
+                        { name: "Node.js", h: 28, count: "28" },
+                        { name: "Docker", h: 20, count: "20" },
+                      ].map((item, idx) => {
+                        const w = 36;
+                        const slot = 320 / 4;
+                        const x = idx * slot + slot / 2 - w / 2;
+                        const y = 52 - item.h;
+                        return (
+                          <g key={item.name}>
+                            <text x={x + w / 2} y={y - 3} textAnchor="middle" className="text-[8px] font-bold fill-primary">
+                              {item.count}
+                            </text>
+                            <rect x={x} y={y} width={w} height={item.h} rx="3" className="fill-primary/80 hover:fill-primary transition-colors" />
+                            <text x={x + w / 2} y="62" textAnchor="middle" className="text-[8px] font-medium fill-foreground-secondary">
+                              {item.name}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <div className="flex justify-between font-semibold text-foreground text-[11px]">
-                    <span>Full-Stack Web Systems</span>
-                    <span className="text-muted-foreground">29 Projects</span>
+
+                {/* Domain Distribution Mini Tiles */}
+                <div className="grid grid-cols-3 gap-1.5 text-center">
+                  <div className="rounded-md border border-primary/20 bg-primary-50/50 p-2">
+                    <div className="text-xs font-bold text-primary font-mono">48%</div>
+                    <div className="text-[9px] text-muted-foreground truncate">AI & ML</div>
                   </div>
-                  <div className="h-1.5 w-full rounded-full bg-surface overflow-hidden">
-                    <div style={{ width: "58%" }} className="h-full bg-primary/80 rounded-full" />
+                  <div className="rounded-md border border-border bg-surface p-2">
+                    <div className="text-xs font-bold text-foreground font-mono">32%</div>
+                    <div className="text-[9px] text-muted-foreground truncate">Web Systems</div>
+                  </div>
+                  <div className="rounded-md border border-border bg-surface p-2">
+                    <div className="text-xs font-bold text-foreground font-mono">20%</div>
+                    <div className="text-[9px] text-muted-foreground truncate">Cloud/DevOps</div>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

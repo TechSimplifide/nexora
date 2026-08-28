@@ -111,7 +111,7 @@ function StudentRegistrationPage() {
           </p>
           <div className="mt-6 border-t border-border pt-6">
             <Link to="/login" className="block w-full">
-              <Button variant="primary" size="md" className="w-full justify-center">
+              <Button variant="primary" size="md" className="w-full justify-center shadow-nexora-sm">
                 Go to Login
               </Button>
             </Link>
@@ -155,7 +155,10 @@ function StudentRegistrationPage() {
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm sm:p-8">
         {/* Server Error Alert */}
         {serverError && (
-          <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700">
+          <div
+            role="alert"
+            className="mb-5 flex items-start gap-2.5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
+          >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-500" />
             <span>{serverError}</span>
           </div>
@@ -175,13 +178,17 @@ function StudentRegistrationPage() {
               value={formData.fullName}
               onChange={handleChange}
               disabled={isSubmitting}
+              aria-invalid={errors.fullName ? "true" : undefined}
+              aria-describedby={errors.fullName ? "fullName-error" : undefined}
               className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 errors.fullName ? "border-danger-500" : "border-border hover:border-border-strong"
               }`}
               placeholder="e.g. Raja Kumar"
             />
             {errors.fullName && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.fullName}</p>
+              <p id="fullName-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.fullName}
+              </p>
             )}
           </div>
 
@@ -197,16 +204,22 @@ function StudentRegistrationPage() {
               id="collegeCode"
               name="collegeCode"
               type="text"
+              autoComplete="off"
+              autoCapitalize="characters"
               value={formData.collegeCode}
               onChange={handleChange}
               disabled={isSubmitting}
-              className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              aria-invalid={errors.collegeCode ? "true" : undefined}
+              aria-describedby={errors.collegeCode ? "collegeCode-error" : undefined}
+              className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground uppercase tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 errors.collegeCode ? "border-danger-500" : "border-border hover:border-border-strong"
               }`}
               placeholder="e.g. ABC-GS1HE"
             />
             {errors.collegeCode && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.collegeCode}</p>
+              <p id="collegeCode-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.collegeCode}
+              </p>
             )}
           </div>
 
@@ -223,13 +236,17 @@ function StudentRegistrationPage() {
               value={formData.email}
               onChange={handleChange}
               disabled={isSubmitting}
+              aria-invalid={errors.email ? "true" : undefined}
+              aria-describedby={errors.email ? "email-error" : undefined}
               className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 errors.email ? "border-danger-500" : "border-border hover:border-border-strong"
               }`}
               placeholder="raja@student.com"
             />
             {errors.email && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.email}</p>
+              <p id="email-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.email}
+              </p>
             )}
           </div>
 
@@ -247,6 +264,8 @@ function StudentRegistrationPage() {
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isSubmitting}
+                aria-invalid={errors.password ? "true" : undefined}
+                aria-describedby={errors.password ? "password-error" : undefined}
                 className={`w-full rounded-md border bg-surface px-3 py-2 pr-10 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   errors.password ? "border-danger-500" : "border-border hover:border-border-strong"
                 }`}
@@ -255,14 +274,16 @@ function StudentRegistrationPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.password}</p>
+              <p id="password-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.password}
+              </p>
             )}
           </div>
 
@@ -283,6 +304,8 @@ function StudentRegistrationPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 disabled={isSubmitting}
+                aria-invalid={errors.confirmPassword ? "true" : undefined}
+                aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
                 className={`w-full rounded-md border bg-surface px-3 py-2 pr-10 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   errors.confirmPassword
                     ? "border-danger-500"
@@ -293,7 +316,7 @@ function StudentRegistrationPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
                 aria-label={
                   showConfirmPassword ? "Hide confirm password" : "Show confirm password"
                 }
@@ -306,7 +329,9 @@ function StudentRegistrationPage() {
               </button>
             </div>
             {errors.confirmPassword && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.confirmPassword}</p>
+              <p id="confirmPassword-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.confirmPassword}
+              </p>
             )}
           </div>
 
@@ -318,7 +343,7 @@ function StudentRegistrationPage() {
               size="md"
               loading={isSubmitting}
               disabled={isSubmitting}
-              className="w-full justify-center"
+              className="w-full justify-center shadow-nexora-sm"
             >
               Create Student Account
             </Button>

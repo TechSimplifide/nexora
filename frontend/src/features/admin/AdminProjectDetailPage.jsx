@@ -19,6 +19,8 @@ import {
   Check,
   X,
   ImageIcon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import {
@@ -29,6 +31,7 @@ import {
 import { formatDate } from "@/utils/date";
 import AdminFeatureProjectModal from "@/features/admin/components/AdminFeatureProjectModal";
 import PdfViewerModal from "@/components/common/PdfViewerModal";
+import ImageViewerModal from "@/components/common/ImageViewerModal";
 
 function AdminProjectDetailPage() {
   const { id } = useParams();
@@ -44,8 +47,9 @@ function AdminProjectDetailPage() {
   // In-App Document PDF Viewer Modal State
   const [isDocumentViewerOpen, setIsDocumentViewerOpen] = useState(false);
 
-  // Screenshot Preview Lightbox
-  const [previewImage, setPreviewImage] = useState(null);
+  // Screenshot Gallery & Fullscreen Lightbox Modal State
+  const [activeScreenshot, setActiveScreenshot] = useState(0);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Dismissible Feedback Banner
   const [feedbackBanner, setFeedbackBanner] = useState(null);
@@ -193,8 +197,20 @@ function AdminProjectDetailPage() {
     ? project.teamMembers
     : [];
   const screenshots = Array.isArray(project.screenshots)
-    ? project.screenshots
+    ? project.screenshots.filter((s) => (typeof s === "string" ? s : s?.url))
     : [];
+
+  const handlePrevScreenshot = (e) => {
+    e.stopPropagation();
+    if (screenshots.length <= 1) return;
+    setActiveScreenshot((prev) => (prev - 1 + screenshots.length) % screenshots.length);
+  };
+
+  const handleNextScreenshot = (e) => {
+    e.stopPropagation();
+    if (screenshots.length <= 1) return;
+    setActiveScreenshot((prev) => (prev + 1) % screenshots.length);
+  };
 
   // Direct root resource properties on project returned by backend
   const hasGithubUrl = Boolean(project.github?.url);
@@ -474,30 +490,91 @@ function AdminProjectDetailPage() {
         </div>
 
         {screenshots.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 pt-2">
-            {screenshots.map((s, idx) => {
-              const imgUrl = typeof s === "string" ? s : s?.url;
-              if (!imgUrl) return null;
-              return (
-                <div
-                  key={idx}
-                  onClick={() => setPreviewImage(imgUrl)}
-                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-border bg-surface-secondary aspect-video transition-all hover:border-primary hover:shadow-nexora-md"
+          <div className="space-y-3 pt-1">
+            {/* Main Stage: Uncropped object-contain viewer over neutral dark surface */}
+            <div
+              onClick={() => setIsViewerOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsViewerOpen(true);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`View screenshot ${activeScreenshot + 1} of ${screenshots.length}`}
+              className="group relative overflow-hidden rounded-xl border border-border bg-zinc-950/90 dark:bg-zinc-900/90 flex items-center justify-center min-h-[260px] sm:min-h-[380px] lg:min-h-[420px] max-h-[500px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-xs"
+            >
+              {/* Previous Button (if multiple) */}
+              {screenshots.length > 1 && (
+                <button
+                  type="button"
+                  onClick={handlePrevScreenshot}
+                  aria-label="Previous screenshot"
+                  className="absolute left-2.5 sm:left-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 text-zinc-200 border border-zinc-700/80 opacity-80 hover:opacity-100 hover:bg-zinc-800 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
-                  <img
-                    src={imgUrl}
-                    alt={`Screenshot ${idx + 1} for ${project.title}`}
-                    className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-foreground/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="rounded-lg bg-surface/90 px-2.5 py-1 text-xs font-semibold text-foreground shadow-xs">
-                      Enlarge Preview
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+              )}
+
+              {/* Uncropped Image Display */}
+              <img
+                src={screenshots[activeScreenshot]?.url || (typeof screenshots[activeScreenshot] === "string" ? screenshots[activeScreenshot] : "")}
+                alt={`${project.title || "Project"} preview ${activeScreenshot + 1}`}
+                className="max-h-[460px] w-auto max-w-full object-contain transition-transform duration-200 group-hover:scale-[1.005]"
+              />
+
+              {/* Next Button (if multiple) */}
+              {screenshots.length > 1 && (
+                <button
+                  type="button"
+                  onClick={handleNextScreenshot}
+                  aria-label="Next screenshot"
+                  className="absolute right-2.5 sm:right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 text-zinc-200 border border-zinc-700/80 opacity-80 hover:opacity-100 hover:bg-zinc-800 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              )}
+
+              {/* Top-Right Badge: Screenshot Position */}
+              <div className="absolute top-3 right-3 z-10 rounded-md bg-zinc-900/80 px-2.5 py-1 text-[11px] font-mono font-medium text-zinc-200 border border-zinc-700/70 backdrop-blur-xs shadow-sm">
+                <span>
+                  {activeScreenshot + 1} / {screenshots.length}
+                </span>
+              </div>
+            </div>
+
+            {/* Thumbnail Navigation Strip */}
+            {screenshots.length > 1 && (
+              <div
+                className="flex gap-2 overflow-x-auto pb-1"
+                aria-label="Project screenshots thumbnail selector"
+              >
+                {screenshots.map((shot, index) => {
+                  const shotUrl = typeof shot === "string" ? shot : shot?.url;
+                  return (
+                    <button
+                      key={shot?.publicId || shotUrl || index}
+                      type="button"
+                      onClick={() => setActiveScreenshot(index)}
+                      aria-label={`Select screenshot ${index + 1}`}
+                      aria-current={activeScreenshot === index ? "true" : undefined}
+                      className={`relative h-14 w-22 shrink-0 overflow-hidden rounded-lg border bg-surface-secondary transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                        activeScreenshot === index
+                          ? "border-primary ring-2 ring-primary/30 opacity-100"
+                          : "border-border opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      <img
+                        src={shotUrl}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         ) : (
           <div className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
@@ -626,32 +703,14 @@ function AdminProjectDetailPage() {
         error={featureError}
       />
 
-      {/* Screenshot Lightbox Modal */}
-      {previewImage && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Screenshot lightbox"
-          onClick={() => setPreviewImage(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/70 backdrop-blur-xs p-4 animate-in fade-in duration-150"
-        >
-          <div className="relative max-w-4xl max-h-[85vh] overflow-hidden rounded-2xl bg-surface border border-border shadow-nexora-lg">
-            <button
-              type="button"
-              onClick={() => setPreviewImage(null)}
-              aria-label="Close image preview"
-              className="absolute right-3 top-3 z-10 rounded-full bg-foreground/60 p-1.5 text-surface hover:bg-foreground/80 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <img
-              src={previewImage}
-              alt="Expanded preview"
-              className="max-h-[80vh] w-auto object-contain"
-            />
-          </div>
-        </div>
-      )}
+      {/* Fullscreen Image Lightbox Modal */}
+      <ImageViewerModal
+        isOpen={isViewerOpen}
+        onClose={() => setIsViewerOpen(false)}
+        images={screenshots}
+        initialIndex={activeScreenshot}
+        title={project.title}
+      />
     </div>
   );
 }

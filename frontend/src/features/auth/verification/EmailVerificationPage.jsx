@@ -61,7 +61,7 @@ function EmailVerificationPage() {
 
     try {
       await resendVerificationEmail(trimmedEmail);
-      setResendSuccess("Verification email sent successfully");
+      setResendSuccess("Verification email sent successfully. Please check your inbox.");
       setResendEmail("");
     } catch (err) {
       setResendError(err.message || "Something went wrong. Please try again.");
@@ -109,7 +109,7 @@ function EmailVerificationPage() {
             </p>
             <div className="mt-6 border-t border-border pt-6">
               <Link to="/login" className="block w-full">
-                <Button variant="primary" size="md" className="w-full justify-center">
+                <Button variant="primary" size="md" className="w-full justify-center shadow-nexora-sm">
                   Go to Login
                 </Button>
               </Link>
@@ -133,7 +133,10 @@ function EmailVerificationPage() {
 
             {/* Resend Success Alert */}
             {resendSuccess && (
-              <div className="mt-5 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 p-3.5 text-xs font-medium text-success-700">
+              <div
+                role="status"
+                className="mt-5 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 p-3.5 text-xs font-medium text-success-700"
+              >
                 <Check className="h-4 w-4 shrink-0 text-success-600" />
                 <span>{resendSuccess}</span>
               </div>
@@ -141,7 +144,10 @@ function EmailVerificationPage() {
 
             {/* Resend Error Alert */}
             {resendError && (
-              <div className="mt-5 flex items-start gap-2 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700">
+              <div
+                role="alert"
+                className="mt-5 flex items-start gap-2 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
+              >
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-500" />
                 <span>{resendError}</span>
               </div>
@@ -162,11 +168,21 @@ function EmailVerificationPage() {
                   type="email"
                   autoComplete="email"
                   value={resendEmail}
-                  onChange={(e) => setResendEmail(e.target.value)}
+                  onChange={(e) => {
+                    setResendEmail(e.target.value);
+                    if (resendError) setResendError("");
+                  }}
                   disabled={isResending}
+                  aria-invalid={resendError ? "true" : undefined}
+                  aria-describedby={resendError ? "resendEmail-error" : undefined}
                   className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   placeholder="your.email@example.com"
                 />
+                {resendError && (
+                  <p id="resendEmail-error" className="mt-1 text-xs font-medium text-danger-600">
+                    {resendError}
+                  </p>
+                )}
               </div>
 
               <Button
@@ -175,7 +191,7 @@ function EmailVerificationPage() {
                 size="md"
                 loading={isResending}
                 disabled={isResending}
-                className="w-full justify-center"
+                className="w-full justify-center shadow-nexora-sm"
               >
                 Resend Verification Email
               </Button>

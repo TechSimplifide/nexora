@@ -144,7 +144,10 @@ function LoginPage() {
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm sm:p-8">
         {/* Server Error Alert */}
         {serverError && (
-          <div className="mb-5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700">
+          <div
+            role="alert"
+            className="mb-5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
+          >
             <div className="flex items-start gap-2.5">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-500" />
               <div className="flex-1">
@@ -177,7 +180,10 @@ function LoginPage() {
 
         {/* Resend Success Alert */}
         {resendSuccess && (
-          <div className="mb-5 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 p-3.5 text-xs font-medium text-success-700">
+          <div
+            role="status"
+            className="mb-5 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 p-3.5 text-xs font-medium text-success-700"
+          >
             <Check className="h-4 w-4 shrink-0 text-success-600" />
             <span>{resendSuccess}</span>
           </div>
@@ -185,7 +191,10 @@ function LoginPage() {
 
         {/* Resend Error Alert */}
         {resendError && (
-          <div className="mb-5 flex items-start gap-2 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700">
+          <div
+            role="alert"
+            className="mb-5 flex items-start gap-2 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
+          >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-500" />
             <span>{resendError}</span>
           </div>
@@ -205,13 +214,17 @@ function LoginPage() {
               value={formData.email}
               onChange={handleChange}
               disabled={isSubmitting}
+              aria-invalid={errors.email ? "true" : undefined}
+              aria-describedby={errors.email ? "email-error" : undefined}
               className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 errors.email ? "border-danger-500" : "border-border hover:border-border-strong"
               }`}
               placeholder="name@example.com"
             />
             {errors.email && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.email}</p>
+              <p id="email-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.email}
+              </p>
             )}
           </div>
 
@@ -229,6 +242,8 @@ function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 disabled={isSubmitting}
+                aria-invalid={errors.password ? "true" : undefined}
+                aria-describedby={errors.password ? "password-error" : undefined}
                 className={`w-full rounded-md border bg-surface px-3 py-2 pr-10 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   errors.password ? "border-danger-500" : "border-border hover:border-border-strong"
                 }`}
@@ -237,14 +252,16 @@ function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-xs font-medium text-danger-600">{errors.password}</p>
+              <p id="password-error" className="mt-1 text-xs font-medium text-danger-600">
+                {errors.password}
+              </p>
             )}
           </div>
 
@@ -256,7 +273,7 @@ function LoginPage() {
               size="md"
               loading={isSubmitting}
               disabled={isSubmitting}
-              className="w-full justify-center"
+              className="w-full justify-center shadow-nexora-sm"
             >
               Login
             </Button>

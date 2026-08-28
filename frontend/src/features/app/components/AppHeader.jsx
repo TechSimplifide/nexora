@@ -18,7 +18,7 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "@/services/notification.service";
-import NotificationCard from "@/features/student/components/NotificationCard";
+import NotificationCard from "@/components/common/NotificationCard";
 
 const routeTitleMap = {
   "/app/student/dashboard": "Dashboard",

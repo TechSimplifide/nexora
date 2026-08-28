@@ -12,6 +12,8 @@ import {
   Pencil,
   Trash2,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/features/auth/context/AuthContext";
@@ -21,6 +23,7 @@ import {
   deleteProject,
 } from "@/services/project.service";
 import ProjectResourceCard from "@/features/student/components/ProjectResourceCard";
+import ImageViewerModal from "@/components/common/ImageViewerModal";
 import { formatDate } from "@/utils/date";
 
 function StudentProjectDetailPage() {
@@ -32,6 +35,7 @@ function StudentProjectDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Delete Modal State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -226,6 +230,18 @@ function StudentProjectDetailPage() {
   );
   const hasAnyResources = hasGithub || hasDeployedLink || hasSupportingDoc;
 
+  const handlePrevScreenshot = (e) => {
+    e.stopPropagation();
+    if (screenshots.length <= 1) return;
+    setActiveScreenshot((prev) => (prev - 1 + screenshots.length) % screenshots.length);
+  };
+
+  const handleNextScreenshot = (e) => {
+    e.stopPropagation();
+    if (screenshots.length <= 1) return;
+    setActiveScreenshot((prev) => (prev + 1) % screenshots.length);
+  };
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Back Link */}
@@ -316,28 +332,78 @@ function StudentProjectDetailPage() {
           </div>
         </div>
 
-        {/* Screenshots Showcase (if available) */}
+        {/* Uncropped Project Screenshot Gallery */}
         {screenshots.length > 0 && (
           <div className="space-y-3">
-            <div className="overflow-hidden rounded-xl border border-border bg-surface-secondary aspect-video">
+            {/* Main Stage: Uncropped object-contain viewer over neutral dark surface */}
+            <div
+              onClick={() => setIsViewerOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsViewerOpen(true);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`View screenshot ${activeScreenshot + 1} of ${screenshots.length}`}
+              className="group relative overflow-hidden rounded-xl border border-border bg-zinc-950/90 dark:bg-zinc-900/90 flex items-center justify-center min-h-[260px] sm:min-h-[380px] lg:min-h-[420px] max-h-[500px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-xs"
+            >
+              {/* Previous Button (if multiple) */}
+              {screenshots.length > 1 && (
+                <button
+                  type="button"
+                  onClick={handlePrevScreenshot}
+                  aria-label="Previous screenshot"
+                  className="absolute left-2.5 sm:left-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 text-zinc-200 border border-zinc-700/80 opacity-80 hover:opacity-100 hover:bg-zinc-800 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+              )}
+
+              {/* Uncropped Image Display */}
               <img
                 src={screenshots[activeScreenshot]?.url}
                 alt={`${project.title} preview ${activeScreenshot + 1}`}
-                className="h-full w-full object-cover"
+                className="max-h-[460px] w-auto max-w-full object-contain transition-transform duration-200 group-hover:scale-[1.005]"
               />
+
+              {/* Next Button (if multiple) */}
+              {screenshots.length > 1 && (
+                <button
+                  type="button"
+                  onClick={handleNextScreenshot}
+                  aria-label="Next screenshot"
+                  className="absolute right-2.5 sm:right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/80 text-zinc-200 border border-zinc-700/80 opacity-80 hover:opacity-100 hover:bg-zinc-800 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              )}
+
+              {/* Top-Right Badge: Screenshot Position */}
+              <div className="absolute top-3 right-3 z-10 rounded-md bg-zinc-900/80 px-2.5 py-1 text-[11px] font-mono font-medium text-zinc-200 border border-zinc-700/70 backdrop-blur-xs shadow-sm">
+                <span>
+                  {activeScreenshot + 1} / {screenshots.length}
+                </span>
+              </div>
             </div>
 
+            {/* Thumbnail Navigation Strip */}
             {screenshots.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Screenshots thumbnail list">
+              <div
+                className="flex gap-2 overflow-x-auto pb-1"
+                aria-label="Project screenshots thumbnail selector"
+              >
                 {screenshots.map((shot, index) => (
                   <button
                     key={shot.publicId || shot.url || index}
                     type="button"
                     onClick={() => setActiveScreenshot(index)}
-                    aria-label={`View screenshot ${index + 1}`}
-                    className={`relative aspect-video w-20 shrink-0 overflow-hidden rounded-lg border transition-all ${
+                    aria-label={`Select screenshot ${index + 1}`}
+                    aria-current={activeScreenshot === index ? "true" : undefined}
+                    className={`relative h-14 w-22 shrink-0 overflow-hidden rounded-lg border bg-surface-secondary transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                       activeScreenshot === index
-                        ? "border-primary ring-2 ring-primary/20"
+                        ? "border-primary ring-2 ring-primary/30 opacity-100"
                         : "border-border opacity-70 hover:opacity-100"
                     }`}
                   >
@@ -494,6 +560,15 @@ function StudentProjectDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Fullscreen Image Lightbox Modal */}
+      <ImageViewerModal
+        isOpen={isViewerOpen}
+        onClose={() => setIsViewerOpen(false)}
+        images={screenshots}
+        initialIndex={activeScreenshot}
+        title={project.title}
+      />
 
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
