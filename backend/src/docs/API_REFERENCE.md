@@ -54,6 +54,8 @@ All API errors return a consistent `ApiError` envelope:
 8. [AI Project Recommendations](#8-ai-project-recommendations)
 9. [Notifications](#9-notifications)
 10. [Dashboards & Analytics](#10-dashboards--analytics)
+11. [AI Proposal Review](#11-ai-proposal-review)
+12. [Project Review Criteria](#12-project-review-criteria)
 
 ---
 
@@ -1535,5 +1537,426 @@ Returns personal project contribution counts, access requests sent/received, pro
       }
     ]
   }
+}
+```
+
+
+---
+
+## 11. AI Proposal Review
+
+### POST `/api/v1/ai-proposal-review/:id/analyze`
+
+Executes an AI-assisted evaluation of a pending student project proposal PDF abstract against the college's configured standard and custom review criteria using Google Gemini.
+
+> **Important Governance Principle:**
+> AI recommendations are strictly advisory assistance. Nexora AI evaluates proposal feasibility, technical depth, and institutional criteria compliance, but the college faculty / administrator retains exclusive authority over final approval or rejection decisions (`APPROVE` or `REJECT`).
+
+- **Authentication:** Required (`verifyJWT`)
+- **Role:** `admin`
+- **Tenant Scope:** Scoped to proposals belonging to the administrator's college
+- **Preconditions:** Proposal must exist, belong to admin's college, and be in `pending` status.
+- **Content-Type:** `application/json`
+
+#### URL Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string (MongoDB ObjectId) | Yes | Unique identifier of the pending project proposal to evaluate |
+
+#### Request Body
+
+None (empty body).
+
+#### AI Evaluation Processing Details
+
+1. Retrieves the proposal and its attached PDF abstract from Cloudinary storage.
+2. Retrieves the college's active `ProjectReviewCriteria` configuration (both standard and custom criteria).
+3. Evaluates all **enabled** criteria individually:
+   - `PASS`: The proposal clearly satisfies the criterion.
+   - `PARTIAL`: The proposal satisfies some aspects but has noticeable weaknesses or missing details.
+   - `FAIL`: The proposal clearly does not satisfy the criterion.
+4. Generates an overall recommendation:
+   - `APPROVE`: The proposal satisfies institutional expectations and contains no critical blockers.
+   - `NEEDS_IMPROVEMENT`: The proposal has potential but requires tangible improvements in scope, technical depth, or feasibility before approval.
+   - `REJECT`: The proposal contains fundamental deficiencies or fails critical required criteria.
+5. Produces a confidence score between `0.0` and `1.0`, concrete evaluation reasons, actionable improvement suggestions, and a complete criterion-by-criterion breakdown.
+
+#### Success Response (`200 OK`)
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Project proposal analyzed successfully",
+  "data": {
+    "recommendation": "NEEDS_IMPROVEMENT",
+    "confidenceScore": 0.87,
+    "summary": "The proposal presents a strong problem domain but requires greater technical depth in backend architecture and a clear milestone for a working prototype.",
+    "reasons": [
+      "The problem statement is well-defined and relevant to campus needs.",
+      "The technical architecture lacks detail on database indexing and scale."
+    ],
+    "improvementSuggestions": [
+      "Add architectural block diagram with concrete microservice boundaries.",
+      "Include a timeline milestone for testing a functional prototype."
+    ],
+    "criteriaBreakdown": [
+      {
+        "key": "clear_problem",
+        "name": "Clear Problem",
+        "result": "PASS",
+        "reason": "The proposal clearly identifies the problem and target audience."
+      },
+      {
+        "key": "technical_depth",
+        "name": "Technical Depth",
+        "result": "PARTIAL",
+        "reason": "Architecture requires more technical substance for a final-year project."
+      },
+      {
+        "key": "working_prototype",
+        "name": "Working Prototype",
+        "result": "FAIL",
+        "reason": "No roadmap or deliverable timeline is provided for a functioning prototype."
+      },
+      {
+        "key": "academic_value",
+        "name": "Academic Value",
+        "result": "PASS",
+        "reason": "The project demonstrates substantial pedagogical value for final-year students."
+      }
+    ]
+  }
+}
+```
+
+#### Error Responses
+
+##### `400 Bad Request`
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Only pending project proposals can be analyzed",
+  "errors": []
+}
+```
+
+##### `401 Unauthorized`
+```json
+{
+  "statusCode": 401,
+  "success": false,
+  "message": "Unauthorized request",
+  "errors": []
+}
+```
+
+##### `403 Forbidden`
+```json
+{
+  "statusCode": 403,
+  "success": false,
+  "message": "Access denied",
+  "errors": []
+}
+```
+
+##### `404 Not Found`
+```json
+{
+  "statusCode": 404,
+  "success": false,
+  "message": "Project proposal not found",
+  "errors": []
+}
+```
+
+##### `502 Bad Gateway`
+```json
+{
+  "statusCode": 502,
+  "success": false,
+  "message": "Invalid response received from AI proposal review service",
+  "errors": []
+}
+```
+
+##### `503 Service Unavailable`
+```json
+{
+  "statusCode": 503,
+  "success": false,
+  "message": "AI proposal review service is currently unavailable",
+  "errors": []
+}
+```
+
+---
+
+## 12. Project Review Criteria
+
+Institutional criteria settings that govern what Google Gemini evaluates during AI-assisted proposal reviews.
+
+### GET `/api/v1/project-review-criteria`
+
+Fetches the college's review criteria configuration. If no record exists yet, automatically initializes and returns the default standard criteria set.
+
+- **Authentication:** Required (`verifyJWT`)
+- **Role:** `admin`
+- **Tenant Scope:** Scoped to the administrator's college
+
+#### Success Response (`200 OK`)
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Project review criteria fetched successfully",
+  "data": {
+    "_id": "67be08a2b3c4d5e6f7a8b9c7",
+    "college": "67be01a2b3c4d5e6f7a8b9c0",
+    "standardCriteria": [
+      {
+        "key": "clear_problem",
+        "name": "Clear Problem",
+        "description": "The proposal clearly identifies a specific and meaningful problem.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "problem_relevance",
+        "name": "Problem Relevance",
+        "description": "The proposed project addresses a relevant and meaningful problem.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "scope_feasibility",
+        "name": "Scope & Feasibility",
+        "description": "The project scope is realistic for the team size and academic timeline.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "technical_depth",
+        "name": "Technical Depth",
+        "description": "The project contains sufficient technical depth for a final-year academic project.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "originality",
+        "name": "Originality",
+        "description": "The proposal demonstrates sufficient originality and is not merely a basic clone of a common system.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "solution_quality",
+        "name": "Solution Quality",
+        "description": "The proposed solution reasonably addresses the identified problem.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "academic_value",
+        "name": "Academic Value",
+        "description": "The project provides sufficient technical and academic value for a final-year project.",
+        "enabled": true,
+        "required": true
+      }
+    ],
+    "customCriteria": [
+      {
+        "_id": "67be09a2b3c4d5e6f7a8b9c8",
+        "name": "Working Prototype",
+        "description": "The project should demonstrate a functional working prototype.",
+        "enabled": true,
+        "required": true,
+        "createdAt": "2026-08-28T10:00:00.000Z",
+        "updatedAt": "2026-08-28T10:00:00.000Z"
+      }
+    ],
+    "autoReview": {
+      "enabled": false,
+      "confidenceThreshold": 0.9
+    },
+    "createdAt": "2026-08-28T10:00:00.000Z",
+    "updatedAt": "2026-08-28T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### PUT `/api/v1/project-review-criteria`
+
+Updates the college's review criteria configuration. Allows enabling/disabling standard criteria, marking them as required/optional, adding/updating/removing custom criteria, and configuring automated review thresholds.
+
+- **Authentication:** Required (`verifyJWT`)
+- **Role:** `admin`
+- **Tenant Scope:** Scoped to the administrator's college
+- **Content-Type:** `application/json`
+
+#### Validation Rules
+
+- `standardCriteria`:
+  - Required array with at least 1 criterion.
+  - Must include **all 7 predefined keys**: `clear_problem`, `problem_relevance`, `scope_feasibility`, `technical_depth`, `originality`, `solution_quality`, `academic_value`.
+  - Duplicate standard keys are rejected.
+  - Each item requires: `key` (enum), `enabled` (boolean), `required` (boolean).
+- `customCriteria`:
+  - Array of up to **20 custom criteria**.
+  - `name`: String, minimum 3 characters, maximum 100 characters.
+  - `description`: String, minimum 10 characters, maximum 500 characters.
+  - `enabled`: Boolean.
+  - `required`: Boolean.
+- `autoReview`:
+  - `enabled`: Boolean.
+  - `confidenceThreshold`: Number between `0.5` and `1.0`.
+
+#### Request Body
+
+```json
+{
+  "standardCriteria": [
+    { "key": "clear_problem", "enabled": true, "required": true },
+    { "key": "problem_relevance", "enabled": true, "required": true },
+    { "key": "scope_feasibility", "enabled": true, "required": true },
+    { "key": "technical_depth", "enabled": true, "required": true },
+    { "key": "originality", "enabled": true, "required": true },
+    { "key": "solution_quality", "enabled": true, "required": true },
+    { "key": "academic_value", "enabled": true, "required": true }
+  ],
+  "customCriteria": [
+    {
+      "name": "Working Prototype",
+      "description": "The project should demonstrate a functional working prototype.",
+      "enabled": true,
+      "required": true
+    }
+  ],
+  "autoReview": {
+    "enabled": false,
+    "confidenceThreshold": 0.9
+  }
+}
+```
+
+#### Success Response (`200 OK`)
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Project review criteria updated successfully",
+  "data": {
+    "_id": "67be08a2b3c4d5e6f7a8b9c7",
+    "college": "67be01a2b3c4d5e6f7a8b9c0",
+    "standardCriteria": [
+      {
+        "key": "clear_problem",
+        "name": "Clear Problem",
+        "description": "The proposal clearly identifies a specific and meaningful problem.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "problem_relevance",
+        "name": "Problem Relevance",
+        "description": "The proposed project addresses a relevant and meaningful problem.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "scope_feasibility",
+        "name": "Scope & Feasibility",
+        "description": "The project scope is realistic for the team size and academic timeline.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "technical_depth",
+        "name": "Technical Depth",
+        "description": "The project contains sufficient technical depth for a final-year academic project.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "originality",
+        "name": "Originality",
+        "description": "The proposal demonstrates sufficient originality and is not merely a basic clone of a common system.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "solution_quality",
+        "name": "Solution Quality",
+        "description": "The proposed solution reasonably addresses the identified problem.",
+        "enabled": true,
+        "required": true
+      },
+      {
+        "key": "academic_value",
+        "name": "Academic Value",
+        "description": "The project provides sufficient technical and academic value for a final-year project.",
+        "enabled": true,
+        "required": true
+      }
+    ],
+    "customCriteria": [
+      {
+        "_id": "67be09a2b3c4d5e6f7a8b9c8",
+        "name": "Working Prototype",
+        "description": "The project should demonstrate a functional working prototype.",
+        "enabled": true,
+        "required": true,
+        "createdAt": "2026-08-28T10:00:00.000Z",
+        "updatedAt": "2026-08-28T10:00:00.000Z"
+      }
+    ],
+    "autoReview": {
+      "enabled": false,
+      "confidenceThreshold": 0.9
+    },
+    "createdAt": "2026-08-28T10:00:00.000Z",
+    "updatedAt": "2026-08-28T10:00:00.000Z"
+  }
+}
+```
+
+#### Error Responses
+
+##### `400 Bad Request`
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Validation failed",
+  "errors": {
+    "customCriteria": ["Custom criterion description must be at least 10 characters"]
+  }
+}
+```
+
+##### `401 Unauthorized`
+```json
+{
+  "statusCode": 401,
+  "success": false,
+  "message": "Unauthorized request",
+  "errors": []
+}
+```
+
+##### `403 Forbidden`
+```json
+{
+  "statusCode": 403,
+  "success": false,
+  "message": "Access denied",
+  "errors": []
 }
 ```

@@ -11,7 +11,7 @@ info:
     real-time notification tracking, and analytical dashboards for students and administrators.
 
 servers:
-  - url: http://localhost:3000/api/v1
+  - url: http://localhost:4000/api/v1
     description: Local Development Server
   - url: /api/v1
     description: Current Host Relative Base URL
@@ -37,6 +37,10 @@ tags:
     description: User notification delivery, read state tracking, and deletion
   - name: Dashboard
     description: Role-specific analytical metrics and summary feeds for students and admins
+  - name: AI Proposal Review
+    description: AI-assisted evaluation of student project proposal PDF abstracts against institutional review criteria
+  - name: Project Review Criteria
+    description: Institutional criteria configuration for standard and custom proposal evaluations
 
 paths:
   /healthcheck:
@@ -2180,6 +2184,151 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         "403":
           $ref: "#/components/responses/ForbiddenError"
+
+
+  /ai-proposal-review/{id}/analyze:
+    post:
+      tags:
+        - AI Proposal Review
+      summary: Analyze Project Proposal with AI
+      description: >
+        Executes an AI-assisted evaluation of a pending project proposal PDF abstract against the college's configured standard and custom review criteria using Google Gemini. Advisory only; final decisions remain with faculty.
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Pending proposal ID
+      responses:
+        "200":
+          description: Project proposal analyzed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Only pending project proposals can be analyzed
+        "401":
+          description: Unauthorized request
+        "403":
+          description: Access denied (Admin only)
+        "404":
+          description: Proposal or criteria not found
+        "502":
+          description: Invalid response received from AI review service
+        "503":
+          description: AI proposal review service is currently unavailable
+
+  /project-review-criteria:
+    get:
+      tags:
+        - Project Review Criteria
+      summary: Get College Project Review Criteria
+      description: Fetches the college's review criteria configuration, initializing default criteria if none exists.
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Project review criteria fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "401":
+          description: Unauthorized request
+        "403":
+          description: Access denied (Admin only)
+    put:
+      tags:
+        - Project Review Criteria
+      summary: Update College Project Review Criteria
+      description: Updates the college's standard and custom review criteria configuration for AI proposal evaluations.
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - standardCriteria
+                - customCriteria
+              properties:
+                standardCriteria:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - key
+                      - enabled
+                      - required
+                    properties:
+                      key:
+                        type: string
+                        enum:
+                          - clear_problem
+                          - problem_relevance
+                          - scope_feasibility
+                          - technical_depth
+                          - originality
+                          - solution_quality
+                          - academic_value
+                      enabled:
+                        type: boolean
+                      required:
+                        type: boolean
+                customCriteria:
+                  type: array
+                  maxItems: 20
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - description
+                      - enabled
+                      - required
+                    properties:
+                      name:
+                        type: string
+                        minLength: 3
+                        maxLength: 100
+                      description:
+                        type: string
+                        minLength: 10
+                        maxLength: 500
+                      enabled:
+                        type: boolean
+                      required:
+                        type: boolean
+                autoReview:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                    confidenceThreshold:
+                      type: number
+                      minimum: 0.5
+                      maximum: 1.0
+      responses:
+        "200":
+          description: Project review criteria updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        "400":
+          description: Validation failed
+        "401":
+          description: Unauthorized request
+        "403":
+          description: Access denied (Admin only)
 
 components:
   securitySchemes:
