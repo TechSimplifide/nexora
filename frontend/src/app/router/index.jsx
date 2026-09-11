@@ -49,6 +49,9 @@ const StudentFeaturedProjectsPage = lazy(
 const StudentProposalsPage = lazy(
   () => import("@/features/student/StudentProposalsPage")
 );
+const StudentCreateProposalPage = lazy(
+  () => import("@/features/student/StudentCreateProposalPage")
+);
 const StudentAccessRequestsPage = lazy(
   () => import("@/features/student/StudentAccessRequestsPage")
 );
@@ -57,6 +60,9 @@ const StudentProjectRequestsPage = lazy(
 );
 const StudentRecommendationsPage = lazy(
   () => import("@/features/student/StudentRecommendationsPage")
+);
+const StudentCreateRecommendationPage = lazy(
+  () => import("@/features/student/StudentCreateRecommendationPage")
 );
 const StudentNotificationsPage = lazy(
   () => import("@/features/student/StudentNotificationsPage")
@@ -202,6 +208,10 @@ export const router = createBrowserRouter([
                 element: withSuspense(StudentProposalsPage),
               },
               {
+                path: "student/proposals/new",
+                element: withSuspense(StudentCreateProposalPage),
+              },
+              {
                 path: "student/access-requests",
                 element: withSuspense(StudentAccessRequestsPage),
               },
@@ -212,6 +222,10 @@ export const router = createBrowserRouter([
               {
                 path: "student/recommendations",
                 element: withSuspense(StudentRecommendationsPage),
+              },
+              {
+                path: "student/recommendations/new",
+                element: withSuspense(StudentCreateRecommendationPage),
               },
               {
                 path: "student/notifications",

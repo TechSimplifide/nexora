@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import {
   Sparkles,
   AlertCircle,
@@ -14,15 +15,11 @@ import {
   deleteStudentRecommendation,
 } from "@/services/recommendation.service";
 import ProjectRecommendationCard from "@/features/student/components/ProjectRecommendationCard";
-import ProjectRecommendationModal from "@/features/student/components/ProjectRecommendationModal";
 
 function StudentRecommendationsPage() {
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Deletion Confirmation State
   const [recommendationToDelete, setRecommendationToDelete] = useState(null);
@@ -80,16 +77,6 @@ function StudentRecommendationsPage() {
     };
   }, []);
 
-  // Handle Successful Generation
-  const handleGenerationSuccess = (newRecommendation) => {
-    if (newRecommendation) {
-      setRecommendations((prev) => [newRecommendation, ...prev]);
-      setFeedbackBanner({
-        type: "success",
-        message: "New project recommendation generated successfully!",
-      });
-    }
-  };
 
   // Handle Confirmed Deletion
   const handleConfirmDelete = async () => {
@@ -135,16 +122,20 @@ function StudentRecommendationsPage() {
           </p>
         </div>
 
-        <Button
-          type="button"
-          variant="primary"
-          size="md"
-          onClick={() => setIsModalOpen(true)}
-          className="gap-2 font-semibold shadow-nexora-sm self-start sm:self-auto shrink-0"
+        <Link
+          to="/app/student/recommendations/new"
+          className="self-start sm:self-auto shrink-0"
         >
-          <Sparkles className="h-4 w-4" aria-hidden="true" />
-          <span>Get Recommendation</span>
-        </Button>
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            className="gap-2 font-semibold shadow-nexora-sm"
+          >
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+            <span>Get Recommendation</span>
+          </Button>
+        </Link>
       </div>
 
       {/* Feedback Banner */}
@@ -231,15 +222,17 @@ function StudentRecommendationsPage() {
             Tell Nexora about your skills and project preferences to get a project idea tailored to you.
           </p>
           <div className="mt-6">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={() => setIsModalOpen(true)}
-              className="gap-2 font-semibold"
-            >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              <span>Get Recommendation</span>
-            </Button>
+            <Link to="/app/student/recommendations/new">
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                className="gap-2 font-semibold"
+              >
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                <span>Get Recommendation</span>
+              </Button>
+            </Link>
           </div>
         </div>
       ) : (
@@ -257,13 +250,6 @@ function StudentRecommendationsPage() {
           ))}
         </div>
       )}
-
-      {/* Generation Form Modal */}
-      <ProjectRecommendationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={handleGenerationSuccess}
-      />
 
       {/* Delete Confirmation Modal */}
       {recommendationToDelete && (

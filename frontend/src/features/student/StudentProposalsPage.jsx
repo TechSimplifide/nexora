@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
 import {
   FileText,
   Plus,
@@ -106,12 +107,6 @@ function StudentProposalsPage() {
     );
   }, [proposals, activeFilter]);
 
-  // Open Create Modal
-  const handleOpenCreateModal = () => {
-    setProposalToEdit(null);
-    setIsModalOpen(true);
-  };
-
   // Open Edit Modal for Rejected Proposal
   const handleOpenEditModal = (proposal) => {
     setProposalToEdit(proposal);
@@ -177,16 +172,20 @@ function StudentProposalsPage() {
           </p>
         </div>
 
-        <Button
-          type="button"
-          variant="primary"
-          size="md"
-          onClick={handleOpenCreateModal}
-          className="gap-2 font-semibold shadow-nexora-sm self-start sm:self-auto"
+        <Link
+          to="/app/student/proposals/new"
+          className="self-start sm:self-auto shrink-0"
         >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          <span>New Proposal</span>
-        </Button>
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            className="gap-2 font-semibold shadow-nexora-sm"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            <span>New Proposal</span>
+          </Button>
+        </Link>
       </div>
 
       {/* Feedback Banner */}
@@ -335,15 +334,17 @@ function StudentProposalsPage() {
             Submit your first project proposal and track its approval here.
           </p>
           <div className="mt-6">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={handleOpenCreateModal}
-              className="gap-2 font-semibold"
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              <span>New Proposal</span>
-            </Button>
+            <Link to="/app/student/proposals/new">
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                className="gap-2 font-semibold"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span>New Proposal</span>
+              </Button>
+            </Link>
           </div>
         </div>
       ) : filteredProposals.length === 0 ? (
