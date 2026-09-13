@@ -74,7 +74,7 @@ describe("Auth API", () => {
       mockUserCreate.mockResolvedValue({
         _id: "student123",
         fullName: "John Doe",
-        email: "john@example.com",
+        email: "john@gmail.com",
         role: "student",
       });
 
@@ -82,7 +82,7 @@ describe("Auth API", () => {
         .post("/api/v1/auth/student/register")
         .send({
           fullName: "John Doe",
-          email: "john@example.com",
+          email: "john@gmail.com",
           password: "password123",
           collegeCode: "NEX001",
         });
@@ -96,7 +96,7 @@ describe("Auth API", () => {
       expect(response.body.data).toEqual({
         id: "student123",
         fullName: "John Doe",
-        email: "john@example.com",
+        email: "john@gmail.com",
         role: "student",
         college: {
           id: "college123",
@@ -109,14 +109,14 @@ describe("Auth API", () => {
     test("should return 409 if user already exists", async () => {
       mockUserFindOne.mockResolvedValue({
         _id: "existing123",
-        email: "john@example.com",
+        email: "john@gmail.com",
       });
 
       const response = await request(app)
         .post("/api/v1/auth/student/register")
         .send({
           fullName: "John Doe",
-          email: "john@example.com",
+          email: "john@gmail.com",
           password: "password123",
           collegeCode: "NEX001",
         });
@@ -138,7 +138,7 @@ describe("Auth API", () => {
         .post("/api/v1/auth/student/register")
         .send({
           fullName: "John Doe",
-          email: "john@example.com",
+          email: "john@gmail.com",
           password: "password123",
           collegeCode: "INVALID",
         });
@@ -167,7 +167,7 @@ describe("POST /api/v1/auth/login", () => {
     const mockLoginUser = {
       _id: "student123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       college: "college123",
       isVerified: true,
@@ -185,7 +185,7 @@ describe("POST /api/v1/auth/login", () => {
     });
 
     const response = await request(app).post("/api/v1/auth/login").send({
-      email: "john@example.com",
+      email: "john@gmail.com",
       password: "password123",
     });
 
@@ -196,7 +196,7 @@ describe("POST /api/v1/auth/login", () => {
     expect(response.body.data.user).toEqual({
       id: "student123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       college: "college123",
     });
@@ -222,7 +222,7 @@ describe("POST /api/v1/auth/login", () => {
     });
 
     const response = await request(app).post("/api/v1/auth/login").send({
-      email: "unknown@example.com",
+      email: "unknown@gmail.com",
       password: "password123",
     });
 
@@ -241,7 +241,7 @@ describe("POST /api/v1/auth/login", () => {
     });
 
     const response = await request(app).post("/api/v1/auth/login").send({
-      email: "john@example.com",
+      email: "john@gmail.com",
       password: "wrong-password",
     });
 
@@ -265,7 +265,7 @@ describe("POST /api/v1/auth/login", () => {
     });
 
     const response = await request(app).post("/api/v1/auth/login").send({
-      email: "john@example.com",
+      email: "john@gmail.com",
       password: "password123",
     });
 
@@ -293,7 +293,7 @@ describe("POST /api/v1/auth/refresh-token", () => {
     const mockRefreshUser = {
       _id: "student123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       college: "college123",
       refreshToken: "old-refresh-token",
@@ -324,7 +324,7 @@ describe("POST /api/v1/auth/refresh-token", () => {
     expect(response.body.data.user).toEqual({
       id: "student123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       college: "college123",
     });
@@ -465,7 +465,7 @@ describe("GET /api/v1/auth/me", () => {
     const mockUser = {
       _id: "student123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       isVerified: true,
       avatar: {
@@ -504,7 +504,7 @@ describe("GET /api/v1/auth/me", () => {
     expect(response.body.data).toEqual({
       id: "student123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       isVerified: true,
       avatar: {
@@ -543,7 +543,7 @@ describe("GET /api/v1/auth/verify-email/:token", () => {
     const mockUser = {
       _id: "student123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       isVerified: false,
       emailVerificationToken: "hashed-token",
       emailVerificationExpiry: Date.now() + 20 * 60 * 1000,
@@ -594,7 +594,7 @@ describe("POST /api/v1/auth/resend-verification-email", () => {
     const response = await request(app)
       .post("/api/v1/auth/resend-verification-email")
       .send({
-        email: "unknown@example.com",
+        email: "unknown@gmail.com",
       });
 
     expect(response.status).toBe(404);
@@ -612,7 +612,7 @@ describe("POST /api/v1/auth/resend-verification-email", () => {
     const response = await request(app)
       .post("/api/v1/auth/resend-verification-email")
       .send({
-        email: "john@example.com",
+        email: "john@gmail.com",
       });
 
     expect(response.status).toBe(400);
@@ -622,7 +622,7 @@ describe("POST /api/v1/auth/resend-verification-email", () => {
 
   test("should resend verification email successfully", async () => {
     const mockUser = {
-      email: "john@example.com",
+      email: "john@gmail.com",
       fullName: "John Doe",
       isVerified: false,
 
@@ -641,7 +641,7 @@ describe("POST /api/v1/auth/resend-verification-email", () => {
     const response = await request(app)
       .post("/api/v1/auth/resend-verification-email")
       .send({
-        email: "john@example.com",
+        email: "john@gmail.com",
       });
 
     expect(response.status).toBe(200);

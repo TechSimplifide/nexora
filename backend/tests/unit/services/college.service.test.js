@@ -93,7 +93,7 @@ describe("registerCollegeService", () => {
     const mockAdmin = {
       _id: "admin123",
       fullName: "John Doe",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
       role: "admin",
       isVerified: false,
     };
@@ -106,7 +106,7 @@ describe("registerCollegeService", () => {
     const result = await registerCollegeService({
       collegeName: "Nexora College",
       adminName: "John Doe",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
       password: "password123",
     });
 
@@ -115,7 +115,7 @@ describe("registerCollegeService", () => {
       admin: {
         id: "admin123",
         fullName: "John Doe",
-        email: "admin@example.com",
+        email: "admin@gmail.com",
         role: "admin",
         isVerified: false,
       },
@@ -145,7 +145,7 @@ describe("registerCollegeService", () => {
       [
         {
           fullName: "John Doe",
-          email: "admin@example.com",
+          email: "admin@gmail.com",
           password: "password123",
           role: "admin",
           college: "college123",
@@ -159,7 +159,7 @@ describe("registerCollegeService", () => {
     );
 
     expect(mockSendVerificationEmail).toHaveBeenCalledWith({
-      to: "admin@example.com",
+      to: "admin@gmail.com",
       fullName: "John Doe",
       verificationUrl: expect.stringContaining("/verify-email/plain-token"),
     });
@@ -168,7 +168,7 @@ describe("registerCollegeService", () => {
   test("should throw error if admin email already exists", async () => {
     const existingUser = {
       _id: "existing123",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
     };
 
     mockUserFindOne.mockReturnValue({
@@ -179,7 +179,7 @@ describe("registerCollegeService", () => {
       registerCollegeService({
         collegeName: "Nexora College",
         adminName: "John Doe",
-        email: "admin@example.com",
+        email: "admin@gmail.com",
         password: "password123",
       }),
     ).rejects.toThrow("A college account already exists");
@@ -229,7 +229,7 @@ describe("registerCollegeService", () => {
     const mockAdmin = {
       _id: "admin123",
       fullName: "John Doe",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
       role: "admin",
       isVerified: false,
     };
@@ -242,7 +242,7 @@ describe("registerCollegeService", () => {
     const result = await registerCollegeService({
       collegeName: "Nexora College",
       adminName: "John Doe",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
       password: "password123",
     });
 
@@ -289,7 +289,7 @@ describe("registerCollegeService", () => {
     const mockAdmin = {
       _id: "admin123",
       fullName: "John Doe",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
       role: "admin",
       isVerified: false,
     };
@@ -304,7 +304,7 @@ describe("registerCollegeService", () => {
     const result = await registerCollegeService({
       collegeName: "Nexora College",
       adminName: "John Doe",
-      email: "admin@example.com",
+      email: "admin@gmail.com",
       password: "password123",
     });
 
@@ -313,7 +313,7 @@ describe("registerCollegeService", () => {
       admin: {
         id: "admin123",
         fullName: "John Doe",
-        email: "admin@example.com",
+        email: "admin@gmail.com",
         role: "admin",
         isVerified: false,
       },
@@ -349,7 +349,7 @@ describe("registerCollegeService", () => {
       registerCollegeService({
         collegeName: "Nexora College",
         adminName: "John Doe",
-        email: "admin@example.com",
+        email: "admin@gmail.com",
         password: "password123",
       }),
     ).rejects.toThrow("College creation failed");
@@ -390,7 +390,7 @@ describe("registerCollegeService", () => {
       registerCollegeService({
         collegeName: "Nexora College",
         adminName: "John Doe",
-        email: "admin@example.com",
+        email: "admin@gmail.com",
         password: "password123",
       }),
     ).rejects.toThrow("Admin creation failed");

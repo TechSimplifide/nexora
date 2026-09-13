@@ -3,7 +3,7 @@ import crypto from "crypto";
 
 import { User } from "../models/user.model.js";
 import { College } from "../models/college.model.js";
-
+import { isAllowedPublicEmail } from "../utils/email-validator.js";
 import ApiError from "../utils/api-error.js";
 import { USER_ROLES } from "../constants/roles.js";
 import { sendVerificationEmail, sendWelcomeEmail } from "./email.service.js";
@@ -36,6 +36,10 @@ export const registerStudentService = async ({
 
   if (existingUser) {
     throw new ApiError(409, "A student account already exists");
+  }
+
+  if (!isAllowedPublicEmail(email)) {
+    throw new ApiError(400, "Please use a valid email address.");
   }
 
   // Find college

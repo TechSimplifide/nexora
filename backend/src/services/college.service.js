@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import { College } from "../models/college.model.js";
 
 import generateCollegeCode from "../utils/generateCollegeCode.js";
+import { isAllowedPublicEmail } from "../utils/email-validator.js";
 import ApiError from "../utils/api-error.js";
 import { USER_ROLES } from "../constants/roles.js";
 import { sendVerificationEmail } from "./email.service.js";
@@ -26,6 +27,9 @@ export const registerCollegeService = async ({
         throw new ApiError(409, "A college account already exists");
       }
 
+      if (!isAllowedPublicEmail(email)) {
+        throw new ApiError(400, "Please use a valid email address.");
+      }
 
       // 2. Generate unique college code
       let collegeCode;

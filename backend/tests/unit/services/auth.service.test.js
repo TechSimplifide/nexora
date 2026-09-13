@@ -29,13 +29,13 @@ const mockCollege = {
 const mockStudent = {
   _id: "student123",
   fullName: "John Doe",
-  email: "john@example.com",
+  email: "john@gmail.com",
   role: "student",
 };
 
 const mockRegistrationData = {
   fullName: "John Doe",
-  email: "john@example.com",
+  email: "john@gmail.com",
   password: "password123",
   collegeCode: "NEX001",
 };
@@ -47,14 +47,14 @@ const mockTemporaryToken = {
 };
 
 const mockLoginData = {
-  email: "john@example.com",
+  email: "john@gmail.com",
   password: "password123",
 };
 
 const mockLoginUser = {
   _id: "student123",
   fullName: "John Doe",
-  email: "john@example.com",
+  email: "john@gmail.com",
   role: "student",
   college: "college123",
   isVerified: true,
@@ -264,7 +264,7 @@ describe("loginService", () => {
       user: {
         id: "student123",
         fullName: "John Doe",
-        email: "john@example.com",
+        email: "john@gmail.com",
         role: "student",
         college: "college123",
       },
@@ -282,13 +282,13 @@ describe("loginService", () => {
 
     await expect(
       loginService({
-        email: "unknown@example.com",
+        email: "unknown@gmail.com",
         password: "password123",
       }),
     ).rejects.toThrow("Invalid email or password");
 
     expect(mockUserFindOne).toHaveBeenCalledWith({
-      email: "unknown@example.com",
+      email: "unknown@gmail.com",
     });
 
     expect(mockUserSelect).toHaveBeenCalledWith("+password +refreshToken");
@@ -305,7 +305,7 @@ describe("loginService", () => {
 
     await expect(
       loginService({
-        email: "john@example.com",
+        email: "john@gmail.com",
         password: "wrong-password",
       }),
     ).rejects.toThrow("Invalid email or password");
@@ -331,7 +331,7 @@ describe("loginService", () => {
 
     await expect(
       loginService({
-        email: "john@example.com",
+        email: "john@gmail.com",
         password: "password123",
       }),
     ).rejects.toThrow("Please verify your email first.");
@@ -428,7 +428,7 @@ describe("refreshTokenService", () => {
     const user = {
       _id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       college: "college123",
       refreshToken: "old-refresh-token",
@@ -459,7 +459,7 @@ describe("refreshTokenService", () => {
       user: {
         id: "user123",
         fullName: "John Doe",
-        email: "john@example.com",
+        email: "john@gmail.com",
         role: "student",
         college: "college123",
       },
@@ -522,7 +522,7 @@ describe("getCurrentUserService", () => {
     const user = {
       _id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       isVerified: true,
       avatar: {
@@ -547,7 +547,7 @@ describe("getCurrentUserService", () => {
     expect(result).toEqual({
       id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       isVerified: true,
       avatar: {
@@ -570,7 +570,7 @@ describe("getCurrentUserService", () => {
     const user = {
       _id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       isVerified: true,
       avatar: {
@@ -593,7 +593,7 @@ describe("getCurrentUserService", () => {
     expect(result).toEqual({
       id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       role: "student",
       isVerified: true,
       avatar: {
@@ -629,7 +629,7 @@ describe("verifyEmailService", () => {
     const user = {
       _id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       isVerified: false,
       emailVerificationToken: "hashed-token",
       emailVerificationExpiry: Date.now() + 20 * 60 * 1000,
@@ -654,7 +654,7 @@ describe("verifyEmailService", () => {
     });
 
     expect(mockSendWelcomeEmail).toHaveBeenCalledWith({
-      to: "john@example.com",
+      to: "john@gmail.com",
       fullName: "John Doe",
     });
   });
@@ -663,7 +663,7 @@ describe("verifyEmailService", () => {
     const user = {
       _id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       isVerified: false,
       emailVerificationToken: "hashed-token",
       emailVerificationExpiry: Date.now() + 20 * 60 * 1000,
@@ -695,7 +695,7 @@ describe("verifyEmailService", () => {
     });
 
     expect(mockSendWelcomeEmail).toHaveBeenCalledWith({
-      to: "john@example.com",
+      to: "john@gmail.com",
       fullName: "John Doe",
     });
 
@@ -717,11 +717,11 @@ describe("resendVerificationEmailService", () => {
     mockUserFindOne.mockResolvedValue(null);
 
     await expect(
-      resendVerificationEmailService("unknown@example.com"),
+      resendVerificationEmailService("unknown@gmail.com"),
     ).rejects.toThrow("User not found");
 
     expect(mockUserFindOne).toHaveBeenCalledWith({
-      email: "unknown@example.com",
+      email: "unknown@gmail.com",
     });
 
     expect(mockUserCreate).not.toHaveBeenCalled();
@@ -731,18 +731,18 @@ describe("resendVerificationEmailService", () => {
   test("should throw error if email is already verified", async () => {
     const user = {
       _id: "user123",
-      email: "john@example.com",
+      email: "john@gmail.com",
       isVerified: true,
     };
 
     mockUserFindOne.mockResolvedValue(user);
 
     await expect(
-      resendVerificationEmailService("john@example.com"),
+      resendVerificationEmailService("john@gmail.com"),
     ).rejects.toThrow("Email is already verified");
 
     expect(mockUserFindOne).toHaveBeenCalledWith({
-      email: "john@example.com",
+      email: "john@gmail.com",
     });
 
     expect(mockGenerateTemporaryToken).not.toHaveBeenCalled();
@@ -754,7 +754,7 @@ describe("resendVerificationEmailService", () => {
     const user = {
       _id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       isVerified: false,
 
       generateTemporaryToken: jest.fn(),
@@ -771,10 +771,10 @@ describe("resendVerificationEmailService", () => {
 
     mockSendVerificationEmail.mockResolvedValue(undefined);
 
-    await resendVerificationEmailService("john@example.com");
+    await resendVerificationEmailService("john@gmail.com");
 
     expect(mockUserFindOne).toHaveBeenCalledWith({
-      email: "john@example.com",
+      email: "john@gmail.com",
     });
 
     expect(user.generateTemporaryToken).toHaveBeenCalledTimes(1);
@@ -788,7 +788,7 @@ describe("resendVerificationEmailService", () => {
     });
 
     expect(mockSendVerificationEmail).toHaveBeenCalledWith({
-      to: "john@example.com",
+      to: "john@gmail.com",
       fullName: "John Doe",
       verificationUrl: expect.stringContaining("/verify-email/new-plain-token"),
     });
@@ -798,7 +798,7 @@ describe("resendVerificationEmailService", () => {
     const user = {
       _id: "user123",
       fullName: "John Doe",
-      email: "john@example.com",
+      email: "john@gmail.com",
       isVerified: false,
 
       generateTemporaryToken: jest.fn(),
@@ -821,7 +821,7 @@ describe("resendVerificationEmailService", () => {
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
-    await resendVerificationEmailService("john@example.com");
+    await resendVerificationEmailService("john@gmail.com");
 
     expect(user.emailVerificationToken).toBe("new-hashed-token");
 

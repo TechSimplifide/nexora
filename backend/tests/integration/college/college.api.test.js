@@ -40,7 +40,7 @@ describe("College API", () => {
         admin: {
           id: "admin123",
           fullName: "John Doe",
-          email: "admin@example.com",
+          email: "admin@gmail.com",
           role: "admin",
           isVerified: false,
         },
@@ -51,7 +51,7 @@ describe("College API", () => {
         .send({
           collegeName: "Nexora College",
           adminName: "John Doe",
-          email: "admin@example.com",
+          email: "admin@gmail.com",
           password: "password123",
         });
 
@@ -66,7 +66,7 @@ describe("College API", () => {
         admin: {
           id: "admin123",
           fullName: "John Doe",
-          email: "admin@example.com",
+          email: "admin@gmail.com",
           role: "admin",
           isVerified: false,
         },
@@ -75,7 +75,7 @@ describe("College API", () => {
       expect(mockRegisterCollegeService).toHaveBeenCalledWith({
         collegeName: "Nexora College",
         adminName: "John Doe",
-        email: "admin@example.com",
+        email: "admin@gmail.com",
         password: "password123",
       });
     });
