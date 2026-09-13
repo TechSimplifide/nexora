@@ -5,6 +5,7 @@ import generateCollegeCode from "../utils/generateCollegeCode.js";
 import ApiError from "../utils/api-error.js";
 import { USER_ROLES } from "../constants/roles.js";
 import { sendVerificationEmail } from "./email.service.js";
+import { isTemporaryEmail } from "../utils/email-validator.js";
 import mongoose from "mongoose";
 
 export const registerCollegeService = async ({
@@ -26,6 +27,13 @@ export const registerCollegeService = async ({
         throw new ApiError(409, "User already exists with this email");
       }
 
+      if (isTemporaryEmail(email)) {
+        throw new ApiError(
+          400,
+          "Please use a valid email address to continue.",
+        );
+      }
+      
       // 2. Generate unique college code
       let collegeCode;
       let existingCollege;
