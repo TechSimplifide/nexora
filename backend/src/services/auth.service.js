@@ -7,7 +7,6 @@ import { College } from "../models/college.model.js";
 import ApiError from "../utils/api-error.js";
 import { USER_ROLES } from "../constants/roles.js";
 import { sendVerificationEmail, sendWelcomeEmail } from "./email.service.js";
-import { isTemporaryEmail } from "../utils/email-validator.js";
 
 const generateAndSaveTokens = async (user) => {
   const accessToken = user.generateAccessToken();
@@ -37,10 +36,6 @@ export const registerStudentService = async ({
 
   if (existingUser) {
     throw new ApiError(409, "A student account already exists");
-  }
-
-  if (isTemporaryEmail(email)) {
-    throw new ApiError(400, "Please use a valid email address to continue.");
   }
 
   // Find college

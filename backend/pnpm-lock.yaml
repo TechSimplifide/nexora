@@ -141,9 +141,6 @@ importers:
       '@google/generative-ai':
         specifier: ^0.24.1
         version: 0.24.1
-      '@visulima/disposable-email-domains':
-        specifier: ^1.1.1
-        version: 1.1.1
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -898,10 +895,6 @@ packages:
     resolution: {integrity: sha512-nAB74NfSNKknqQ1RrYj6uz8FcXEomu/MATJZxh/x+BArzN2U3JbOYC0APYzUIGhVY3m5hRxA8VPNdPBoG8txlA==}
     cpu: [x64]
     os: [win32]
-
-  '@visulima/disposable-email-domains@1.1.1':
-    resolution: {integrity: sha512-Qkb7edpL5IIp4E7kJ9hKdo1oiLu9TO82Ct8JNeXJ0YsKNnNWwbjnIxv60eB+0ZgoydKWhY9D5tujJcas8QG6cA==}
-    engines: {node: ^22.14.0 || >=24.10.0}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -3251,8 +3244,6 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
-
-  '@visulima/disposable-email-domains@1.1.1': {}
 
   accepts@2.0.0:
     dependencies:
