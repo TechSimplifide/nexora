@@ -10,6 +10,8 @@ import {
   aiRecommendationLimiter,
 } from "./middlewares/rate-limit.middleware.js";
 
+import pinoHttp from "pino-http";
+import logger from "./utils/logger.js";
 import healthCheckRouter from "./routes/healthcheck.routes.js";
 import { swaggerDocs } from "./docs/swagger.js";
 import collegeRouter from "./routes/college.routes.js";
@@ -24,6 +26,23 @@ import notificationRoutes from "./routes/notification.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 
 const app = express();
+
+app.use(
+  pinoHttp({
+    logger,
+    autoLogging: true,
+    serializers: {
+      req: (req) => ({
+        id: req.id,
+        method: req.method,
+        url: req.url,
+      }),
+      res: (res) => ({
+        statusCode: res.statusCode,
+      }),
+    },
+  }),
+);
 
 // Proxy Configuration
 

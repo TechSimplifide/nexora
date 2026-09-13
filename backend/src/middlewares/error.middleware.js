@@ -1,4 +1,5 @@
 import ApiError from "../utils/api-error.js";
+import logger from "../utils/logger.js";
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof ApiError) {
@@ -9,6 +10,15 @@ const errorHandler = (err, req, res, next) => {
       errors: err.errors ?? [],
     });
   }
+
+  logger.error(
+    {
+      err,
+      method: req.method,
+      url: req.originalUrl,
+    },
+    "Request failed",
+  );
 
   return res.status(500).json({
     statusCode: 500,
