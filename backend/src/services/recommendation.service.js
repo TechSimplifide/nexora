@@ -424,7 +424,7 @@ Return exactly this structure:
 
   try {
     recommendationData = JSON.parse(responseText);
-  } catch (error) {
+  } catch {
     console.error("Invalid Gemini JSON response:", responseText);
 
     throw new ApiError(
@@ -471,7 +471,6 @@ export const getStudentRecommendationsService = async (studentId) => {
 
   return recommendations;
 };
-
 
 export const deleteStudentRecommendationService = async ({
   recommendationId,
