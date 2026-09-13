@@ -116,33 +116,6 @@ const projectSchema = new mongoose.Schema(
         default: "public",
       },
     },
-
-    // supportingDocuments: [
-    //   {
-    //     name: {
-    //       type: String,
-    //       required: true,
-    //       trim: true,
-    //     },
-
-    //     url: {
-    //       type: String,
-    //       required: true,
-    //     },
-
-    //     publicId: {
-    //       type: String,
-    //       required: true,
-    //     },
-
-    //     access: {
-    //       type: String,
-    //       enum: ["public", "protected"],
-    //       default: "public",
-    //     },
-    //   },
-    // ],
-
     supportingDocument: {
       name: {
         type: String,
