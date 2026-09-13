@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FolderKanban } from "lucide-react";
+import { motion } from "motion/react";
 import { getStudentDashboard } from "@/services/dashboard.service";
 import { getProjects } from "@/services/project.service";
 import StudentDashboardHeader from "@/features/student/components/StudentDashboardHeader";
@@ -10,6 +11,28 @@ import FeaturedProjectShowcase from "@/features/student/components/FeaturedProje
 import DiscoverProjectCard from "@/features/student/components/DiscoverProjectCard";
 import StudentDashboardSkeleton from "@/features/student/components/StudentDashboardSkeleton";
 import StudentDashboardError from "@/features/student/components/StudentDashboardError";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
 
 function StudentDashboardPage() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -110,21 +133,38 @@ function StudentDashboardPage() {
   }
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto">
+    <motion.div
+      className="space-y-10 max-w-7xl mx-auto"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* 1. Header */}
-      <StudentDashboardHeader />
+      <motion.div variants={sectionVariants}>
+        <StudentDashboardHeader />
+      </motion.div>
 
       {/* 2. KPIs Grid */}
-      <StudentDashboardKpis kpis={kpis} />
+      <motion.div variants={sectionVariants}>
+        <StudentDashboardKpis kpis={kpis} />
+      </motion.div>
 
       {/* 3. My Proposal Section */}
-      <StudentProposalCard proposal={proposal} />
+      <motion.div variants={sectionVariants}>
+        <StudentProposalCard proposal={proposal} />
+      </motion.div>
 
       {/* 4. Featured Project Showcase Preview */}
-      <FeaturedProjectShowcase onLoadedFeaturedIds={handleLoadedFeaturedIds} />
+      <motion.div variants={sectionVariants}>
+        <FeaturedProjectShowcase onLoadedFeaturedIds={handleLoadedFeaturedIds} />
+      </motion.div>
 
       {/* 5. Discover Projects Section (Non-Featured Institutional Projects with populated createdBy) */}
-      <section aria-labelledby="discover-projects-heading" className="space-y-4">
+      <motion.section
+        aria-labelledby="discover-projects-heading"
+        className="space-y-4"
+        variants={sectionVariants}
+      >
         <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2
@@ -170,8 +210,8 @@ function StudentDashboardPage() {
             </p>
           </div>
         )}
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }
 

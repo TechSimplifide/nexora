@@ -1,4 +1,5 @@
 import { FileText, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { motion } from "motion/react";
 
 function AdminProposalOverview({ data = {} }) {
   const pending = Number(data?.pending) || 0;
@@ -38,23 +39,29 @@ function AdminProposalOverview({ data = {} }) {
           <div className="space-y-1.5">
             <div className="flex h-3 w-full overflow-hidden rounded-full bg-surface-secondary border border-border/60">
               {approved > 0 && (
-                <div
-                  style={{ width: `${(approved / total) * 100}%` }}
-                  className="bg-success-500 transition-all duration-500"
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(approved / total) * 100}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="bg-success-500"
                   title={`Approved: ${approved} (${approvedPct}%)`}
                 />
               )}
               {pending > 0 && (
-                <div
-                  style={{ width: `${(pending / total) * 100}%` }}
-                  className="bg-warning-500 transition-all duration-500"
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(pending / total) * 100}%` }}
+                  transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
+                  className="bg-warning-500"
                   title={`Pending: ${pending} (${pendingPct}%)`}
                 />
               )}
               {rejected > 0 && (
-                <div
-                  style={{ width: `${(rejected / total) * 100}%` }}
-                  className="bg-danger-500 transition-all duration-500"
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(rejected / total) * 100}%` }}
+                  transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+                  className="bg-danger-500"
                   title={`Rejected: ${rejected} (${rejectedPct}%)`}
                 />
               )}
@@ -70,12 +77,12 @@ function AdminProposalOverview({ data = {} }) {
           {/* Clean Metric Row */}
           <div className="grid grid-cols-3 gap-2.5 pt-2 border-t border-border/60">
             {/* Approved */}
-            <div className="flex flex-col items-center justify-center rounded-lg bg-surface-secondary/40 border border-border/50 py-2.5 px-2 text-center">
-              <div className="flex items-center gap-1 text-[11px] font-semibold text-success-700 mb-0.5">
-                <CheckCircle2 className="h-3 w-3 shrink-0" aria-hidden="true" />
+            <div className="flex flex-col items-center justify-center rounded-lg bg-surface-secondary/40 border border-border/50 py-2.5 px-2 text-center transition-colors">
+              <div className="flex items-center gap-1 text-[11px] font-medium text-foreground-secondary mb-0.5">
+                <CheckCircle2 className="h-3 w-3 shrink-0 text-success-600" aria-hidden="true" />
                 <span>Approved</span>
               </div>
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-bold text-success-600">
                 {approved}
               </span>
               <span className="text-[10px] text-muted-foreground font-medium">
@@ -84,12 +91,12 @@ function AdminProposalOverview({ data = {} }) {
             </div>
 
             {/* Pending */}
-            <div className="flex flex-col items-center justify-center rounded-lg bg-surface-secondary/40 border border-border/50 py-2.5 px-2 text-center">
-              <div className="flex items-center gap-1 text-[11px] font-semibold text-warning-800 mb-0.5">
-                <Clock className="h-3 w-3 shrink-0" aria-hidden="true" />
+            <div className="flex flex-col items-center justify-center rounded-lg bg-surface-secondary/40 border border-border/50 py-2.5 px-2 text-center transition-colors">
+              <div className="flex items-center gap-1 text-[11px] font-medium text-foreground-secondary mb-0.5">
+                <Clock className="h-3 w-3 shrink-0 text-warning-600" aria-hidden="true" />
                 <span>Pending</span>
               </div>
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-bold text-warning-600">
                 {pending}
               </span>
               <span className="text-[10px] text-muted-foreground font-medium">
@@ -98,12 +105,12 @@ function AdminProposalOverview({ data = {} }) {
             </div>
 
             {/* Rejected */}
-            <div className="flex flex-col items-center justify-center rounded-lg bg-surface-secondary/40 border border-border/50 py-2.5 px-2 text-center">
-              <div className="flex items-center gap-1 text-[11px] font-semibold text-danger-700 mb-0.5">
-                <XCircle className="h-3 w-3 shrink-0" aria-hidden="true" />
+            <div className="flex flex-col items-center justify-center rounded-lg bg-surface-secondary/40 border border-border/50 py-2.5 px-2 text-center transition-colors">
+              <div className="flex items-center gap-1 text-[11px] font-medium text-foreground-secondary mb-0.5">
+                <XCircle className="h-3 w-3 shrink-0 text-danger-600" aria-hidden="true" />
                 <span>Rejected</span>
               </div>
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-bold text-danger-600">
                 {rejected}
               </span>
               <span className="text-[10px] text-muted-foreground font-medium">

@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Code2 } from "lucide-react";
+import { motion } from "motion/react";
 import ChartFloatingTooltip from "./ChartFloatingTooltip";
 
 /**
@@ -140,14 +141,25 @@ function AdminPopularTechnologies({ data = [] }) {
                     </text>
 
                     {/* Vertical Column Bar */}
-                    <rect
+                    <motion.rect
                       x={barX}
-                      y={barY}
                       width={barWidth}
-                      height={Math.max(barHeight, 3)}
                       rx="4"
                       ry="4"
-                      className={`transition-all duration-200 ${
+                      initial={{
+                        height: 0,
+                        y: paddingTop + innerHeight,
+                      }}
+                      animate={{
+                        height: Math.max(barHeight, 3),
+                        y: barY,
+                      }}
+                      transition={{
+                        duration: 0.45,
+                        delay: idx * 0.06,
+                        ease: [0.25, 0.1, 0.25, 1],
+                      }}
+                      className={`transition-colors duration-200 ${
                         isHovered
                           ? "fill-primary-hover shadow-xs"
                           : "fill-primary"

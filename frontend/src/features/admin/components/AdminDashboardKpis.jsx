@@ -1,5 +1,25 @@
 import { Link } from "react-router-dom";
 import { Users, FolderKanban, Clock, Star, ArrowUpRight } from "lucide-react";
+import { motion } from "motion/react";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] },
+  },
+};
 
 function AdminDashboardKpis({ kpis }) {
   const pendingCount = Number(kpis?.pendingProposals) || 0;
@@ -50,7 +70,12 @@ function AdminDashboardKpis({ kpis }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+    <motion.div
+      className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {cards.map((card) => {
         const Icon = card.icon;
         const CardContent = (
@@ -105,20 +130,35 @@ function AdminDashboardKpis({ kpis }) {
 
         if (card.to) {
           return (
-            <Link
+            <motion.div
               key={card.title}
-              to={card.to}
-              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
-              aria-label={`${card.title}: ${card.value}. ${card.description}`}
+              variants={cardVariants}
+              whileHover={{ y: -2 }}
+              transition={{ duration: 0.2 }}
             >
-              {CardContent}
-            </Link>
+              <Link
+                to={card.to}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl block h-full"
+                aria-label={`${card.title}: ${card.value}. ${card.description}`}
+              >
+                {CardContent}
+              </Link>
+            </motion.div>
           );
         }
 
-        return <div key={card.title}>{CardContent}</div>;
+        return (
+          <motion.div
+            key={card.title}
+            variants={cardVariants}
+            whileHover={{ y: -2 }}
+            transition={{ duration: 0.2 }}
+          >
+            {CardContent}
+          </motion.div>
+        );
       })}
-    </div>
+    </motion.div>
   );
 }
 

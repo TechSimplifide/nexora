@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
  */
 function FinalCTASection() {
   return (
-    <section className="relative overflow-hidden border-t border-border bg-background py-20 md:py-28 transition-colors">
+    <section className="relative overflow-hidden border-t border-border bg-surface py-20 md:py-28 transition-colors">
       {/* Subtle atmospheric glow */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[380px] w-full max-w-4xl opacity-30 blur-3xl"
@@ -25,8 +25,11 @@ function FinalCTASection() {
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.5 }}
-          className="mx-auto max-w-4xl rounded-3xl border border-border bg-surface p-8 sm:p-12 lg:p-14 shadow-nexora-md text-center space-y-6"
+          transition={{
+            duration: 0.5,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          className="mx-auto max-w-4xl rounded-3xl border border-border bg-background p-8 sm:p-12 lg:p-14 shadow-nexora-md text-center space-y-6"
         >
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs">
@@ -34,7 +37,7 @@ function FinalCTASection() {
             <span>Institutional Workspace</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground leading-[1.15]">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground leading-[1.15] text-balance">
             Bring your institution&apos;s project lifecycle into one workspace.
           </h2>
 
@@ -57,7 +60,11 @@ function FinalCTASection() {
             </Link>
             <Link to="/login" className="w-full sm:w-auto">
               <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto font-medium">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto font-medium shadow-2xs"
+                >
                   Sign In
                 </Button>
               </motion.div>

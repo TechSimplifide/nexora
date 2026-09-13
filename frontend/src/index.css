@@ -289,6 +289,13 @@
    Nexora — Global Base Styles
    ───────────────────────────────────────── */
 
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
 html {
   font-family: var(--font-sans);
   font-synthesis: none;
@@ -298,7 +305,6 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
   background: var(--color-background);
   color: var(--color-foreground);
   transition: background-color 0.2s ease, color 0.2s ease;

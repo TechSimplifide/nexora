@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Building, AlertCircle, RotateCcw } from "lucide-react";
+import { motion } from "motion/react";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { getAdminDashboardAnalytics } from "@/services/dashboard.service";
@@ -9,6 +10,28 @@ import AdminProposalOverview from "@/features/admin/components/AdminProposalOver
 import AdminPopularTechnologies from "@/features/admin/components/AdminPopularTechnologies";
 import AdminTrendingDomains from "@/features/admin/components/AdminTrendingDomains";
 import AdminDashboardSkeleton from "@/features/admin/components/AdminDashboardSkeleton";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
 
 function AdminDashboardPage() {
   const { user } = useAuth();
@@ -100,9 +123,17 @@ function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <motion.div
+      className="space-y-6 max-w-7xl mx-auto"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* 1. Lean Page Header (Matches Nexora SaaS Pattern) */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <motion.div
+        className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+        variants={sectionVariants}
+      >
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Welcome back, {user?.fullName || "Administrator"}
@@ -118,20 +149,21 @@ function AdminDashboardPage() {
             <span className="truncate max-w-[220px]">{collegeName}</span>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* 2. KPI Summary Cards */}
-      <section aria-labelledby="kpi-summary-heading">
+      <motion.section aria-labelledby="kpi-summary-heading" variants={sectionVariants}>
         <h2 id="kpi-summary-heading" className="sr-only">
           KPI Metrics Summary
         </h2>
         <AdminDashboardKpis kpis={analytics?.kpis} />
-      </section>
+      </motion.section>
 
       {/* 3. Analytics: Projects By Academic Year & Proposal Overview */}
-      <section
+      <motion.section
         aria-labelledby="analytics-charts-heading"
         className="grid grid-cols-1 gap-5 lg:grid-cols-2"
+        variants={sectionVariants}
       >
         <h2 id="analytics-charts-heading" className="sr-only">
           Academic Year & Proposal Analytics
@@ -140,20 +172,21 @@ function AdminDashboardPage() {
           data={analytics?.projectsByAcademicYear}
         />
         <AdminProposalOverview data={analytics?.proposalOverview} />
-      </section>
+      </motion.section>
 
       {/* 4. Project Insights: Popular Technologies & Trending Domains */}
-      <section
+      <motion.section
         aria-labelledby="project-insights-heading"
         className="grid grid-cols-1 gap-5 lg:grid-cols-2"
+        variants={sectionVariants}
       >
         <h2 id="project-insights-heading" className="sr-only">
           Technology & Domain Insights
         </h2>
         <AdminPopularTechnologies data={analytics?.popularTechnologies} />
         <AdminTrendingDomains data={analytics?.trendingDomains} />
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }
 

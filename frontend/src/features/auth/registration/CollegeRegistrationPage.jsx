@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Building2,
+  User,
+  Mail,
+  Lock,
   Eye,
   EyeOff,
   ArrowLeft,
@@ -10,6 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import Logo from "@/components/common/Logo";
 import { registerCollege } from "@/services/auth.service";
 
@@ -227,161 +232,93 @@ function CollegeRegistrationPage() {
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           {/* College Name */}
-          <div>
-            <label
-              htmlFor="collegeName"
-              className="mb-1 block text-xs font-semibold text-foreground"
-            >
-              College / Institution Name
-            </label>
-            <input
-              id="collegeName"
-              name="collegeName"
-              type="text"
-              autoComplete="organization"
-              value={formData.collegeName}
-              onChange={handleChange}
-              disabled={isSubmitting}
-              aria-invalid={errors.collegeName ? "true" : undefined}
-              aria-describedby={errors.collegeName ? "collegeName-error" : undefined}
-              className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                errors.collegeName
-                  ? "border-danger-500"
-                  : "border-border hover:border-border-strong"
-              }`}
-              placeholder="e.g. Stanford University"
-            />
-            {errors.collegeName && (
-              <p id="collegeName-error" className="mt-1 text-xs font-medium text-danger-600">
-                {errors.collegeName}
-              </p>
-            )}
-          </div>
+          <Input
+            id="collegeName"
+            name="collegeName"
+            type="text"
+            label="College / Institution Name"
+            icon={Building2}
+            autoComplete="organization"
+            value={formData.collegeName}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            error={errors.collegeName}
+            placeholder="ABC College of Arts & Science"
+          />
 
           {/* Admin Name */}
-          <div>
-            <label
-              htmlFor="adminName"
-              className="mb-1 block text-xs font-semibold text-foreground"
-            >
-              Administrator Full Name
-            </label>
-            <input
-              id="adminName"
-              name="adminName"
-              type="text"
-              autoComplete="name"
-              value={formData.adminName}
-              onChange={handleChange}
-              disabled={isSubmitting}
-              aria-invalid={errors.adminName ? "true" : undefined}
-              aria-describedby={errors.adminName ? "adminName-error" : undefined}
-              className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                errors.adminName ? "border-danger-500" : "border-border hover:border-border-strong"
-              }`}
-              placeholder="e.g. Dr. John Doe"
-            />
-            {errors.adminName && (
-              <p id="adminName-error" className="mt-1 text-xs font-medium text-danger-600">
-                {errors.adminName}
-              </p>
-            )}
-          </div>
+          <Input
+            id="adminName"
+            name="adminName"
+            type="text"
+            label="Administrator Full Name"
+            icon={User}
+            autoComplete="name"
+            value={formData.adminName}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            error={errors.adminName}
+            placeholder="Dr. Suresh Patil"
+          />
 
           {/* Email */}
-          <div>
-            <label htmlFor="email" className="mb-1 block text-xs font-semibold text-foreground">
-              Official Email Address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={isSubmitting}
-              aria-invalid={errors.email ? "true" : undefined}
-              aria-describedby={errors.email ? "email-error" : undefined}
-              className={`w-full rounded-md border bg-surface px-3 py-2 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                errors.email ? "border-danger-500" : "border-border hover:border-border-strong"
-              }`}
-              placeholder="admin@college.edu"
-            />
-            {errors.email && (
-              <p id="email-error" className="mt-1 text-xs font-medium text-danger-600">
-                {errors.email}
-              </p>
-            )}
-          </div>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            label="Official Email"
+            icon={Mail}
+            autoComplete="email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            error={errors.email}
+            placeholder="admin@college.edu"
+          />
 
           {/* Password */}
-          <div>
-            <label htmlFor="password" className="mb-1 block text-xs font-semibold text-foreground">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={isSubmitting}
-                aria-invalid={errors.password ? "true" : undefined}
-                aria-describedby={errors.password ? "password-error" : undefined}
-                className={`w-full rounded-md border bg-surface px-3 py-2 pr-10 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  errors.password ? "border-danger-500" : "border-border hover:border-border-strong"
-                }`}
-                placeholder="••••••••"
-              />
+          <Input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            label="Password"
+            icon={Lock}
+            autoComplete="new-password"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            error={errors.password}
+            placeholder="••••••••"
+            rightElement={
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+                className="p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
-            </div>
-            {errors.password && (
-              <p id="password-error" className="mt-1 text-xs font-medium text-danger-600">
-                {errors.password}
-              </p>
-            )}
-          </div>
+            }
+          />
 
           {/* Confirm Password */}
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="mb-1 block text-xs font-semibold text-foreground"
-            >
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                autoComplete="new-password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                disabled={isSubmitting}
-                aria-invalid={errors.confirmPassword ? "true" : undefined}
-                aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
-                className={`w-full rounded-md border bg-surface px-3 py-2 pr-10 text-sm text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  errors.confirmPassword
-                    ? "border-danger-500"
-                    : "border-border hover:border-border-strong"
-                }`}
-                placeholder="••••••••"
-              />
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            label="Confirm Password"
+            icon={Lock}
+            autoComplete="new-password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            error={errors.confirmPassword}
+            placeholder="••••••••"
+            rightElement={
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+                className="p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
                 aria-label={
                   showConfirmPassword ? "Hide confirm password" : "Show confirm password"
                 }
@@ -392,13 +329,8 @@ function CollegeRegistrationPage() {
                   <Eye className="h-4 w-4" />
                 )}
               </button>
-            </div>
-            {errors.confirmPassword && (
-              <p id="confirmPassword-error" className="mt-1 text-xs font-medium text-danger-600">
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div>
+            }
+          />
 
           {/* Submit Button */}
           <div className="pt-2">

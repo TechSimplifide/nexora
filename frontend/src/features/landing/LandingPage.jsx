@@ -1,11 +1,11 @@
 import { MotionConfig } from "motion/react";
 import LandingNavbar from "./components/LandingNavbar";
 import HeroSection from "./components/HeroSection";
-import ProductPreview from "./components/ProductPreview";
-import CapabilitiesSection from "./components/CapabilitiesSection";
+import ProductValueSection from "./components/ProductValueSection";
+import WorkspacesSection from "./components/WorkspacesSection";
+import AiSection from "./components/AiSection";
 import MultiCollegeSection from "./components/MultiCollegeSection";
-import HowItWorksSection from "./components/HowItWorksSection";
-import WhyNexoraSection from "./components/WhyNexoraSection";
+import GovernanceSection from "./components/GovernanceSection";
 import FinalCTASection from "./components/FinalCTASection";
 import LandingFooter from "./components/LandingFooter";
 
@@ -15,14 +15,28 @@ function LandingPage() {
       <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
         <LandingNavbar />
         <main>
+          {/* Section 1: Hero */}
           <HeroSection />
-          <ProductPreview />
-          <CapabilitiesSection />
+
+          {/* Section 2: Platform Mental Model */}
+          <ProductValueSection />
+
+          {/* Section 3: Two Purpose-Built Workspaces */}
+          <WorkspacesSection />
+
+          {/* Section 5: AI Intelligence */}
+          <AiSection />
+
+          {/* Section 6: Multi-College / Multi-Tenant */}
           <MultiCollegeSection />
-          <HowItWorksSection />
-          <WhyNexoraSection />
+
+          {/* Section 7: Institutional Governance */}
+          <GovernanceSection />
+
+          {/* Section 8: Final CTA */}
           <FinalCTASection />
         </main>
+        {/* Section 9: Footer */}
         <LandingFooter />
       </div>
     </MotionConfig>
@@ -30,3 +44,4 @@ function LandingPage() {
 }
 
 export default LandingPage;
+

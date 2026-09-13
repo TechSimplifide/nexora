@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { GraduationCap } from "lucide-react";
+import { motion } from "motion/react";
 import ChartFloatingTooltip from "./ChartFloatingTooltip";
 
 /**
@@ -135,17 +136,23 @@ function AdminProjectsByAcademicYearChart({ data = [] }) {
 
               {/* Area Under Line (Subtle Accent) */}
               {points.length > 1 && (
-                <path
+                <motion.path
                   d={areaPath}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
                   className="fill-primary/6 transition-all duration-300"
                 />
               )}
 
               {/* Connecting Trend Line */}
               {points.length > 1 && (
-                <path
+                <motion.path
                   d={linePath}
                   fill="none"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
                   className="stroke-primary transition-all duration-300"
                   strokeWidth="2.5"
                   strokeLinecap="round"

@@ -34,37 +34,37 @@ function StudentWorkspacePreview() {
             </div>
           </div>
           <div className="text-2xl font-bold text-foreground">2</div>
-          <p className="text-[10px] text-muted-foreground">Active projects</p>
+          <p className="text-[10px] text-muted-foreground">Projects you've contributed</p>
         </div>
 
         <div className="rounded-xl border border-border bg-surface p-4 shadow-nexora-sm space-y-1">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-[11px] font-bold uppercase tracking-wider">
-              Requests Sent
+              Access Requests Sent
             </span>
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface-secondary text-foreground-secondary border border-border/60">
               <Send className="h-3.5 w-3.5" aria-hidden="true" />
             </div>
           </div>
           <div className="text-2xl font-bold text-foreground">3</div>
-          <p className="text-[10px] text-muted-foreground">Peer documents requested</p>
+          <p className="text-[10px] text-muted-foreground">Requests you've submitted</p>
         </div>
 
         <div className="rounded-xl border border-border bg-surface p-4 shadow-nexora-sm space-y-1">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-[11px] font-bold uppercase tracking-wider">
-              Requests Received
+              Access Requests Received
             </span>
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface-secondary text-foreground-secondary border border-border/60">
               <Inbox className="h-3.5 w-3.5" aria-hidden="true" />
             </div>
           </div>
           <div className="text-2xl font-bold text-foreground">5</div>
-          <p className="text-[10px] text-muted-foreground">On your project assets</p>
+          <p className="text-[10px] text-muted-foreground">Requests for your projects</p>
         </div>
       </div>
 
-      {/* 2. Active Proposal Card with 4-Stage Lifecycle & Faculty Admin Remarks */}
+      {/* 2. Active Proposal Card with 3-Stage Lifecycle & Faculty Admin Remarks */}
       <div className="rounded-xl border border-border bg-surface p-5 shadow-nexora-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="space-y-1">
@@ -89,7 +89,7 @@ function StudentWorkspacePreview() {
 
           <span className="inline-flex items-center gap-1.5 rounded-full border border-success-200 bg-success-50 px-3 py-1 text-xs font-semibold text-success-700 self-start sm:self-auto">
             <CheckCircle2 className="h-3.5 w-3.5" />
-            <span>Approved by Faculty</span>
+            <span>Approved</span>
           </span>
         </div>
 
@@ -97,15 +97,15 @@ function StudentWorkspacePreview() {
         <div className="rounded-lg border border-border/80 bg-surface-secondary/50 p-3.5 text-xs">
           <div className="flex items-center gap-1.5 font-semibold text-muted-foreground mb-1">
             <MessageSquare className="h-3.5 w-3.5 text-primary" />
-            <span>Faculty Admin Remarks:</span>
+            <span>Admin Remarks</span>
           </div>
           <p className="leading-relaxed text-foreground-secondary">
             Strong project direction. Proceed with smart contract testnet deployment and prepare supporting documentation.
           </p>
         </div>
 
-        {/* 4-Stage Proposal Lifecycle Timeline */}
-        <ProposalTimelinePreview status="APPROVED" activeStageIndex={3} />
+        {/* 3-Stage Proposal Lifecycle Timeline */}
+        <ProposalTimelinePreview status="APPROVED" />
       </div>
 
       {/* 3. 2-Column Supporting Grid: College Featured Project + AI Recommendation Supporting Card */}

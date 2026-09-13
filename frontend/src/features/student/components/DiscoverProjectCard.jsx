@@ -19,7 +19,7 @@ function DiscoverProjectCard({ project }) {
       : null);
 
   return (
-    <div className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-nexora-sm transition-all hover:border-border-strong hover:shadow-nexora-md">
+    <div className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-nexora-sm transition-all duration-200 hover:border-border-strong hover:shadow-nexora-md hover:-translate-y-0.5">
       <div>
         {/* Domain Badge */}
         {project.domain ? (

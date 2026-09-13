@@ -26,15 +26,13 @@ function AppLayout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      {/* Desktop Sidebar (Sticky to Viewport with persisted collapse width) */}
-      <div className="hidden lg:flex lg:shrink-0">
-        <div className="sticky top-0 h-screen">
-          <AppSidebar
-            isCollapsed={isCollapsed}
-            onToggleCollapse={handleToggleCollapse}
-          />
-        </div>
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+      {/* Desktop Sidebar (Fixed viewport height, persistent collapse width) */}
+      <div className="hidden lg:flex lg:shrink-0 h-full">
+        <AppSidebar
+          isCollapsed={isCollapsed}
+          onToggleCollapse={handleToggleCollapse}
+        />
       </div>
 
       {/* Mobile Sidebar (Drawer Overlay - always full width) */}
@@ -57,15 +55,15 @@ function AppLayout() {
         </div>
       )}
 
-      {/* Main Content Column (Natural Browser Window Scrolling) */}
-      <div className="flex flex-1 flex-col min-w-0">
+      {/* Main Content Column (Viewport-height constrained with dedicated internal scrolling) */}
+      <div className="flex flex-1 flex-col h-full min-w-0 overflow-hidden">
         <AppHeader
           onToggleMobileSidebar={() =>
             setIsMobileSidebarOpen(!isMobileSidebarOpen)
           }
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

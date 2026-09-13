@@ -82,17 +82,17 @@ function AdminWorkspacePreview() {
       {/* 2. AI-Assisted Proposal Review Panel (New Core Capability) */}
       <AdminAiReviewPreview />
 
-      {/* 3. Proposal Review Pipeline Overview (Matches AdminProposalOverview.jsx) */}
+      {/* 3. Proposal Overview (Matches AdminProposalOverview.jsx) */}
       <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-nexora-sm space-y-3.5">
         <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-foreground">Proposal Review Pipeline</h3>
+          <div className="space-y-0.5">
+            <h3 className="text-sm font-bold text-foreground">Proposal Overview</h3>
             <p className="text-xs text-muted-foreground">
-              Current student project submissions distribution
+              Current project proposal review status and distribution
             </p>
           </div>
           <span className="text-xs font-semibold text-foreground px-2.5 py-0.5 rounded-md bg-surface-secondary border border-border/60">
-            <strong className="font-bold">42</strong> Total Submissions
+            <strong className="font-bold text-foreground">42</strong> Total Submissions
           </span>
         </div>
 
@@ -118,17 +118,17 @@ function AdminWorkspacePreview() {
 
           {/* Status Breakdown Labels */}
           <div className="flex items-center justify-between text-[11px] text-muted-foreground px-0.5">
-            <span className="flex items-center gap-1 font-medium text-success-700">
+            <span className="flex items-center gap-1 font-medium text-foreground-secondary">
               <span className="h-2 w-2 rounded-full bg-success-500" />
-              26 Approved (62%)
+              <strong className="font-bold text-success-600">26</strong> Approved (62%)
             </span>
-            <span className="flex items-center gap-1 font-medium text-warning-800">
+            <span className="flex items-center gap-1 font-medium text-foreground-secondary">
               <span className="h-2 w-2 rounded-full bg-warning-500" />
-              12 Pending (28%)
+              <strong className="font-bold text-warning-600">12</strong> Pending (28%)
             </span>
-            <span className="flex items-center gap-1 font-medium text-danger-700">
+            <span className="flex items-center gap-1 font-medium text-foreground-secondary">
               <span className="h-2 w-2 rounded-full bg-danger-500" />
-              4 Rejected (10%)
+              <strong className="font-bold text-danger-600">4</strong> Rejected (10%)
             </span>
           </div>
         </div>

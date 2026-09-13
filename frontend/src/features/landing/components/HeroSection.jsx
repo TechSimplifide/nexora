@@ -12,8 +12,8 @@ import Button from "@/components/ui/Button";
 
 /**
  * HeroSection
- * Premium, product-led SaaS hero for Nexora.
- * Visually presents the authentic Institutional Control Center with gentle entrance motion.
+ * Refined, product-led SaaS hero for Nexora.
+ * Displays clean typography, clear CTA hierarchy, and an authentic Institutional Control Center preview.
  */
 function HeroSection() {
   const techData = [
@@ -25,9 +25,9 @@ function HeroSection() {
 
   return (
     <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-28">
-      {/* Subtle atmospheric glow behind hero */}
+      {/* Subtle atmospheric gradient behind hero */}
       <div
-        className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[480px] w-full max-w-7xl opacity-40 blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[440px] w-full max-w-7xl opacity-30 dark:opacity-20 blur-3xl"
         style={{
           background:
             "radial-gradient(ellipse at top, var(--color-primary-500) 0%, transparent 70%)",
@@ -37,15 +37,15 @@ function HeroSection() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Positioning & Value Proposition */}
-        <div className="mx-auto max-w-3xl text-center space-y-5">
+        <div className="mx-auto max-w-3xl text-center space-y-4 sm:space-y-5">
           {/* Eyebrow Pill */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1 text-xs font-semibold text-foreground-secondary shadow-2xs"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1 text-xs font-medium text-foreground-secondary shadow-2xs"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
             <span>Institutional Project Workspace</span>
           </motion.div>
 
@@ -54,7 +54,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.08 }}
-            className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl sm:leading-[1.12]"
+            className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance"
           >
             The project platform built for colleges.
           </motion.h1>
@@ -64,7 +64,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.16 }}
-            className="text-base leading-relaxed text-muted-foreground sm:text-lg max-w-2xl mx-auto"
+            className="text-base leading-relaxed text-muted-foreground sm:text-lg sm:leading-relaxed max-w-2xl mx-auto text-balance"
           >
             Nexora gives colleges one structured workspace to collect, review, preserve,
             discover, and manage student projects across every academic cycle.
@@ -75,7 +75,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.24 }}
-            className="pt-3 flex flex-col items-center justify-center gap-3 sm:flex-row"
+            className="pt-2 flex flex-col items-center justify-center gap-3 sm:flex-row"
           >
             <Link to="/register" className="w-full sm:w-auto">
               <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
@@ -89,9 +89,13 @@ function HeroSection() {
                 </Button>
               </motion.div>
             </Link>
-            <a href="#product" className="w-full sm:w-auto">
+            <a href="#platform" className="w-full sm:w-auto">
               <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto font-medium">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto font-medium shadow-2xs"
+                >
                   Explore Nexora
                 </Button>
               </motion.div>
@@ -104,20 +108,20 @@ function HeroSection() {
           initial={{ opacity: 0, y: 16, scale: 0.985 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-12 sm:mt-16"
+          className="mt-10 sm:mt-14"
         >
           <div className="relative mx-auto max-w-5xl rounded-2xl border border-border bg-surface shadow-nexora-lg overflow-hidden transition-shadow duration-300 hover:shadow-nexora-xl">
             {/* Top Browser / Application Chrome Bar */}
             <div className="flex items-center justify-between border-b border-border bg-surface-secondary/70 px-4 py-3 sm:px-6">
               <div className="flex items-center gap-3">
                 <div className="flex gap-1.5" aria-hidden="true">
-                  <div className="h-3 w-3 rounded-full bg-border-strong/70" />
-                  <div className="h-3 w-3 rounded-full bg-border-strong/70" />
-                  <div className="h-3 w-3 rounded-full bg-border-strong/70" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-border-strong/70" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-border-strong/70" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-border-strong/70" />
                 </div>
-                <span className="hidden text-[11px] font-mono font-medium text-muted-foreground sm:inline-block">
+                <div className="hidden rounded-md border border-border/80 bg-surface px-2.5 py-0.5 text-[11px] font-mono font-medium text-muted-foreground sm:inline-block">
                   app.nexora.edu / admin / dashboard
-                </span>
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -214,21 +218,21 @@ function HeroSection() {
                 </div>
               </div>
 
-              {/* 2-Column Analytics: Proposal Review Pipeline + Curriculum Technology Adoption */}
+              {/* 2-Column Analytics: Proposal Overview + Curriculum Technology Adoption */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {/* Proposal Review Pipeline Overview (Matches AdminProposalOverview.jsx) */}
+                {/* Proposal Overview */}
                 <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-nexora-sm space-y-3.5 flex flex-col justify-between">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <h3 className="text-xs sm:text-sm font-bold text-foreground">
-                        Proposal Review Pipeline
+                        Proposal Overview
                       </h3>
                       <span className="text-[11px] font-semibold text-foreground px-2 py-0.5 rounded-md bg-surface-secondary border border-border/60">
-                        <strong>42</strong> Submissions
+                        <strong className="font-bold text-foreground">42</strong> Submissions
                       </span>
                     </div>
                     <p className="text-[11px] text-muted-foreground">
-                      Current student project submissions distribution
+                      Current project proposal review status and distribution
                     </p>
                   </div>
 
@@ -255,22 +259,22 @@ function HeroSection() {
                     {/* Status Breakdown Labels */}
                     <div className="grid grid-cols-3 gap-1 pt-1 text-center">
                       <div className="rounded-lg bg-surface-secondary/70 p-1.5 border border-border/50">
-                        <div className="text-[11px] font-bold text-success-700">26</div>
-                        <div className="text-[9px] text-muted-foreground">Approved (62%)</div>
-                      </div>
-                      <div className="rounded-lg bg-warning-50/50 p-1.5 border border-warning-200/50">
-                        <div className="text-[11px] font-bold text-warning-800">12</div>
-                        <div className="text-[9px] text-warning-800">Pending (28%)</div>
+                        <div className="text-[11px] font-bold text-success-600">26</div>
+                        <div className="text-[9px] text-foreground-secondary">Approved (62%)</div>
                       </div>
                       <div className="rounded-lg bg-surface-secondary/70 p-1.5 border border-border/50">
-                        <div className="text-[11px] font-bold text-danger-700">4</div>
-                        <div className="text-[9px] text-muted-foreground">Rejected (10%)</div>
+                        <div className="text-[11px] font-bold text-warning-600">12</div>
+                        <div className="text-[9px] text-foreground-secondary">Pending (28%)</div>
+                      </div>
+                      <div className="rounded-lg bg-surface-secondary/70 p-1.5 border border-border/50">
+                        <div className="text-[11px] font-bold text-danger-600">4</div>
+                        <div className="text-[9px] text-foreground-secondary">Rejected (10%)</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Technology Adoption SVG Column Chart (Matches AdminPopularTechnologies.jsx) */}
+                {/* Technology Adoption SVG Column Chart */}
                 <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-nexora-sm space-y-3 flex flex-col justify-between">
                   <div className="flex items-center justify-between">
                     <div>

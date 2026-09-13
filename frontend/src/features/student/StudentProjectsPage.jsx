@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Search,
   RotateCcw,
   AlertCircle,
   FolderKanban,
@@ -11,12 +10,12 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  X,
   Plus,
   CheckCircle2,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { getProjects } from "@/services/project.service";
+import ProjectFilterBar from "@/features/projects/components/ProjectFilterBar";
 
 function StudentProjectsPage() {
   const location = useLocation();
@@ -199,103 +198,37 @@ function StudentProjectsPage() {
       )}
 
       {/* Search & Filter Bar */}
-      <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5 shadow-nexora-sm space-y-4">
-        {/* Search Input */}
-        <form onSubmit={handleSearchSubmit} className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Search projects by title, summary, or author..."
-              className="w-full rounded-xl border border-border bg-surface pl-10 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
-            />
-            {searchTerm && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchTerm("");
-                  setCurrentPage(1);
-                }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
-                aria-label="Clear search"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-          <Button type="submit" variant="primary" size="md" className="hidden sm:inline-flex">
-            Search
-          </Button>
-        </form>
-
-        {/* Filter Controls */}
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:flex lg:items-center lg:gap-3">
-          {/* Domain Filter */}
-          <input
-            type="text"
-            placeholder="Domain..."
-            value={domainFilter}
-            onChange={(e) => {
-              setDomainFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full lg:w-40 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
-          />
-
-          {/* Department Filter */}
-          <input
-            type="text"
-            placeholder="Department..."
-            value={departmentFilter}
-            onChange={(e) => {
-              setDepartmentFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full lg:w-40 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
-          />
-
-          {/* Academic Year Filter */}
-          <input
-            type="text"
-            placeholder="Year (e.g. 2026-27)..."
-            value={academicYearFilter}
-            onChange={(e) => {
-              setAcademicYearFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full lg:w-40 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
-          />
-
-          {/* Technology Filter */}
-          <input
-            type="text"
-            placeholder="Tech (e.g. React)..."
-            value={technologyFilter}
-            onChange={(e) => {
-              setTechnologyFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full lg:w-40 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
-          />
-
-          {/* Clear Filters Button */}
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="col-span-2 sm:col-span-4 lg:col-span-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-danger-700 hover:bg-danger-50 transition-colors"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              <span>Reset Filters</span>
-            </button>
-          )}
-        </div>
-      </div>
+      <ProjectFilterBar
+        searchTerm={searchTerm}
+        onSearchChange={(val) => {
+          setSearchTerm(val);
+          setCurrentPage(1);
+        }}
+        onSearchSubmit={handleSearchSubmit}
+        domainFilter={domainFilter}
+        onDomainChange={(val) => {
+          setDomainFilter(val);
+          setCurrentPage(1);
+        }}
+        departmentFilter={departmentFilter}
+        onDepartmentChange={(val) => {
+          setDepartmentFilter(val);
+          setCurrentPage(1);
+        }}
+        academicYearFilter={academicYearFilter}
+        onAcademicYearChange={(val) => {
+          setAcademicYearFilter(val);
+          setCurrentPage(1);
+        }}
+        technologyFilter={technologyFilter}
+        onTechnologyChange={(val) => {
+          setTechnologyFilter(val);
+          setCurrentPage(1);
+        }}
+        onResetFilters={handleClearFilters}
+        hasActiveFilters={hasActiveFilters}
+        projects={projects}
+      />
 
       {/* Projects Grid / Content */}
       {isLoading ? (

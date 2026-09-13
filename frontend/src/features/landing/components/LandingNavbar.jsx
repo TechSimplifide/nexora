@@ -22,59 +22,47 @@ function LandingNavbar() {
   }, [mobileMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-surface/80 backdrop-blur-md transition-colors">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
-        {/* Brand / Logo */}
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-surface/85 backdrop-blur-md transition-colors">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        {/* Left: Brand / Logo */}
         <Link
           to="/"
-          className="transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+          className="transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg shrink-0"
           aria-label="Nexora Home"
         >
           <Logo size="md" />
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Main navigation">
+        {/* Center: Clean SaaS Navigation Links */}
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
           <a
-            href="#product"
-            className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+            href="#platform"
+            className="text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
           >
-            Product
+            Platform
           </a>
           <a
             href="#capabilities"
-            className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+            className="text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
           >
             Capabilities
           </a>
           <a
-            href="#for-colleges"
-            className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+            href="#why-nexora"
+            className="text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
           >
-            For Colleges
-          </a>
-          <a
-            href="#how-it-works"
-            className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
-          >
-            How It Works
-          </a>
-          <a
-            href="#trust"
-            className="text-xs font-medium text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
-          >
-            Trust
+            Why Nexora
           </a>
         </nav>
 
-        {/* Desktop Auth CTAs & Theme Toggle */}
+        {/* Right: Theme Toggle & Auth Actions */}
         <div className="hidden items-center gap-3 md:flex">
           <button
             type="button"
             onClick={toggleTheme}
             aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
             title={isDark ? "Switch to light theme" : "Switch to dark theme"}
-            className="flex h-8.5 w-8.5 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {isDark ? (
               <Sun className="h-4 w-4" aria-hidden="true" />
@@ -83,7 +71,7 @@ function LandingNavbar() {
             )}
           </button>
           <Link to="/login">
-            <Button variant="ghost" size="sm" className="text-xs font-medium">
+            <Button variant="ghost" size="sm" className="text-xs font-semibold">
               Sign In
             </Button>
           </Link>
@@ -106,7 +94,7 @@ function LandingNavbar() {
         </button>
       </div>
 
-      {/* Mobile Navigation Drawer with Smooth AnimatePresence */}
+      {/* Mobile Navigation Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -114,15 +102,15 @@ function LandingNavbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden border-b border-border bg-surface px-4 pb-6 pt-2 md:hidden"
+            className="overflow-hidden border-b border-border bg-surface px-4 pb-6 pt-2 shadow-nexora-sm md:hidden"
           >
             <nav className="flex flex-col space-y-1" aria-label="Mobile navigation">
               <a
-                href="#product"
+                href="#platform"
                 onClick={() => setMobileMenuOpen(false)}
                 className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
               >
-                Product
+                Platform
               </a>
               <a
                 href="#capabilities"
@@ -132,25 +120,11 @@ function LandingNavbar() {
                 Capabilities
               </a>
               <a
-                href="#for-colleges"
+                href="#why-nexora"
                 onClick={() => setMobileMenuOpen(false)}
                 className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
               >
-                For Colleges
-              </a>
-              <a
-                href="#how-it-works"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
-              >
-                How It Works
-              </a>
-              <a
-                href="#trust"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary hover:text-foreground"
-              >
-                Trust
+                Why Nexora
               </a>
               <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
                 <button
@@ -172,7 +146,11 @@ function LandingNavbar() {
                   </span>
                 </button>
                 <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" size="md" className="w-full justify-center text-xs">
+                  <Button
+                    variant="outline"
+                    size="md"
+                    className="w-full justify-center text-xs font-medium"
+                  >
                     Sign In
                   </Button>
                 </Link>

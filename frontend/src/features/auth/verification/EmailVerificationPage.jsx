@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { CheckCircle2, AlertCircle, Loader2, Check } from "lucide-react";
+import { CheckCircle2, AlertCircle, Loader2, Check, Mail } from "lucide-react";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import Logo from "@/components/common/Logo";
 import { verifyEmail, resendVerificationEmail } from "@/services/auth.service";
 
@@ -155,35 +156,22 @@ function EmailVerificationPage() {
 
             {/* Resend Verification Form */}
             <form onSubmit={handleResendSubmit} noValidate className="mt-5 space-y-4">
-              <div>
-                <label
-                  htmlFor="resendEmail"
-                  className="mb-1 block text-xs font-semibold text-foreground"
-                >
-                  Email Address
-                </label>
-                <input
-                  id="resendEmail"
-                  name="resendEmail"
-                  type="email"
-                  autoComplete="email"
-                  value={resendEmail}
-                  onChange={(e) => {
-                    setResendEmail(e.target.value);
-                    if (resendError) setResendError("");
-                  }}
-                  disabled={isResending}
-                  aria-invalid={resendError ? "true" : undefined}
-                  aria-describedby={resendError ? "resendEmail-error" : undefined}
-                  className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  placeholder="your.email@example.com"
-                />
-                {resendError && (
-                  <p id="resendEmail-error" className="mt-1 text-xs font-medium text-danger-600">
-                    {resendError}
-                  </p>
-                )}
-              </div>
+              <Input
+                id="resendEmail"
+                name="resendEmail"
+                type="email"
+                label="Email Address"
+                icon={Mail}
+                autoComplete="email"
+                value={resendEmail}
+                onChange={(e) => {
+                  setResendEmail(e.target.value);
+                  if (resendError) setResendError("");
+                }}
+                disabled={isResending}
+                error={resendError}
+                placeholder="you@college.edu"
+              />
 
               <Button
                 type="submit"
