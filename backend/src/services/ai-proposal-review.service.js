@@ -391,7 +391,7 @@ export const analyzeProposalWithAIService = async ({
 
   try {
     reviewData = JSON.parse(responseText);
-  } catch (error) {
+  } catch {
     console.error("Invalid Gemini proposal review JSON:", responseText);
 
     throw new ApiError(
