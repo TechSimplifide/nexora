@@ -36,7 +36,7 @@ export const registerStudentService = async ({
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    throw new ApiError(409, "User already exists with this email");
+    throw new ApiError(409, "A student account already exists");
   }
 
   if (isTemporaryEmail(email)) {

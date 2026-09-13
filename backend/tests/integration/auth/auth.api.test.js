@@ -123,7 +123,7 @@ describe("Auth API", () => {
 
       expect(response.status).toBe(409);
 
-      expect(response.body.message).toBe("User already exists with this email");
+      expect(response.body.message).toBe("A student account already exists");
 
       expect(mockCollegeFindOne).not.toHaveBeenCalled();
       expect(mockUserCreate).not.toHaveBeenCalled();

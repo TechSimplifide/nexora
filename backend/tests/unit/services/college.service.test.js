@@ -182,7 +182,7 @@ describe("registerCollegeService", () => {
         email: "admin@example.com",
         password: "password123",
       }),
-    ).rejects.toThrow("User already exists with this email");
+    ).rejects.toThrow("A college account already exists");
 
     expect(mockGenerateCollegeCode).not.toHaveBeenCalled();
     expect(mockCollegeFindOne).not.toHaveBeenCalled();

@@ -24,7 +24,7 @@ export const registerCollegeService = async ({
       const existingUser = await User.findOne({ email }).session(session);
 
       if (existingUser) {
-        throw new ApiError(409, "User already exists with this email");
+        throw new ApiError(409, "A college account already exists");
       }
 
       if (isTemporaryEmail(email)) {
@@ -33,7 +33,7 @@ export const registerCollegeService = async ({
           "Please use a valid email address to continue.",
         );
       }
-      
+
       // 2. Generate unique college code
       let collegeCode;
       let existingCollege;

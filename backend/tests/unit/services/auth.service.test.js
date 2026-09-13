@@ -185,7 +185,7 @@ describe("registerStudentService", () => {
     });
 
     await expect(registerStudentService(mockRegistrationData)).rejects.toThrow(
-      "User already exists with this email",
+      "A student account already exists",
     );
 
     expect(mockCollegeFindOne).not.toHaveBeenCalled();
