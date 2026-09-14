@@ -437,7 +437,7 @@ function StudentProjectDetailPage() {
             <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
               Description
             </h2>
-            <div className="text-sm leading-relaxed text-foreground-secondary whitespace-pre-wrap">
+            <div className="text-sm leading-relaxed text-foreground-secondary whitespace-pre-wrap break-words">
               {project.description}
             </div>
           </div>

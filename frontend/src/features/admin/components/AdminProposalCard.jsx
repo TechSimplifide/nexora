@@ -119,7 +119,7 @@ function AdminProposalCard({
         )}
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 self-end sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
           <Button
             type="button"
             variant="danger"

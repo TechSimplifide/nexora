@@ -21,6 +21,7 @@ import {
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { getProjectById, updateProject } from "@/services/project.service";
 import Button from "@/components/ui/Button";
+import Skeleton from "@/components/ui/Skeleton";
 import PdfViewerModal from "@/components/common/PdfViewerModal";
 
 const COMMON_DOMAINS = [
@@ -520,14 +521,83 @@ function StudentEditProjectPage() {
     }
   };
 
-  // Loading State
+  // Loading State - Project Form Skeleton
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto py-16 text-center space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-        <p className="text-sm font-semibold text-muted-foreground">
-          Loading project data for editing...
-        </p>
+      <div className="space-y-6 max-w-4xl mx-auto" aria-label="Loading project data for editing">
+        {/* Header Skeleton */}
+        <div className="space-y-2">
+          <Skeleton variant="text" className="h-4 w-36 rounded-md" />
+          <div className="space-y-1.5 pt-1">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+              <Skeleton className="h-8 w-64 rounded-lg" />
+            </div>
+            <Skeleton variant="text" className="h-4 w-96 max-w-full rounded-md" />
+          </div>
+        </div>
+
+        {/* Section 1: Information Card Skeleton */}
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm space-y-6">
+          <div className="border-b border-border/80 pb-4 space-y-1.5">
+            <Skeleton className="h-5 w-48 rounded-md" />
+            <Skeleton className="h-3.5 w-72 rounded-md" />
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Skeleton className="h-3.5 w-24 rounded" />
+              <Skeleton className="h-10 w-full rounded-xl" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Skeleton className="h-3.5 w-28 rounded" />
+                <Skeleton className="h-10 w-full rounded-xl" />
+              </div>
+              <div className="space-y-1.5">
+                <Skeleton className="h-3.5 w-24 rounded" />
+                <Skeleton className="h-10 w-full rounded-xl" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Skeleton className="h-3.5 w-36 rounded" />
+              <Skeleton className="h-24 w-full rounded-xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2: Tech Stack Card Skeleton */}
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm space-y-5">
+          <div className="border-b border-border/80 pb-4 space-y-1.5">
+            <Skeleton className="h-5 w-44 rounded-md" />
+            <Skeleton className="h-3.5 w-64 rounded-md" />
+          </div>
+          <div className="space-y-3">
+            <Skeleton className="h-3.5 w-32 rounded" />
+            <div className="flex flex-wrap gap-2 pt-1">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton key={i} className="h-7 w-20 rounded-full" />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Media Uploads Card Skeleton */}
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm space-y-5">
+          <div className="border-b border-border/80 pb-4 space-y-1.5">
+            <Skeleton className="h-5 w-40 rounded-md" />
+            <Skeleton className="h-3.5 w-56 rounded-md" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Skeleton className="h-32 w-full rounded-xl" />
+            <Skeleton className="h-32 w-full rounded-xl" />
+          </div>
+        </div>
+
+        {/* Bottom Action Bar Skeleton */}
+        <div className="flex justify-end gap-3 pt-2">
+          <Skeleton className="h-9 w-24 rounded-xl" />
+          <Skeleton className="h-9 w-36 rounded-xl" />
+        </div>
       </div>
     );
   }
@@ -834,7 +904,7 @@ function StudentEditProjectPage() {
                 <span className="text-danger-600">*</span>
               </label>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   id="edit-tech-input"
                   type="text"
@@ -848,7 +918,7 @@ function StudentEditProjectPage() {
                   }}
                   placeholder="e.g. React, PostgreSQL, Docker..."
                   maxLength={50}
-                  className="flex-1 rounded-xl border border-border bg-surface px-3.5 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="min-w-0 flex-1 rounded-xl border border-border bg-surface px-3.5 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 />
                 <Button
                   type="button"
@@ -856,7 +926,7 @@ function StudentEditProjectPage() {
                   size="sm"
                   onClick={handleAddTechnology}
                   disabled={!techInput.trim()}
-                  className="gap-1.5 text-xs shrink-0"
+                  className="w-full sm:w-auto gap-1.5 text-xs shrink-0 justify-center"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Add</span>
@@ -869,14 +939,14 @@ function StudentEditProjectPage() {
                   {technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary shadow-2xs"
+                      className="inline-flex items-center gap-1.5 max-w-full rounded-lg border border-primary/20 bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary shadow-2xs"
                     >
-                      <span>{tech}</span>
+                      <span className="truncate">{tech}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveTechnology(tech)}
                         aria-label={`Remove ${tech}`}
-                        className="hover:text-primary-hover focus-visible:outline-none text-primary/70"
+                        className="hover:text-primary-hover focus-visible:outline-none text-primary/70 shrink-0"
                       >
                         ✕
                       </button>
@@ -1027,38 +1097,45 @@ function StudentEditProjectPage() {
 
               {/* GitHub Access Radio */}
               {githubUrl.trim() && (
-                <div className="flex items-center gap-4 pt-1 text-xs">
-                  <span className="text-muted-foreground">Access:</span>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="editGithubAccess"
-                      value="public"
-                      checked={githubAccess === "public"}
-                      onChange={() => {
-                        setGithubAccess("public");
-                        markDirty();
-                      }}
-                      className="text-primary"
-                    />
-                    <Globe className="h-3 w-3 text-muted-foreground" />
-                    <span>Public</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="editGithubAccess"
-                      value="protected"
-                      checked={githubAccess === "protected"}
-                      onChange={() => {
-                        setGithubAccess("protected");
-                        markDirty();
-                      }}
-                      className="text-primary"
-                    />
-                    <Lock className="h-3 w-3 text-muted-foreground" />
-                    <span>Protected</span>
-                  </label>
+                <div className="space-y-1 pt-1">
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="text-muted-foreground font-medium">Access:</span>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="editGithubAccess"
+                        value="public"
+                        checked={githubAccess === "public"}
+                        onChange={() => {
+                          setGithubAccess("public");
+                          markDirty();
+                        }}
+                        className="text-primary"
+                      />
+                      <Globe className="h-3 w-3 text-muted-foreground" />
+                      <span>Public</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="editGithubAccess"
+                        value="protected"
+                        checked={githubAccess === "protected"}
+                        onChange={() => {
+                          setGithubAccess("protected");
+                          markDirty();
+                        }}
+                        className="text-primary"
+                      />
+                      <Lock className="h-3 w-3 text-muted-foreground" />
+                      <span>Protected</span>
+                    </label>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {githubAccess === "public"
+                      ? "Anyone in your college can view and open this repository."
+                      : "Students must request permission before viewing this repository."}
+                  </p>
                 </div>
               )}
             </div>
@@ -1090,38 +1167,45 @@ function StudentEditProjectPage() {
 
               {/* Deployed Access Radio */}
               {deployedUrl.trim() && (
-                <div className="flex items-center gap-4 pt-1 text-xs">
-                  <span className="text-muted-foreground">Access:</span>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="editDeployedAccess"
-                      value="public"
-                      checked={deployedAccess === "public"}
-                      onChange={() => {
-                        setDeployedAccess("public");
-                        markDirty();
-                      }}
-                      className="text-primary"
-                    />
-                    <Globe className="h-3 w-3 text-muted-foreground" />
-                    <span>Public</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="editDeployedAccess"
-                      value="protected"
-                      checked={deployedAccess === "protected"}
-                      onChange={() => {
-                        setDeployedAccess("protected");
-                        markDirty();
-                      }}
-                      className="text-primary"
-                    />
-                    <Lock className="h-3 w-3 text-muted-foreground" />
-                    <span>Protected</span>
-                  </label>
+                <div className="space-y-1 pt-1">
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="text-muted-foreground font-medium">Access:</span>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="editDeployedAccess"
+                        value="public"
+                        checked={deployedAccess === "public"}
+                        onChange={() => {
+                          setDeployedAccess("public");
+                          markDirty();
+                        }}
+                        className="text-primary"
+                      />
+                      <Globe className="h-3 w-3 text-muted-foreground" />
+                      <span>Public</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="editDeployedAccess"
+                        value="protected"
+                        checked={deployedAccess === "protected"}
+                        onChange={() => {
+                          setDeployedAccess("protected");
+                          markDirty();
+                        }}
+                        className="text-primary"
+                      />
+                      <Lock className="h-3 w-3 text-muted-foreground" />
+                      <span>Protected</span>
+                    </label>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {deployedAccess === "public"
+                      ? "Anyone in your college can open this demo link directly."
+                      : "Students must request permission before opening this demo link."}
+                  </p>
                 </div>
               )}
             </div>

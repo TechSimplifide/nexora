@@ -120,9 +120,9 @@ function PdfViewerModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-border/80 px-6 py-3 bg-surface shrink-0 text-xs text-muted-foreground">
-          <span>Viewing within Nexora in-app reader</span>
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between border-t border-border/80 px-4 sm:px-6 py-3 bg-surface shrink-0 text-xs text-muted-foreground">
+          <span className="hidden sm:inline">Viewing within Nexora in-app reader</span>
+          <div className="flex items-center justify-end w-full sm:w-auto gap-3">
             <a
               href={documentUrl}
               download={downloadFilename}

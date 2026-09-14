@@ -587,17 +587,42 @@ export function AdminAIReviewPage() {
                 )}
 
                 {analysisStatus === "analyzing" && (
-                  <div className="rounded-2xl border border-primary/30 bg-surface p-8 text-center space-y-4 shadow-nexora-xs animate-pulse">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-primary border border-primary/20">
-                      <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                  <div className="rounded-2xl border border-primary/30 bg-surface p-6 sm:p-8 space-y-6 shadow-nexora-xs animate-in fade-in duration-200">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 border-b border-border/80 pb-5">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-primary border border-primary/20 shrink-0">
+                        <Sparkles className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <h3 className="text-base font-bold text-foreground">
+                          AI Analysis in Progress
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          Reviewing proposal document and evaluating against institutional quality standards.
+                        </p>
+                      </div>
                     </div>
-                    <div className="space-y-1.5 max-w-sm mx-auto">
-                      <h3 className="text-base font-bold text-foreground">
-                        Evaluating Proposal PDF...
-                      </h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Gemini is reading the document, assessing scope feasibility, checking technical depth, and scoring institutional criteria.
-                      </p>
+
+                    {/* Progress Stages */}
+                    <div className="space-y-2.5">
+                      {[
+                        { label: "Reading proposal document", sub: "Parsing submission overview and technical scope" },
+                        { label: "Evaluating technical feasibility and project scope", sub: "Assessing implementation complexity and domain depth" },
+                        { label: "Reviewing institutional criteria", sub: "Checking active college standards and requirements" },
+                        { label: "Preparing AI review insights", sub: "Compiling strengths, weaknesses, and recommendation" },
+                      ].map((stage, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-3 rounded-xl border border-border/60 bg-surface-secondary/40 p-3 text-xs"
+                        >
+                          <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                          </div>
+                          <div className="min-w-0 flex-1 space-y-0.5">
+                            <p className="font-semibold text-foreground">{stage.label}</p>
+                            <p className="text-[11px] text-muted-foreground">{stage.sub}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}

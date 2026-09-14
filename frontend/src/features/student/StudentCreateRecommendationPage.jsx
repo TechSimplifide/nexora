@@ -7,7 +7,6 @@ import {
   X,
   AlertCircle,
   Loader2,
-  BrainCircuit,
   CheckCircle2,
   ExternalLink,
 } from "lucide-react";
@@ -289,15 +288,15 @@ function StudentCreateRecommendationPage() {
                 {skills.map((skill) => (
                   <span
                     key={skill}
-                    className="inline-flex items-center gap-1.5 rounded-md bg-surface px-2.5 py-1 text-xs font-medium text-foreground border border-border/80 shadow-2xs"
+                    className="inline-flex items-center gap-1.5 max-w-full rounded-md bg-surface px-2.5 py-1 text-xs font-medium text-foreground border border-border/80 shadow-2xs"
                   >
-                    <span>{skill}</span>
+                    <span className="truncate">{skill}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveSkill(skill)}
                       disabled={isGenerating}
                       aria-label={`Remove ${skill}`}
-                      className="text-muted-foreground hover:text-danger-600 rounded-sm"
+                      className="text-muted-foreground hover:text-danger-600 rounded-sm shrink-0"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -307,7 +306,7 @@ function StudentCreateRecommendationPage() {
             )}
 
             {/* Skill Add Input */}
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 id="skill-input"
                 type="text"
@@ -316,7 +315,7 @@ function StudentCreateRecommendationPage() {
                 onKeyDown={handleSkillKeyDown}
                 placeholder="Type a skill and press Enter (e.g. PyTorch, Next.js)"
                 disabled={isGenerating || skills.length >= 15}
-                className="flex-1 rounded-xl border border-border bg-surface px-3.5 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="min-w-0 flex-1 rounded-xl border border-border bg-surface px-3.5 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <Button
                 type="button"
@@ -324,7 +323,7 @@ function StudentCreateRecommendationPage() {
                 size="sm"
                 onClick={() => handleAddSkill()}
                 disabled={isGenerating || !skillInput.trim() || skills.length >= 15}
-                className="shrink-0 gap-1 text-xs"
+                className="w-full sm:w-auto shrink-0 gap-1 text-xs justify-center"
               >
                 <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Add</span>
@@ -483,13 +482,13 @@ function StudentCreateRecommendationPage() {
 
           {/* Generation In-Progress Indicator */}
           {isGenerating && (
-            <div className="rounded-xl border border-primary/20 bg-primary-50/50 p-4 space-y-2 animate-pulse">
+            <div className="rounded-xl border border-primary/30 bg-primary-50/40 p-4 space-y-2 animate-in fade-in duration-200">
               <div className="flex items-center gap-2 text-xs font-bold text-primary">
-                <BrainCircuit className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />
-                <span>Generating your project recommendation...</span>
+                <Sparkles className="h-4 w-4 animate-spin text-primary shrink-0" aria-hidden="true" />
+                <span>Generating project recommendations…</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-muted-foreground">
-                Nexora AI is evaluating your skills, domain, and complexity requirements to generate a complete problem statement, technology stack, and implementation roadmap.
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Nexora AI is analyzing your selected skills, domain preferences, and complexity level to compose a tailored project blueprint.
               </p>
             </div>
           )}

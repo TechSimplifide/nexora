@@ -142,7 +142,7 @@ function ProjectOwnerAccessRequestCard({
             size="sm"
             onClick={() => onApprove(request)}
             disabled={isProcessing}
-            className="gap-1.5 text-xs font-semibold"
+            className="gap-1.5 text-xs font-semibold min-w-[92px]"
           >
             {isProcessing ? (
               <>

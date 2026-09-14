@@ -380,7 +380,7 @@ function StudentCreateProjectPage() {
     } catch (err) {
       setApiError(
         err.message ||
-          "Failed to submit project. Please verify all fields and try again."
+        "Failed to submit project. Please verify all fields and try again."
       );
       window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
@@ -502,11 +502,10 @@ function StudentCreateProjectPage() {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. AI-Powered Autonomous Drone Navigation"
                 maxLength={100}
-                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${
-                  formErrors.title
-                    ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
-                    : "border-border focus-visible:ring-primary bg-surface"
-                }`}
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${formErrors.title
+                  ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
+                  : "border-border focus-visible:ring-primary bg-surface"
+                  }`}
               />
               <div className="flex justify-between text-[11px] text-muted-foreground">
                 {formErrors.title ? (
@@ -531,11 +530,10 @@ function StudentCreateProjectPage() {
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder="A concise summary highlighting the problem solved, methodologies used, and key findings (20-500 chars)..."
                 maxLength={500}
-                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${
-                  formErrors.summary
-                    ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
-                    : "border-border focus-visible:ring-primary bg-surface"
-                }`}
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${formErrors.summary
+                  ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
+                  : "border-border focus-visible:ring-primary bg-surface"
+                  }`}
               />
               <div className="flex justify-between text-[11px] text-muted-foreground">
                 {formErrors.summary ? (
@@ -560,11 +558,10 @@ function StudentCreateProjectPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Elaborate on the background, technical architecture, system design, algorithms implemented, testing methodology, and conclusions (50-5000 chars)..."
                 maxLength={5000}
-                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${
-                  formErrors.description
-                    ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
-                    : "border-border focus-visible:ring-primary bg-surface"
-                }`}
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${formErrors.description
+                  ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
+                  : "border-border focus-visible:ring-primary bg-surface"
+                  }`}
               />
               <div className="flex justify-between text-[11px] text-muted-foreground">
                 {formErrors.description ? (
@@ -593,11 +590,10 @@ function StudentCreateProjectPage() {
                   onChange={(e) => setDomain(e.target.value)}
                   placeholder="e.g. Artificial Intelligence"
                   maxLength={50}
-                  className={`w-full rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${
-                    formErrors.domain
-                      ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
-                      : "border-border focus-visible:ring-primary bg-surface"
-                  }`}
+                  className={`w-full rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${formErrors.domain
+                    ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
+                    : "border-border focus-visible:ring-primary bg-surface"
+                    }`}
                 />
                 <datalist id="domain-options">
                   {COMMON_DOMAINS.map((d) => (
@@ -624,11 +620,10 @@ function StudentCreateProjectPage() {
                   onChange={(e) => setDepartment(e.target.value)}
                   placeholder="e.g. Computer Science"
                   maxLength={100}
-                  className={`w-full rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${
-                    formErrors.department
-                      ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
-                      : "border-border focus-visible:ring-primary bg-surface"
-                  }`}
+                  className={`w-full rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 ${formErrors.department
+                    ? "border-danger-300 focus-visible:ring-danger-500 bg-danger-50/20"
+                    : "border-border focus-visible:ring-primary bg-surface"
+                    }`}
                 />
                 <datalist id="department-options">
                   {COMMON_DEPARTMENTS.map((dept) => (
@@ -672,7 +667,7 @@ function StudentCreateProjectPage() {
                 <span className="text-danger-600">*</span>
               </label>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input
                   id="tech-input"
                   type="text"
@@ -686,7 +681,7 @@ function StudentCreateProjectPage() {
                   }}
                   placeholder="e.g. React, PyTorch, Node.js, Docker..."
                   maxLength={50}
-                  className="flex-1 rounded-xl border border-border bg-surface px-3.5 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="min-w-0 flex-1 rounded-xl border border-border bg-surface px-3.5 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 />
                 <Button
                   type="button"
@@ -694,7 +689,7 @@ function StudentCreateProjectPage() {
                   size="sm"
                   onClick={handleAddTechnology}
                   disabled={!techInput.trim()}
-                  className="gap-1.5 text-xs shrink-0"
+                  className="w-full sm:w-auto gap-1.5 text-xs shrink-0 justify-center"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Add Tech</span>
@@ -707,14 +702,14 @@ function StudentCreateProjectPage() {
                   {technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-primary/20 bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary shadow-2xs animate-in fade-in duration-100"
+                      className="inline-flex items-center gap-1.5 max-w-full rounded-lg border border-primary/20 bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary shadow-2xs animate-in fade-in duration-100"
                     >
-                      <span>{tech}</span>
+                      <span className="truncate">{tech}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveTechnology(tech)}
                         aria-label={`Remove ${tech}`}
-                        className="hover:text-primary-hover focus-visible:outline-none text-primary/70"
+                        className="hover:text-primary-hover focus-visible:outline-none text-primary/70 shrink-0"
                       >
                         ✕
                       </button>
@@ -837,7 +832,7 @@ function StudentCreateProjectPage() {
               3. Project Links & Permissions
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Optionally provide your source repository and live deployed URL with public or protected access.
+              Provide your source repository and live deployed URL with public or protected access.
             </p>
           </div>
 
@@ -846,7 +841,6 @@ function StudentCreateProjectPage() {
             <div className="space-y-2">
               <label htmlFor="github-url" className="text-xs font-semibold text-foreground flex items-center justify-between">
                 <span>GitHub Repository</span>
-                <span className="text-[11px] text-muted-foreground">Optional</span>
               </label>
               <input
                 id="github-url"
@@ -854,11 +848,10 @@ function StudentCreateProjectPage() {
                 value={githubUrl}
                 onChange={(e) => setGithubUrl(e.target.value)}
                 placeholder="https://github.com/username/project"
-                className={`w-full rounded-xl border px-3 py-2 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 ${
-                  formErrors.github
-                    ? "border-danger-300 focus-visible:ring-danger-500"
-                    : "border-border focus-visible:ring-primary bg-surface"
-                }`}
+                className={`w-full rounded-xl border px-3 py-2 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 ${formErrors.github
+                  ? "border-danger-300 focus-visible:ring-danger-500"
+                  : "border-border focus-visible:ring-primary bg-surface"
+                  }`}
               />
               {formErrors.github && (
                 <p className="text-[11px] text-danger-600 font-medium">{formErrors.github}</p>
@@ -866,32 +859,39 @@ function StudentCreateProjectPage() {
 
               {/* GitHub Access Radio */}
               {githubUrl.trim() && (
-                <div className="flex items-center gap-4 pt-1 text-xs">
-                  <span className="text-muted-foreground">Access:</span>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="githubAccess"
-                      value="public"
-                      checked={githubAccess === "public"}
-                      onChange={() => setGithubAccess("public")}
-                      className="text-primary"
-                    />
-                    <Globe className="h-3 w-3 text-muted-foreground" />
-                    <span>Public</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="githubAccess"
-                      value="protected"
-                      checked={githubAccess === "protected"}
-                      onChange={() => setGithubAccess("protected")}
-                      className="text-primary"
-                    />
-                    <Lock className="h-3 w-3 text-muted-foreground" />
-                    <span>Protected</span>
-                  </label>
+                <div className="space-y-1 pt-1">
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="text-muted-foreground font-medium">Access:</span>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="githubAccess"
+                        value="public"
+                        checked={githubAccess === "public"}
+                        onChange={() => setGithubAccess("public")}
+                        className="text-primary"
+                      />
+                      <Globe className="h-3 w-3 text-muted-foreground" />
+                      <span>Public</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="githubAccess"
+                        value="protected"
+                        checked={githubAccess === "protected"}
+                        onChange={() => setGithubAccess("protected")}
+                        className="text-primary"
+                      />
+                      <Lock className="h-3 w-3 text-muted-foreground" />
+                      <span>Protected</span>
+                    </label>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {githubAccess === "public"
+                      ? "Anyone in your college can view and open this repository."
+                      : "Students must request permission before viewing this repository."}
+                  </p>
                 </div>
               )}
             </div>
@@ -900,7 +900,6 @@ function StudentCreateProjectPage() {
             <div className="space-y-2">
               <label htmlFor="deployed-url" className="text-xs font-semibold text-foreground flex items-center justify-between">
                 <span>Live Deployment / Demo URL</span>
-                <span className="text-[11px] text-muted-foreground">Optional</span>
               </label>
               <input
                 id="deployed-url"
@@ -908,11 +907,10 @@ function StudentCreateProjectPage() {
                 value={deployedUrl}
                 onChange={(e) => setDeployedUrl(e.target.value)}
                 placeholder="https://my-app.vercel.app"
-                className={`w-full rounded-xl border px-3 py-2 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 ${
-                  formErrors.deployedLink
-                    ? "border-danger-300 focus-visible:ring-danger-500"
-                    : "border-border focus-visible:ring-primary bg-surface"
-                }`}
+                className={`w-full rounded-xl border px-3 py-2 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 ${formErrors.deployedLink
+                  ? "border-danger-300 focus-visible:ring-danger-500"
+                  : "border-border focus-visible:ring-primary bg-surface"
+                  }`}
               />
               {formErrors.deployedLink && (
                 <p className="text-[11px] text-danger-600 font-medium">{formErrors.deployedLink}</p>
@@ -920,32 +918,39 @@ function StudentCreateProjectPage() {
 
               {/* Deployed Link Access Radio */}
               {deployedUrl.trim() && (
-                <div className="flex items-center gap-4 pt-1 text-xs">
-                  <span className="text-muted-foreground">Access:</span>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="deployedAccess"
-                      value="public"
-                      checked={deployedAccess === "public"}
-                      onChange={() => setDeployedAccess("public")}
-                      className="text-primary"
-                    />
-                    <Globe className="h-3 w-3 text-muted-foreground" />
-                    <span>Public</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="deployedAccess"
-                      value="protected"
-                      checked={deployedAccess === "protected"}
-                      onChange={() => setDeployedAccess("protected")}
-                      className="text-primary"
-                    />
-                    <Lock className="h-3 w-3 text-muted-foreground" />
-                    <span>Protected</span>
-                  </label>
+                <div className="space-y-1 pt-1">
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="text-muted-foreground font-medium">Access:</span>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="deployedAccess"
+                        value="public"
+                        checked={deployedAccess === "public"}
+                        onChange={() => setDeployedAccess("public")}
+                        className="text-primary"
+                      />
+                      <Globe className="h-3 w-3 text-muted-foreground" />
+                      <span>Public</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="deployedAccess"
+                        value="protected"
+                        checked={deployedAccess === "protected"}
+                        onChange={() => setDeployedAccess("protected")}
+                        className="text-primary"
+                      />
+                      <Lock className="h-3 w-3 text-muted-foreground" />
+                      <span>Protected</span>
+                    </label>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {deployedAccess === "public"
+                      ? "Anyone in your college can open this demo link directly."
+                      : "Students must request permission before opening this demo link."}
+                  </p>
                 </div>
               )}
             </div>

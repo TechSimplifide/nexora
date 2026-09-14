@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, AlertCircle, Check, Loader2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Check, Loader2, MailCheck } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Logo from "@/components/common/Logo";
@@ -36,7 +36,7 @@ function LoginPage() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-    if (serverError) {
+    if (serverError || isUnverified || resendSuccess || resendError) {
       setServerError("");
       setIsUnverified(false);
       setResendSuccess("");
@@ -114,7 +114,7 @@ function LoginPage() {
 
     try {
       await resendVerificationEmail(trimmedEmail);
-      setResendSuccess("Verification email sent successfully. Please check your inbox.");
+      setResendSuccess("Verification email sent. Please check your inbox.");
     } catch (err) {
       setResendError(err.message || "Failed to resend verification email.");
     } finally {
@@ -137,69 +137,84 @@ function LoginPage() {
           Welcome back
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          Log in to continue to your Nexora workspace.
+          Sign in to continue to your Nexora workspace.
         </p>
       </div>
 
       {/* Form Card */}
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm sm:p-8">
-        {/* Server Error Alert */}
-        {serverError && (
+        {/* Unverified Email Specific State UI */}
+        {isUnverified ? (
           <div
             role="alert"
-            className="mb-5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
+            className="mb-5 rounded-xl border border-warning-200 bg-warning-50/70 p-4 text-xs shadow-2xs"
           >
-            <div className="flex items-start gap-2.5">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-500" />
-              <div className="flex-1">
-                <span>{serverError}</span>
+            <div className="flex items-start gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-warning-100 text-warning-800 border border-warning-200">
+                <MailCheck className="h-4 w-4" aria-hidden="true" />
+              </div>
+              <div className="flex-1 space-y-1">
+                <h2 className="text-xs font-bold text-foreground">
+                  Email verification required
+                </h2>
+                <p className="leading-relaxed text-muted-foreground text-[11px]">
+                  Your account has been created, but your email address hasn&apos;t been verified yet.
+                </p>
+                <p className="leading-relaxed text-muted-foreground text-[11px]">
+                  Please check your inbox and verify your email before signing in.
+                </p>
 
-                {/* Resend Verification Action if Email Unverified */}
-                {isUnverified && (
-                  <div className="mt-2.5 border-t border-danger-200/60 pt-2.5">
-                    <button
-                      type="button"
-                      onClick={handleResendVerification}
-                      disabled={isResending}
-                      className="inline-flex items-center gap-1.5 font-semibold text-danger-800 underline underline-offset-2 hover:text-danger-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 rounded-sm"
-                    >
-                      {isResending ? (
-                        <>
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          <span>Sending verification email...</span>
-                        </>
-                      ) : (
-                        <span>Resend verification email</span>
+                {/* Resend Action & Status Feedback */}
+                <div className="pt-2">
+                  {resendSuccess ? (
+                    <div className="flex items-center gap-1.5 font-medium text-success-700 bg-success-50 border border-success-200 rounded-lg px-2.5 py-1.5 text-[11px]">
+                      <Check className="h-3.5 w-3.5 shrink-0 text-success-600" />
+                      <span>{resendSuccess}</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleResendVerification}
+                        disabled={isResending}
+                        className="w-full sm:w-auto gap-1.5 text-xs font-semibold"
+                      >
+                        {isResending ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <span>Sending verification email…</span>
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="h-3.5 w-3.5" />
+                            <span>Resend verification email</span>
+                          </>
+                        )}
+                      </Button>
+
+                      {resendError && (
+                        <div className="flex items-start gap-1.5 text-[11px] font-medium text-danger-700">
+                          <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-danger-500" />
+                          <span>{resendError}</span>
+                        </div>
                       )}
-                    </button>
-                  </div>
-                )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        )}
-
-        {/* Resend Success Alert */}
-        {resendSuccess && (
-          <div
-            role="status"
-            className="mb-5 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 p-3.5 text-xs font-medium text-success-700"
-          >
-            <Check className="h-4 w-4 shrink-0 text-success-600" />
-            <span>{resendSuccess}</span>
-          </div>
-        )}
-
-        {/* Resend Error Alert */}
-        {resendError && (
+        ) : serverError ? (
           <div
             role="alert"
-            className="mb-5 flex items-start gap-2 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
+            className="mb-5 flex items-start gap-2.5 rounded-lg border border-danger-100 bg-danger-50 p-3.5 text-xs font-medium text-danger-700"
           >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-500" />
-            <span>{resendError}</span>
+            <span>{serverError}</span>
           </div>
-        )}
+        ) : null}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           {/* Email Address */}
@@ -214,7 +229,7 @@ function LoginPage() {
             onChange={handleChange}
             disabled={isSubmitting}
             error={errors.email}
-            placeholder="you@college.edu"
+            placeholder="user@gmail.com"
           />
 
           {/* Password */}
@@ -234,7 +249,7 @@ function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -252,7 +267,7 @@ function LoginPage() {
               disabled={isSubmitting}
               className="w-full justify-center shadow-nexora-sm"
             >
-              Login
+              Sign in
             </Button>
           </div>
         </form>

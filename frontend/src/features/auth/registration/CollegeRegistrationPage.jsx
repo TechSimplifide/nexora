@@ -130,19 +130,26 @@ function CollegeRegistrationPage() {
   if (isSuccess) {
     return (
       <div className="w-full max-w-md px-4 py-8 sm:px-6">
-        <div className="rounded-2xl border border-border bg-surface p-6 text-center shadow-nexora-sm sm:p-8">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-success-50 text-success-600">
-            <MailCheck className="h-7 w-7" />
+        <div className="rounded-2xl border border-border bg-surface p-6 text-center shadow-nexora-sm sm:p-8 space-y-5">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-primary border border-primary/20">
+            <MailCheck className="h-7 w-7" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Check your email</h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Your Nexora college workspace and administrator account have been created
-            successfully. Please check your email and verify your account before logging in.
-          </p>
+
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Check your email
+            </h1>
+            <p className="text-sm font-semibold text-foreground">
+              Your Nexora account has been created successfully.
+            </p>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              We&apos;ve sent a verification link to your email address. Please check your inbox and verify your email before signing in.
+            </p>
+          </div>
 
           {/* College Code Display Card */}
           {collegeCode && (
-            <div className="mt-6 rounded-xl border border-border bg-surface-secondary p-4 text-left">
+            <div className="rounded-xl border border-border bg-surface-secondary p-4 text-left">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Your College Code
@@ -175,13 +182,17 @@ function CollegeRegistrationPage() {
             </div>
           )}
 
-          <div className="mt-6 border-t border-border pt-6">
+          <div className="pt-2 border-t border-border">
             <Link to="/login" className="block w-full">
               <Button variant="primary" size="md" className="w-full justify-center shadow-nexora-sm">
-                Go to Login
+                Sign in
               </Button>
             </Link>
           </div>
+
+          <p className="text-xs text-muted-foreground">
+            Didn&apos;t receive the email? Check your spam or junk folder.
+          </p>
         </div>
       </div>
     );
@@ -273,7 +284,7 @@ function CollegeRegistrationPage() {
             onChange={handleChange}
             disabled={isSubmitting}
             error={errors.email}
-            placeholder="admin@college.edu"
+            placeholder="admin@gmail.com"
           />
 
           {/* Password */}
@@ -293,7 +304,7 @@ function CollegeRegistrationPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -318,7 +329,7 @@ function CollegeRegistrationPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label={
                   showConfirmPassword ? "Hide confirm password" : "Show confirm password"
                 }
@@ -342,20 +353,20 @@ function CollegeRegistrationPage() {
               disabled={isSubmitting}
               className="w-full justify-center shadow-nexora-sm"
             >
-              Register College & Admin
+              Create college account
             </Button>
           </div>
         </form>
       </div>
 
-      {/* Login Link Footer */}
+      {/* Sign In Link Footer */}
       <div className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           to="/login"
           className="font-semibold text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
         >
-          Log in
+          Sign in
         </Link>
       </div>
     </div>

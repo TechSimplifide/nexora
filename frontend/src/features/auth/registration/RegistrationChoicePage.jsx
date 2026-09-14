@@ -70,14 +70,14 @@ function RegistrationChoicePage() {
         </div>
       </div>
 
-      {/* Login Link Footer */}
+      {/* Sign In Link Footer */}
       <div className="mt-8 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           to="/login"
           className="font-semibold text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
         >
-          Log in
+          Sign in
         </Link>
       </div>
     </div>

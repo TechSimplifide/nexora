@@ -392,7 +392,7 @@ function AdminProjectDetailPage() {
         <h2 className="text-base font-bold text-foreground sm:text-lg">
           Project Description
         </h2>
-        <div className="text-xs leading-relaxed text-foreground-secondary whitespace-pre-wrap">
+        <div className="text-xs leading-relaxed text-foreground-secondary whitespace-pre-wrap break-words">
           {project.description || "No full description provided for this project."}
         </div>
       </section>

@@ -147,7 +147,7 @@ function ProjectAccessRequestCard({ request, onInitiateCancel }) {
       </div>
 
       {/* Footer Actions */}
-      <div className="mt-4 pt-3.5 border-t border-border/70 flex items-center justify-between">
+      <div className="mt-4 pt-3.5 border-t border-border/70 flex flex-wrap items-center justify-between gap-2">
         {status === "pending" ? (
           <>
             <span className="text-xs text-muted-foreground">Waiting for response</span>

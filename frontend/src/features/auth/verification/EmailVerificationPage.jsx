@@ -91,7 +91,7 @@ function EmailVerificationPage() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-primary">
               <Loader2 className="h-7 w-7 animate-spin" />
             </div>
-            <h1 className="text-xl font-bold text-foreground">Verifying email</h1>
+            <h1 className="text-xl font-bold text-foreground">Verifying your email</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               Verifying your email address, please wait...
             </p>
@@ -106,12 +106,12 @@ function EmailVerificationPage() {
             </div>
             <h1 className="text-2xl font-bold text-foreground">Email verified successfully</h1>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Your account has been verified. You can now log in to your Nexora workspace.
+              Your account has been verified. You can now sign in to your Nexora workspace.
             </p>
             <div className="mt-6 border-t border-border pt-6">
               <Link to="/login" className="block w-full">
                 <Button variant="primary" size="md" className="w-full justify-center shadow-nexora-sm">
-                  Go to Login
+                  Sign in
                 </Button>
               </Link>
             </div>
@@ -170,7 +170,7 @@ function EmailVerificationPage() {
                 }}
                 disabled={isResending}
                 error={resendError}
-                placeholder="you@college.edu"
+                placeholder="rohit@gmail.com"
               />
 
               <Button
@@ -181,21 +181,21 @@ function EmailVerificationPage() {
                 disabled={isResending}
                 className="w-full justify-center shadow-nexora-sm"
               >
-                Resend Verification Email
+                Resend verification email
               </Button>
             </form>
           </div>
         )}
       </div>
 
-      {/* Login Link Footer */}
+      {/* Sign In Link Footer */}
       <div className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           to="/login"
           className="font-semibold text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
         >
-          Log in
+          Sign in
         </Link>
       </div>
     </div>

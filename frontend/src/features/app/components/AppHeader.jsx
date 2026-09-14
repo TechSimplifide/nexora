@@ -232,7 +232,7 @@ function AppHeader({ onToggleMobileSidebar }) {
 
           {/* Notification Preview Dropdown */}
           {isNotificationOpen && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-border bg-surface shadow-nexora-lg z-30 overflow-hidden animate-in fade-in duration-150">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-1.5rem)] max-w-sm sm:w-96 rounded-2xl border border-border bg-surface shadow-nexora-lg z-30 overflow-hidden animate-in fade-in duration-150">
               {/* Dropdown Header */}
               <div className="flex items-center justify-between border-b border-border/80 px-4 py-3 bg-surface">
                 <div className="flex items-center gap-2">

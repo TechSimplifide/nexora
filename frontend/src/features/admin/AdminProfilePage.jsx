@@ -9,6 +9,7 @@ import {
   LogOut,
   AtSign,
   Camera,
+  UploadCloud,
   Trash2,
   AlertCircle,
   Copy,
@@ -121,78 +122,108 @@ function AdminProfilePage() {
 
       {/* 2. User Identity & Photo Card */}
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 pb-6 border-b border-border/80">
-          {/* Avatar Photo / Initials Fallback */}
-          <div className="relative group flex h-20 w-20 items-center justify-center rounded-full bg-primary-50 text-2xl font-bold text-primary border-2 border-primary/20 shadow-2xs shrink-0 overflow-hidden">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt={user?.fullName || "Administrator"}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <span>{getInitials(user?.fullName)}</span>
-            )}
-          </div>
-
-          {/* Photo Actions & User Info */}
-          <div className="space-y-2 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl font-bold text-foreground">
-                {user?.fullName || "Administrator"}
-              </h2>
-              <span className="inline-flex items-center gap-1 rounded-md bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary border border-primary/20">
-                <Shield className="h-3 w-3" aria-hidden="true" />
-                {user?.role || "ADMIN"}
-              </span>
-            </div>
-
-            {/* Photo Upload Controls */}
-            <div className="flex flex-wrap items-center gap-2.5 pt-1">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleFileChange}
-                className="hidden"
-                aria-label="Upload profile photo"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                className="gap-1.5 text-xs font-semibold"
-              >
-                <Camera className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>{profileImage ? "Change Photo" : "Upload Photo"}</span>
-              </Button>
-
-              {profileImage && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRemovePhoto}
-                  className="gap-1.5 text-xs font-semibold text-danger-700 hover:text-danger-800 hover:border-danger-200"
-                >
-                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>Remove Photo</span>
-                </Button>
+        {/* User Identity Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border/80">
+          <div className="flex items-center gap-4">
+            {/* Avatar Photo / Initials Fallback */}
+            <div className="relative group flex h-16 w-16 sm:h-18 sm:w-18 items-center justify-center rounded-full bg-primary-50 text-xl sm:text-2xl font-bold text-primary border-2 border-primary/20 shadow-2xs shrink-0 overflow-hidden">
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt={user?.fullName || "Administrator"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span>{getInitials(user?.fullName)}</span>
               )}
-
-              <span className="text-[11px] text-muted-foreground">
-                JPG, PNG or WebP. Max 2 MB.
-              </span>
             </div>
 
-            {imageError && (
-              <div className="flex items-center gap-1.5 text-xs text-danger-700 pt-1">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>{imageError}</span>
+            <div className="space-y-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-bold text-foreground">
+                  {user?.fullName || "Administrator"}
+                </h2>
+                <span className="inline-flex items-center gap-1 rounded-md bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary border border-primary/20">
+                  <Shield className="h-3 w-3" aria-hidden="true" />
+                  {user?.role || "ADMIN"}
+                </span>
               </div>
-            )}
+              <p className="text-xs text-muted-foreground truncate">
+                {user?.email || "No email provided"}
+              </p>
+            </div>
           </div>
+
+          {profileImage && (
+            <button
+              type="button"
+              onClick={handleRemovePhoto}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-danger-600 hover:text-danger-700 hover:bg-danger-50/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-500/30 self-start sm:self-auto shrink-0"
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Remove photo</span>
+            </button>
+          )}
+        </div>
+
+        {/* Compact Profile Photo Upload Dropzone Area */}
+        <div className="space-y-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+            aria-label="Upload profile photo"
+          />
+
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            className="group relative flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-dashed border-border hover:border-primary/40 bg-surface-secondary/30 hover:bg-surface-secondary/60 p-4 transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary border border-primary/20 group-hover:bg-primary-100/60 transition-colors">
+                <UploadCloud className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div className="space-y-0.5 text-center sm:text-left">
+                <p className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                  Upload profile photo
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  JPG, PNG or WebP • Max 2 MB
+                </p>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+              className="gap-1.5 text-xs font-semibold shrink-0 bg-surface hover:bg-surface-secondary border-border hover:border-border-strong text-foreground shadow-2xs group-hover:border-primary/30"
+            >
+              <Camera className="h-3.5 w-3.5 text-foreground-secondary" aria-hidden="true" />
+              <span>Choose photo</span>
+            </Button>
+          </div>
+
+          {imageError && (
+            <div className="flex items-center gap-1.5 text-xs text-danger-700 pt-1">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{imageError}</span>
+            </div>
+          )}
         </div>
 
         {/* Profile Details Grid */}
@@ -312,7 +343,7 @@ function AdminProfilePage() {
             className="gap-2 text-xs font-semibold"
           >
             <LogOut className="h-4 w-4" aria-hidden="true" />
-            <span>Log Out</span>
+            <span>Sign Out</span>
           </Button>
         </div>
       </div>

@@ -245,8 +245,8 @@ function AdminProjectsPage() {
 
           {/* Pagination Controls */}
           {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-border pt-4">
-              <p className="text-xs text-muted-foreground">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border pt-4">
+              <p className="text-xs text-muted-foreground text-center sm:text-left">
                 Showing page <strong className="font-semibold text-foreground">{pagination.page}</strong> of{" "}
                 <strong className="font-semibold text-foreground">{pagination.totalPages}</strong> ({pagination.totalProjects} total)
               </p>

@@ -26,7 +26,7 @@ function AppLayout() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+    <div className="flex h-dvh overflow-hidden bg-background text-foreground">
       {/* Desktop Sidebar (Fixed viewport height, persistent collapse width) */}
       <div className="hidden lg:flex lg:shrink-0 h-full">
         <AppSidebar
@@ -56,14 +56,14 @@ function AppLayout() {
       )}
 
       {/* Main Content Column (Viewport-height constrained with dedicated internal scrolling) */}
-      <div className="flex flex-1 flex-col h-full min-w-0 overflow-hidden">
+      <div className="flex flex-1 flex-col h-full min-w-0 min-h-0 overflow-hidden">
         <AppHeader
           onToggleMobileSidebar={() =>
             setIsMobileSidebarOpen(!isMobileSidebarOpen)
           }
         />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>
