@@ -91,7 +91,9 @@ app.use(limiter);
 
 // API Routes
 
-swaggerDocs(app);
+if (process.env.NODE_ENV === "development") {
+  swaggerDocs(app);
+}
 
 app.use("/api/v1/auth", collegeRouter);
 app.use("/api/v1/auth", authRouter);
