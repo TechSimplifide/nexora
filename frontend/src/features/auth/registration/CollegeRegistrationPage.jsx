@@ -10,8 +10,6 @@ import {
   ArrowLeft,
   MailCheck,
   AlertCircle,
-  Copy,
-  Check,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -33,8 +31,6 @@ function CollegeRegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  const [collegeCode, setCollegeCode] = useState("");
-  const [copied, setCopied] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,32 +93,18 @@ function CollegeRegistrationPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await registerCollege({
+      await registerCollege({
         collegeName: formData.collegeName.trim(),
         adminName: formData.adminName.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
       });
 
-      const generatedCode =
-        response?.data?.collegeCode || response?.collegeCode || "";
-      setCollegeCode(generatedCode);
       setIsSuccess(true);
     } catch (err) {
       setServerError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleCopyCode = async () => {
-    if (!collegeCode) return;
-    try {
-      await navigator.clipboard.writeText(collegeCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback if clipboard API fails
     }
   };
 
@@ -139,48 +121,16 @@ function CollegeRegistrationPage() {
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Check your email
             </h1>
-            <p className="text-sm font-semibold text-foreground">
-              Your Nexora account has been created successfully.
-            </p>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              We&apos;ve sent a verification link to your email address. Please check your inbox and verify your email before signing in.
+              Your Nexora college workspace and administrator account have been created successfully. Please check your email and verify your account before signing in.
             </p>
           </div>
 
-          {/* College Code Display Card */}
-          {collegeCode && (
-            <div className="rounded-xl border border-border bg-surface-secondary p-4 text-left">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Your College Code
-                </span>
-                <button
-                  type="button"
-                  onClick={handleCopyCode}
-                  aria-label="Copy college code"
-                  className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-success-600" />
-                      <span className="text-success-600 font-semibold">Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" />
-                      <span>Copy Code</span>
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="mt-2 font-mono text-xl font-bold tracking-wider text-foreground">
-                {collegeCode}
-              </div>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                Share this code with students from your college so they can join your workspace during registration.
-              </p>
-            </div>
-          )}
+          <div className="rounded-xl border border-border bg-surface-secondary/60 p-3.5 text-center">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground">
+              College code available in your Workspace after verification.
+            </p>
+          </div>
 
           <div className="pt-2 border-t border-border">
             <Link to="/login" className="block w-full">
