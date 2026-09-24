@@ -1,11 +1,7 @@
 import { Building, Lock, ClipboardCheck, ShieldCheck } from "lucide-react";
 import { motion } from "motion/react";
 
-/**
- * GovernanceSection
- * Section 7: Institutional Trust & Governance
- * Structured governance framework presenting how Nexora maintains institutional control.
- */
+// Section 7: Institutional Trust & Governance.
 function GovernanceSection() {
   const principles = [
     {

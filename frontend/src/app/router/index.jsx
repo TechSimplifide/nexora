@@ -103,9 +103,7 @@ const AdminProfilePage = lazy(
 // Lazy-Loaded 404 Not Found Page
 const NotFoundPage = lazy(() => import("@/components/common/NotFoundPage"));
 
-/**
- * Clean, accessible route suspense fallback matching the Nexora design system.
- */
+// Route suspense fallback matching the Nexora design system.
 function PageLoadingFallback() {
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center bg-background px-4">
@@ -121,9 +119,7 @@ function PageLoadingFallback() {
   );
 }
 
-/**
- * Helper to wrap lazy route components in a Suspense boundary with fallback.
- */
+// Wrap lazy route components in a Suspense boundary with fallback.
 const withSuspense = (Component) => (
   <Suspense fallback={<PageLoadingFallback />}>
     <Component />

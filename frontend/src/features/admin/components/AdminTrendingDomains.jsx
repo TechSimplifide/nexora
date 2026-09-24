@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Layers } from "lucide-react";
 
-/**
- * AdminTrendingDomains
- * Responsive Treemap / Proportional Tile visualization for project domains.
- */
+// Treemap tile visualization for project domains.
 function AdminTrendingDomains({ data = [] }) {
   const [hoveredIdx, setHoveredIdx] = useState(null);
 

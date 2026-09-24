@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 
-/**
- * Shared in-app Image Viewer Modal / Lightbox for Nexora.
- * Displays uncropped full-resolution project screenshots with keyboard navigation,
- * accessible dialog semantics, and focus management.
- */
+// In-app Image Viewer Modal / Lightbox for full-resolution project screenshots.
 function ImageViewerContent({
   onClose,
   images = [],

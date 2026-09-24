@@ -4,43 +4,55 @@ import {
   FileText,
   UploadCloud,
   Users,
+  User,
+  Mail,
   AlertCircle,
   Loader2,
   CheckCircle2,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import {
   createProjectProposal,
   updateRejectedProjectProposal,
 } from "@/services/projectProposal.service";
 
 function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
+  const { user } = useAuth();
   const isEditMode = Boolean(proposalToEdit);
   const fileInputRef = useRef(null);
+
+  const creatorName = (
+    user?.fullName ||
+    proposalToEdit?.createdBy?.fullName ||
+    ""
+  )
+    .trim()
+    .toLowerCase();
 
   // Initialize state directly from props without setState in effect
   const [title, setTitle] = useState(() => proposalToEdit?.title || "");
   const [teamSize, setTeamSize] = useState(() => {
-    return (
-      proposalToEdit?.team?.size ||
-      proposalToEdit?.team?.members?.length ||
-      1
-    );
+    return proposalToEdit?.team?.size || 1;
   });
-  const [members, setMembers] = useState(() => {
-    const size =
-      proposalToEdit?.team?.size ||
-      proposalToEdit?.team?.members?.length ||
-      1;
+
+  const [additionalMembers, setAdditionalMembers] = useState(() => {
+    const size = proposalToEdit?.team?.size || 1;
+    const needed = Math.max(0, size - 1);
     const existingMembers = Array.isArray(proposalToEdit?.team?.members)
-      ? proposalToEdit.team.members.map((m) => ({ name: m.name || "" }))
+      ? proposalToEdit.team.members
       : [];
 
-    const padded = [...existingMembers];
-    while (padded.length < size) {
+    // Filter out creator name if it was stored in legacy proposal members
+    const filtered = existingMembers
+      .map((m) => ({ name: m.name || "" }))
+      .filter((m) => m.name.trim().toLowerCase() !== creatorName);
+
+    const padded = [...filtered];
+    while (padded.length < needed) {
       padded.push({ name: "" });
     }
-    return padded.slice(0, size);
+    return padded.slice(0, needed);
   });
 
   const [abstractPdf, setAbstractPdf] = useState(null);
@@ -48,19 +60,20 @@ function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState(null);
 
-  // Handle Team Size adjustment
+  // Handle Team Size adjustment (teamSize = total members including lead)
   const handleTeamSizeChange = (newSize) => {
     const size = Math.max(1, Math.min(10, Number(newSize) || 1));
     setTeamSize(size);
 
-    setMembers((prev) => {
+    const neededAdditional = Math.max(0, size - 1);
+    setAdditionalMembers((prev) => {
       const next = [...prev];
-      if (next.length < size) {
-        while (next.length < size) {
+      if (next.length < neededAdditional) {
+        while (next.length < neededAdditional) {
           next.push({ name: "" });
         }
       } else {
-        return next.slice(0, size);
+        return next.slice(0, neededAdditional);
       }
       return next;
     });
@@ -71,7 +84,7 @@ function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
   };
 
   const handleMemberNameChange = (index, value) => {
-    setMembers((prev) => {
+    setAdditionalMembers((prev) => {
       const next = [...prev];
       next[index] = { ...next[index], name: value };
       return next;
@@ -93,6 +106,14 @@ function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
       setErrors((prev) => ({
         ...prev,
         abstractPdf: "Only PDF documents (.pdf) are allowed.",
+      }));
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors((prev) => ({
+        ...prev,
+        abstractPdf: "File size exceeds 10MB limit.",
       }));
       return;
     }
@@ -120,14 +141,24 @@ function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
     }
 
     // Member names validation
-    members.forEach((m, idx) => {
+    additionalMembers.forEach((m, idx) => {
       const name = m.name?.trim() || "";
       if (!name) {
-        newErrors[`member_${idx}`] = `Member ${idx + 1} name is required.`;
+        newErrors[`member_${idx}`] = `Team Member ${idx + 1} name is required.`;
       } else if (name.length < 2) {
         newErrors[`member_${idx}`] = "Name must be at least 2 characters.";
       } else if (name.length > 50) {
         newErrors[`member_${idx}`] = "Name cannot exceed 50 characters.";
+      } else if (creatorName && name.toLowerCase() === creatorName) {
+        newErrors[`member_${idx}`] = "You are already the Project Lead. Please enter a teammate's name.";
+      } else if (
+        additionalMembers.some(
+          (other, oIdx) =>
+            oIdx !== idx &&
+            (other.name?.trim().toLowerCase() || "") === name.toLowerCase()
+        )
+      ) {
+        newErrors[`member_${idx}`] = "Duplicate team member name entered.";
       }
     });
 
@@ -148,11 +179,22 @@ function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
 
     setIsSubmitting(true);
 
+    const currentLead = (
+      user?.fullName ||
+      proposalToEdit?.createdBy?.fullName ||
+      "Student Lead"
+    ).trim();
+
+    const members = [
+      { name: currentLead },
+      ...additionalMembers.map((m) => ({ name: m.name.trim() })),
+    ];
+
     const payload = {
       title: title.trim(),
       team: {
         size: teamSize,
-        members: members.map((m) => ({ name: m.name.trim() })),
+        members,
       },
       abstractPdf: abstractPdf || undefined,
     };
@@ -179,6 +221,9 @@ function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
       setIsSubmitting(false);
     }
   };
+
+  const leadName = user?.fullName || proposalToEdit?.createdBy?.fullName || "Student Lead";
+  const leadEmail = user?.email || proposalToEdit?.createdBy?.email;
 
   return (
     <div className="relative w-full max-w-2xl my-8 overflow-hidden rounded-2xl border border-border bg-surface shadow-nexora-lg">
@@ -261,83 +306,118 @@ function ProposalFormContent({ onClose, onSuccess, proposalToEdit }) {
           )}
         </div>
 
-        {/* Team Size Selector */}
-        <div className="space-y-1.5">
+        {/* Team Composition Section */}
+        <div className="space-y-4 rounded-xl border border-border/80 bg-surface-secondary/30 p-4">
           <div className="flex items-center justify-between">
-            <label
-              htmlFor="team-size"
-              className="block text-xs font-semibold text-foreground"
-            >
-              Team Size <span className="text-danger-600">*</span>
-            </label>
-            <span className="text-[11px] text-muted-foreground">
-              (1 to 10 members)
-            </span>
+            <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+              <Users className="h-4 w-4 text-primary" aria-hidden="true" />
+              <span>Team Composition</span>
+            </div>
+
+            {/* Team Size Selector */}
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="team-size"
+                className="text-xs font-medium text-muted-foreground whitespace-nowrap"
+              >
+                Total Team Size:
+              </label>
+              <select
+                id="team-size"
+                value={teamSize}
+                onChange={(e) => handleTeamSizeChange(e.target.value)}
+                disabled={isSubmitting}
+                className="rounded-lg border border-border bg-surface px-2.5 py-1 text-xs font-semibold text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                  <option key={num} value={num}>
+                    {num} {num === 1 ? "Member (Individual / Solo)" : "Members"}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <select
-              id="team-size"
-              value={teamSize}
-              onChange={(e) => handleTeamSizeChange(e.target.value)}
-              disabled={isSubmitting}
-              className="rounded-xl border border-border bg-surface px-3.5 py-2 text-sm font-medium text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                <option key={num} value={num}>
-                  {num} {num === 1 ? "Member (Individual)" : "Members"}
-                </option>
-              ))}
-            </select>
-            <span className="text-xs text-muted-foreground">
-              Inputs below adjust dynamically to match team size.
-            </span>
-          </div>
+
           {errors.team && (
             <p className="text-[11px] font-medium text-danger-600">
               {errors.team}
             </p>
           )}
-        </div>
 
-        {/* Dynamic Team Members Inputs */}
-        <div className="space-y-2.5 rounded-xl border border-border/80 bg-surface-secondary/30 p-4">
-          <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-            <Users className="h-4 w-4 text-primary" aria-hidden="true" />
-            <span>Team Member Names</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            {members.map((m, idx) => (
-              <div key={idx} className="space-y-1">
-                <label
-                  htmlFor={`member-input-${idx}`}
-                  className="block text-[11px] font-medium text-muted-foreground"
-                >
-                  Member {idx + 1} {idx === 0 && "(Team Lead)"}
-                </label>
-                <input
-                  id={`member-input-${idx}`}
-                  type="text"
-                  value={m.name}
-                  onChange={(e) => handleMemberNameChange(idx, e.target.value)}
-                  placeholder={`e.g. ${
-                    idx === 0 ? "Your Full Name" : "Teammate Name"
-                  }`}
-                  disabled={isSubmitting}
-                  className={`w-full rounded-lg border bg-surface px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-                    errors[`member_${idx}`]
-                      ? "border-danger-500 focus:border-danger-500"
-                      : "border-border focus:border-primary"
-                  }`}
-                />
-                {errors[`member_${idx}`] && (
-                  <p className="text-[10px] font-medium text-danger-600">
-                    {errors[`member_${idx}`]}
-                  </p>
-                )}
+          {/* Project Lead Card (Automatic) */}
+          <div className="rounded-xl border border-border/80 bg-surface p-3.5 space-y-1.5 shadow-2xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                <User className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                <span>Project Lead</span>
               </div>
-            ))}
+              <span className="rounded-md bg-primary-50 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+                Your Account
+              </span>
+            </div>
+            <div className="space-y-0.5 pl-5 text-xs">
+              <p className="font-semibold text-foreground">{leadName}</p>
+              {leadEmail && (
+                <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <Mail className="h-3 w-3 shrink-0" aria-hidden="true" />
+                  <span>{leadEmail}</span>
+                </div>
+              )}
+              <p className="text-[11px] font-medium text-primary flex items-center gap-1 pt-1">
+                <CheckCircle2 className="h-3 w-3 shrink-0" aria-hidden="true" />
+                <span>Automatically included as Team Lead</span>
+              </p>
+            </div>
           </div>
+
+          {/* Additional Team Members */}
+          {teamSize > 1 ? (
+            <div className="space-y-2.5 pt-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Additional Team Members ({additionalMembers.length})
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  Excluding project lead
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {additionalMembers.map((m, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <label
+                      htmlFor={`modal-member-input-${idx}`}
+                      className="block text-[11px] font-medium text-muted-foreground"
+                    >
+                      Additional Team Member {idx + 1} Name <span className="text-danger-600">*</span>
+                    </label>
+                    <input
+                      id={`modal-member-input-${idx}`}
+                      type="text"
+                      value={m.name}
+                      onChange={(e) => handleMemberNameChange(idx, e.target.value)}
+                      placeholder={`e.g. Teammate ${idx + 1} Full Name`}
+                      disabled={isSubmitting}
+                      className={`w-full rounded-lg border bg-surface px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                        errors[`member_${idx}`]
+                          ? "border-danger-500 focus:border-danger-500"
+                          : "border-border focus:border-primary"
+                      }`}
+                    />
+                    {errors[`member_${idx}`] && (
+                      <p className="text-[10px] font-medium text-danger-600">
+                        {errors[`member_${idx}`]}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-border bg-surface/60 p-3.5 text-center text-xs text-muted-foreground">
+              Individual Project — No additional team members required.
+            </div>
+          )}
         </div>
 
         {/* Abstract PDF Upload */}

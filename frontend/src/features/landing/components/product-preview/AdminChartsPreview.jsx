@@ -1,11 +1,6 @@
 import { useState } from "react";
 
-/**
- * AdminChartsPreview
- * Contains SVG-based Technology Adoption vertical column chart,
- * Year-over-year Academic Year trendline chart, and Proportional Domain Treemap.
- * Refined with balanced internal padding and comfortable breathing room.
- */
+// Product preview demonstration for Admin Analytics Charts.
 function AdminChartsPreview() {
   const [hoveredTechIndex, setHoveredTechIndex] = useState(null);
   const [hoveredYearIndex, setHoveredYearIndex] = useState(null);

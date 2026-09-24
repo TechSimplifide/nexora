@@ -1,12 +1,7 @@
 import { Building, ShieldCheck, FolderKanban, Users, Lock, Layers } from "lucide-react";
 import { motion } from "motion/react";
 
-/**
- * MultiCollegeSection
- * Section 6: Built for Multiple Institutions
- * Explains Nexora's clean, multi-tenant architecture where colleges operate
- * independently while powered by a shared, secure platform foundation.
- */
+// Section 6: Multi-tenant institutional architecture.
 function MultiCollegeSection() {
   const tenants = [
     {

@@ -3,10 +3,7 @@ import { ArrowRight, Building } from "lucide-react";
 import { motion } from "motion/react";
 import Button from "@/components/ui/Button";
 
-/**
- * FinalCTASection
- * Premium conversion panel communicating Nexora's core institutional value proposition with gentle scroll reveal.
- */
+// Final conversion and call-to-action panel.
 function FinalCTASection() {
   return (
     <section className="relative overflow-hidden border-t border-border bg-surface py-20 md:py-28 transition-colors">

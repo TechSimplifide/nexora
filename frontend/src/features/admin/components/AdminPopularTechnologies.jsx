@@ -3,10 +3,7 @@ import { Code2 } from "lucide-react";
 import { motion } from "motion/react";
 import ChartFloatingTooltip from "./ChartFloatingTooltip";
 
-/**
- * AdminPopularTechnologies
- * Premium SVG-based vertical column chart for technology adoption analytics.
- */
+// SVG-based column chart for technology adoption analytics.
 function AdminPopularTechnologies({ data = [] }) {
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const chartContainerRef = useRef(null);

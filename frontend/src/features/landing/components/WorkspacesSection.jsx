@@ -4,11 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import StudentWorkspacePreview from "./product-preview/StudentWorkspacePreview";
 import AdminWorkspacePreview from "./product-preview/AdminWorkspacePreview";
 
-/**
- * WorkspacesSection
- * Section 4: Two Purpose-Built Workspaces
- * Clear Students ↔ Institutions comparison followed by one strong, interactive product proof.
- */
+// Section 4: Two purpose-built workspaces (Students vs Institutions).
 function WorkspacesSection() {
   const [activeRole, setActiveRole] = useState("student"); // "student" | "admin"
 

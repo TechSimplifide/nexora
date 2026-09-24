@@ -17,6 +17,7 @@ import {
 import Button from "@/components/ui/Button";
 import PdfViewerModal from "@/components/common/PdfViewerModal";
 import AdminProposalRejectModal from "@/features/admin/components/AdminProposalRejectModal";
+import AdminAIReviewAnalysis from "@/features/admin/components/AdminAIReviewAnalysis";
 import {
   getPendingProjectProposals,
   analyzeProposalWithAI,
@@ -259,30 +260,6 @@ export function AdminAIReviewPage() {
       iconColor: "text-danger-700",
       desc: "The proposal has significant scope, originality, or feasibility issues based on evaluated criteria.",
     };
-  };
-
-  // Helper for Criterion Result Badge
-  const getCriterionBadge = (result) => {
-    const norm = String(result || "").toUpperCase();
-    if (norm === "PASS") {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-success-50 text-success-700 border border-success-200">
-          <Check className="h-3 w-3" /> PASS
-        </span>
-      );
-    }
-    if (norm === "PARTIAL") {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-warning-50 text-warning-700 border border-warning-200">
-          <AlertTriangle className="h-3 w-3" /> PARTIAL
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-danger-50 text-danger-700 border border-danger-200">
-        <X className="h-3 w-3" /> FAIL
-      </span>
-    );
   };
 
   return (
@@ -538,26 +515,69 @@ export function AdminAIReviewPage() {
                   </div>
 
                   {/* Team Details Strip */}
-                  <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-border text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5 text-primary" />
-                      <span>
-                        Lead:{" "}
-                        <strong className="font-semibold text-foreground">
-                          {selectedProposal.createdBy?.fullName || "Student"}
-                        </strong>
-                      </span>
-                    </div>
+                  {(() => {
+                    const creatorName = (
+                      selectedProposal.createdBy?.fullName || ""
+                    )
+                      .trim()
+                      .toLowerCase();
+                    const rawMembers = Array.isArray(
+                      selectedProposal.team?.members
+                    )
+                      ? selectedProposal.team.members
+                      : [];
+                    const additionalMembers = rawMembers.filter((m) => {
+                      const name = (m.name || "").trim().toLowerCase();
+                      return name && name !== creatorName;
+                    });
+                    const totalCount =
+                      selectedProposal.team?.size ||
+                      Math.max(1, 1 + additionalMembers.length);
 
-                    <div className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span>
-                        Team ({selectedProposal.team?.size || 1}):{" "}
-                        {selectedProposal.team?.members?.map((m) => m.name).join(", ") ||
-                          "No roster specified"}
-                      </span>
-                    </div>
-                  </div>
+                    return (
+                      <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-border text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <Users className="h-3.5 w-3.5 text-primary" />
+                          <span>
+                            Lead:{" "}
+                            <strong className="font-semibold text-foreground">
+                              {selectedProposal.createdBy?.fullName ||
+                                "Student Lead"}
+                            </strong>
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span>
+                            {additionalMembers.length > 0 ? (
+                              <>
+                                Teammates ({additionalMembers.length}):{" "}
+                                <strong className="font-medium text-foreground">
+                                  {additionalMembers
+                                    .map((m) => m.name)
+                                    .join(", ")}
+                                </strong>
+                              </>
+                            ) : (
+                              <span>Individual Project (Solo)</span>
+                            )}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <span>•</span>
+                          <span>
+                            Total:{" "}
+                            <strong className="font-semibold text-foreground">
+                              {totalCount}{" "}
+                              {totalCount === 1 ? "member" : "members"}
+                            </strong>
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* AI Review Display States */}
@@ -699,136 +719,10 @@ export function AdminAIReviewPage() {
                       );
                     })()}
 
-                    {/* 2. Confidence Score & Summary Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                      {/* Confidence Score */}
-                      <div className="rounded-2xl border border-border bg-surface p-5 shadow-nexora-xs flex flex-col justify-between space-y-3">
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-muted-foreground">
-                              AI Confidence
-                            </span>
-                            <span className="text-lg font-extrabold text-foreground">
-                              {Math.round((analysisResult.confidenceScore || 0) * 100)}%
-                            </span>
-                          </div>
-                          {/* Progress Bar */}
-                          <div className="h-2 w-full rounded-full bg-surface-secondary overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-primary transition-all duration-500"
-                              style={{
-                                width: `${Math.min(
-                                  Math.max(
-                                    Math.round(
-                                      (analysisResult.confidenceScore || 0) * 100
-                                    ),
-                                    5
-                                  ),
-                                  100
-                                )}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
+                    {/* 2. Modernized AI Proposal Analysis Dashboard */}
+                    <AdminAIReviewAnalysis analysisResult={analysisResult} />
 
-                        <p className="text-[11px] text-muted-foreground leading-snug">
-                          Confidence represents completeness of information extracted from the document, not project success probability.
-                        </p>
-                      </div>
-
-                      {/* Summary */}
-                      <div className="md:col-span-2 rounded-2xl border border-border bg-surface p-5 shadow-nexora-xs space-y-2">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          Executive Summary
-                        </h4>
-                        <p className="text-xs text-foreground leading-relaxed">
-                          {analysisResult.summary || "No executive summary provided."}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* 3. Reasons & Improvement Suggestions */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      {/* Key Reasons */}
-                      <div className="rounded-2xl border border-border bg-surface p-5 shadow-nexora-xs space-y-3">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          Key Evaluation Reasons
-                        </h4>
-                        {Array.isArray(analysisResult.reasons) &&
-                          analysisResult.reasons.length > 0 ? (
-                          <ul className="space-y-2 text-xs text-foreground">
-                            {analysisResult.reasons.map((reason, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
-                                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                                <span className="leading-relaxed">{reason}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="text-xs text-muted-foreground">
-                            No specific reasons listed.
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Improvement Suggestions */}
-                      <div className="rounded-2xl border border-border bg-surface p-5 shadow-nexora-xs space-y-3">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          Actionable Improvement Suggestions
-                        </h4>
-                        {Array.isArray(analysisResult.improvementSuggestions) &&
-                          analysisResult.improvementSuggestions.length > 0 ? (
-                          <ol className="space-y-2 text-xs text-foreground">
-                            {analysisResult.improvementSuggestions.map((sug, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
-                                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary-50 text-[10px] font-bold text-primary shrink-0">
-                                  {idx + 1}
-                                </span>
-                                <span className="leading-relaxed">{sug}</span>
-                              </li>
-                            ))}
-                          </ol>
-                        ) : (
-                          <p className="text-xs text-muted-foreground">
-                            No specific improvements required.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* 4. Criteria Breakdown (Dynamic for standard + custom criteria) */}
-                    <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-nexora-xs space-y-4">
-                      <div>
-                        <h4 className="text-sm font-bold text-foreground">
-                          Institutional Criteria Breakdown
-                        </h4>
-                        <p className="text-xs text-muted-foreground">
-                          Evaluation against institutional standards configured for your college.
-                        </p>
-                      </div>
-
-                      <div className="space-y-3">
-                        {Array.isArray(analysisResult.criteriaBreakdown) &&
-                          analysisResult.criteriaBreakdown.map((crit, idx) => (
-                            <div
-                              key={crit.key || idx}
-                              className="rounded-xl border border-border bg-surface-secondary/30 p-3.5 space-y-1.5 transition-colors hover:border-border-strong"
-                            >
-                              <div className="flex flex-wrap items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-foreground">
-                                  {crit.name || crit.key || `Criterion ${idx + 1}`}
-                                </span>
-                                {getCriterionBadge(crit.result)}
-                              </div>
-                              <p className="text-xs text-muted-foreground leading-relaxed">
-                                {crit.reason || "No detailed remarks provided."}
-                              </p>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-
-                    {/* 5. Faculty Decision Action Bar */}
+                    {/* 3. Faculty Decision Action Bar */}
                     <div className="rounded-2xl border border-border bg-surface p-5 shadow-nexora-xs flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div className="text-xs text-muted-foreground">
                         <span>Make a faculty decision for </span>

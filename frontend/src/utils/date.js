@@ -1,8 +1,4 @@
-/**
- * Format an ISO date string into a human-readable date (e.g. "26 Aug 2026").
- * @param {string|Date} dateValue
- * @returns {string}
- */
+// Format an ISO date string into a human-readable date (e.g. "26 Aug 2026").
 export function formatDate(dateValue) {
   if (!dateValue) return "";
   try {

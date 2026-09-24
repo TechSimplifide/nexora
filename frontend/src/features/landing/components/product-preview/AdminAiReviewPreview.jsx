@@ -1,10 +1,6 @@
 import { Sparkles, Check, AlertTriangle, X, ShieldCheck } from "lucide-react";
 
-/**
- * AdminAiReviewPreview
- * Visual demonstration of the AI-Assisted Proposal Review feature on the landing page.
- * Displays mock evaluation outcome, confidence score, college-configured criteria breakdown, summary, and faculty governance controls.
- */
+// Product preview demonstration for AI Proposal Review.
 function AdminAiReviewPreview() {
   const criteria = [
     { name: "Clear Problem", result: "PASS", isCustom: false },

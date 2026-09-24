@@ -4,10 +4,7 @@ import Button from "@/components/ui/Button";
 import Logo from "@/components/common/Logo";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
-/**
- * Nexora-branded 404 Not Found Page.
- * Responsive, accessible, supporting Light & Dark mode.
- */
+// Nexora-branded 404 Not Found Page.
 function NotFoundPage() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();

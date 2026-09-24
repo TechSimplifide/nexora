@@ -7,11 +7,7 @@ import {
 import AdminAiReviewPreview from "./AdminAiReviewPreview";
 import AdminChartsPreview from "./AdminChartsPreview";
 
-/**
- * AdminWorkspacePreview
- * Unified, single-view preview of the authentic Administrator Workspace / Institutional Control Center.
- * Integrates KPIs, Proposal Review Pipeline, AI-Assisted Proposal Review panel, and Curriculum analytics.
- */
+// Product preview demonstration for Admin Workspace.
 function AdminWorkspacePreview() {
   return (
     <div className="space-y-5 animate-in fade-in duration-200">

@@ -1,11 +1,4 @@
-/**
- * Lightweight, reusable Skeleton loading primitive for Nexora.
- * Provides subtle visual shimmer placeholders matching the design tokens.
- *
- * @param {Object} props
- * @param {"text" | "rectangular" | "circular"} [props.variant="rectangular"] - Shape of the skeleton placeholder
- * @param {string} [props.className] - Additional Tailwind classes for sizing, rounded corners, or margins
- */
+// Lightweight, reusable Skeleton loading primitive for Nexora.
 function Skeleton({ variant = "rectangular", className = "", ...props }) {
   const variantClasses = {
     text: "h-4 w-full rounded",

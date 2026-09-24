@@ -1,9 +1,6 @@
 import { forwardRef } from "react";
 
-/**
- * Reusable Input UI Primitive for Nexora.
- * Supports label, leading icon, trailing element, error states, and accessibility bindings.
- */
+// Reusable Input UI primitive for Nexora.
 const Input = forwardRef(function Input(
   {
     label,

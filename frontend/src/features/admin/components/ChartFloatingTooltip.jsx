@@ -1,11 +1,6 @@
 import { useState, useLayoutEffect, useRef } from "react";
 
-/**
- * ChartFloatingTooltip
- * Robust, collision-aware floating tooltip for SVG analytics charts.
- * Dynamically measures container & tooltip dimensions to clamp and position
- * perfectly within the chart container bounds on any screen size.
- */
+// Collision-aware floating tooltip for SVG analytics charts.
 function ChartFloatingTooltip({
   containerRef,
   anchor,

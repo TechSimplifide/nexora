@@ -1,17 +1,7 @@
 import { Check, Circle, X } from "lucide-react";
 import { motion } from "motion/react";
 
-/**
- * ProposalProgressTimeline
- * Shared, accessible 3-stage proposal lifecycle timeline component.
- * Stages: Submitted → Under Review → Approved (or Rejected)
- *
- * Supports:
- * - status: "PENDING" | "APPROVED" | "REJECTED" (case-insensitive)
- * - showHeader: boolean (default true)
- * - subtitle: optional override string for status summary text
- * - className: optional additional container classes
- */
+// 3-stage proposal lifecycle progress timeline (Submitted -> Under Review -> Approved/Rejected).
 function ProposalProgressTimeline({
   status = "PENDING",
   showHeader = true,

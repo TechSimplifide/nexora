@@ -14,11 +14,7 @@ import {
 } from "lucide-react";
 import ProposalTimelinePreview from "./ProposalTimelinePreview";
 
-/**
- * StudentWorkspacePreview
- * Unified, single-view preview of the authentic Student Workspace Dashboard.
- * Integrates KPIs, Active Proposal lifecycle, Featured Project, and AI recommendation rationale.
- */
+// Product preview demonstration for Student Workspace.
 function StudentWorkspacePreview() {
   return (
     <div className="space-y-5 animate-in fade-in duration-200">

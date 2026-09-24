@@ -1,10 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api/v1";
+import { API_BASE_URL } from "@/utils/api";
 
-/**
- * Submit and upload a new completed project (Student only, multipart/form-data).
- * @param {FormData} formData
- * @returns {Promise<Object>} API response data with created project in data
- */
+// Submit and upload a new completed project (Student only, multipart/form-data).
 export async function createProject(formData) {
   const response = await fetch(`${API_BASE_URL}/projects`, {
     method: "POST",
@@ -29,12 +25,7 @@ export async function createProject(formData) {
   return data;
 }
 
-/**
- * Update an existing project owned by the authenticated student (Student only, multipart/form-data).
- * @param {string} projectId
- * @param {FormData} formData
- * @returns {Promise<Object>} API response data with updated project in data
- */
+// Update an existing project owned by the authenticated student (Student only, multipart/form-data).
 export async function updateProject(projectId, formData) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(projectId)}`,
@@ -62,11 +53,7 @@ export async function updateProject(projectId, formData) {
   return data;
 }
 
-/**
- * Delete an existing project owned by the authenticated student (Student only).
- * @param {string} projectId
- * @returns {Promise<Object>} API response data
- */
+// Delete an existing project owned by the authenticated student (Student only).
 export async function deleteProject(projectId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(projectId)}`,
@@ -96,18 +83,7 @@ export async function deleteProject(projectId) {
   return data;
 }
 
-/**
- * Fetch all college projects with optional query params (search, filters, pagination).
- * @param {Object} [params]
- * @param {string} [params.search]
- * @param {string} [params.technology]
- * @param {string} [params.domain]
- * @param {string} [params.department]
- * @param {string} [params.academicYear]
- * @param {number} [params.page]
- * @param {number} [params.limit]
- * @returns {Promise<Object>} API response data with projects array and pagination
- */
+// Fetch all college projects with optional query params (search, filters, pagination).
 export async function getProjects(params = {}) {
   const query = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
@@ -144,10 +120,7 @@ export async function getProjects(params = {}) {
   return data;
 }
 
-/**
- * Fetch featured projects for the authenticated student/college.
- * @returns {Promise<Object>} API response data with array of featured projects in data
- */
+// Fetch featured projects for the authenticated student/college.
 export async function getFeaturedProjects() {
   const response = await fetch(`${API_BASE_URL}/projects/featured`, {
     method: "GET",
@@ -174,11 +147,7 @@ export async function getFeaturedProjects() {
   return data;
 }
 
-/**
- * Fetch single project details by ID.
- * @param {string} projectId
- * @returns {Promise<Object>} API response data with project object in data
- */
+// Fetch single project details by ID.
 export async function getProjectById(projectId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(projectId)}`,
@@ -208,11 +177,7 @@ export async function getProjectById(projectId) {
   return data;
 }
 
-/**
- * Feature a project (Admin only, current academic year only).
- * @param {string} projectId
- * @returns {Promise<Object>} API response data with updated project
- */
+// Feature a project (Admin only, current academic year only).
 export async function featureProject(projectId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(projectId)}/feature`,
@@ -242,11 +207,7 @@ export async function featureProject(projectId) {
   return data;
 }
 
-/**
- * Unfeature a project (Admin only).
- * @param {string} projectId
- * @returns {Promise<Object>} API response data with updated project
- */
+// Unfeature a project (Admin only).
 export async function unfeatureProject(projectId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(projectId)}/unfeature`,
@@ -276,10 +237,7 @@ export async function unfeatureProject(projectId) {
   return data;
 }
 
-/**
- * Fetch access requests created by the authenticated student.
- * @returns {Promise<Object>} API response data containing access requests array
- */
+// Fetch access requests created by the authenticated student.
 export async function getMyProjectAccessRequests() {
   const response = await fetch(`${API_BASE_URL}/projects/access-requests/my`, {
     method: "GET",
@@ -308,12 +266,7 @@ export async function getMyProjectAccessRequests() {
   return data;
 }
 
-/**
- * Create a new access request for a protected project resource.
- * @param {string} projectId
- * @param {"github"|"deployedLink"|"supportingDocument"} resourceType
- * @returns {Promise<Object>} API response data for created request
- */
+// Create a new access request for a protected project resource.
 export async function createProjectAccessRequest(projectId, resourceType) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(projectId)}/access-requests`,
@@ -346,12 +299,7 @@ export async function createProjectAccessRequest(projectId, resourceType) {
   return data;
 }
 
-/**
- * Securely fetch the authorized URL for a protected project resource.
- * @param {string} projectId
- * @param {"github"|"deployedLink"|"supportingDocument"} resourceType
- * @returns {Promise<Object>} API response with { resourceType, url, accessStatus }
- */
+// Securely fetch the authorized URL for a protected project resource.
 export async function getProjectResource(projectId, resourceType) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(
@@ -385,11 +333,7 @@ export async function getProjectResource(projectId, resourceType) {
   return data;
 }
 
-/**
- * Cancel a pending access request created by the authenticated student.
- * @param {string} requestId
- * @returns {Promise<Object>} API response data
- */
+// Cancel a pending access request created by the authenticated student.
 export async function cancelProjectAccessRequest(requestId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/access-requests/${encodeURIComponent(requestId)}`,
@@ -421,11 +365,7 @@ export async function cancelProjectAccessRequest(requestId) {
   return data;
 }
 
-/**
- * Fetch all incoming access requests for a specific project (owner-only).
- * @param {string} projectId
- * @returns {Promise<Object>} API response data containing incoming access requests
- */
+// Fetch all incoming access requests for a specific project (owner-only).
 export async function getProjectAccessRequests(projectId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/${encodeURIComponent(projectId)}/access-requests`,
@@ -457,11 +397,7 @@ export async function getProjectAccessRequests(projectId) {
   return data;
 }
 
-/**
- * Approve a pending project access request (owner-only).
- * @param {string} requestId
- * @returns {Promise<Object>} API response data with updated request
- */
+// Approve a pending project access request (owner-only).
 export async function approveProjectAccessRequest(requestId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/access-requests/${encodeURIComponent(requestId)}/approve`,
@@ -493,11 +429,7 @@ export async function approveProjectAccessRequest(requestId) {
   return data;
 }
 
-/**
- * Reject a pending project access request (owner-only).
- * @param {string} requestId
- * @returns {Promise<Object>} API response data with updated request
- */
+// Reject a pending project access request (owner-only).
 export async function rejectProjectAccessRequest(requestId) {
   const response = await fetch(
     `${API_BASE_URL}/projects/access-requests/${encodeURIComponent(requestId)}/reject`,

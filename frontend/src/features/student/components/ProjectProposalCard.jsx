@@ -18,8 +18,13 @@ function ProjectProposalCard({ proposal, onEdit, onInitiateDelete }) {
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const status = (proposal.status || "pending").toLowerCase();
   const team = proposal.team || { size: 1, members: [] };
-  const teamSize = team.size || team.members?.length || 1;
-  const members = Array.isArray(team.members) ? team.members : [];
+  const creatorName = (proposal.createdBy?.fullName || proposal.creator?.fullName || "").trim().toLowerCase();
+  const rawMembers = Array.isArray(team.members) ? team.members : [];
+  const additionalMembers = rawMembers.filter((m) => {
+    const name = (typeof m === "string" ? m : m?.name || "").trim().toLowerCase();
+    return !creatorName || name !== creatorName;
+  });
+  const teamSize = team.size || Math.max(1, 1 + additionalMembers.length);
   const pdfUrl = proposal.abstractPdf?.url;
 
   return (
@@ -33,7 +38,7 @@ function ProjectProposalCard({ proposal, onEdit, onInitiateDelete }) {
             </h3>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
               <Users className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-              <span>Team of {teamSize}</span>
+              <span>{teamSize === 1 ? "Individual Project" : `Team of ${teamSize}`}</span>
             </div>
           </div>
 
@@ -59,18 +64,18 @@ function ProjectProposalCard({ proposal, onEdit, onInitiateDelete }) {
         </div>
 
         {/* Team Members List */}
-        {members.length > 0 && (
+        {additionalMembers.length > 0 && (
           <div className="rounded-lg border border-border/70 bg-surface-secondary/40 p-3 space-y-1.5">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Team Members
+              Additional Team Members ({additionalMembers.length})
             </span>
             <div className="flex flex-wrap gap-1.5">
-              {members.map((m, idx) => (
+              {additionalMembers.map((m, idx) => (
                 <span
                   key={idx}
                   className="inline-flex items-center rounded-md bg-surface px-2 py-0.5 text-xs font-medium text-foreground border border-border/60 shadow-2xs"
                 >
-                  {m.name || `Member ${idx + 1}`}
+                  {(typeof m === "string" ? m : m.name) || `Member ${idx + 1}`}
                 </span>
               ))}
             </div>

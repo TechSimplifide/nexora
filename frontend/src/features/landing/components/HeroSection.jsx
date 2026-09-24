@@ -10,11 +10,7 @@ import {
 import { motion } from "motion/react";
 import Button from "@/components/ui/Button";
 
-/**
- * HeroSection
- * Refined, product-led SaaS hero for Nexora.
- * Displays clean typography, clear CTA hierarchy, and an authentic Institutional Control Center preview.
- */
+// Product-led SaaS Hero section.
 function HeroSection() {
   const techData = [
     { name: "React/TS", count: 42, height: 50 },

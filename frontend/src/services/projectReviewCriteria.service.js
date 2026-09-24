@@ -1,10 +1,6 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api/v1";
+import { API_BASE_URL } from "@/utils/api";
 
-/**
- * Fetch review criteria for the authenticated admin's college.
- * @returns {Promise<Object>} API response data with criteria configuration in data
- */
+// Fetch review criteria for the authenticated admin's college.
 export async function getProjectReviewCriteria() {
   const response = await fetch(`${API_BASE_URL}/project-review-criteria`, {
     method: "GET",
@@ -33,14 +29,7 @@ export async function getProjectReviewCriteria() {
   return data;
 }
 
-/**
- * Update review criteria configuration (Admin only).
- * @param {Object} payload
- * @param {Array<{ key: string, enabled: boolean, required: boolean }>} payload.standardCriteria
- * @param {Array<{ name: string, description: string, enabled: boolean, required: boolean }>} payload.customCriteria
- * @param {{ enabled: boolean, confidenceThreshold: number }} [payload.autoReview]
- * @returns {Promise<Object>} API response data with updated criteria
- */
+// Update review criteria configuration (Admin only).
 export async function updateProjectReviewCriteria({
   standardCriteria,
   customCriteria,

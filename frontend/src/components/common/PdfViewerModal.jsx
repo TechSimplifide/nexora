@@ -2,18 +2,7 @@ import { useEffect } from "react";
 import { X, FileText, Download, ExternalLink } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-/**
- * Shared in-app PDF Viewer Modal for Nexora.
- * Renders embedded PDF documents within the application UI without redirecting to external storage.
- *
- * @param {Object} props
- * @param {boolean} props.isOpen - Whether modal is visible
- * @param {Function} props.onClose - Callback to close modal
- * @param {string} props.documentUrl - URL of the PDF document to view
- * @param {string} [props.title="Document Preview"] - Modal title
- * @param {string} [props.subtitle=null] - Optional subtitle (e.g. project title or author)
- * @param {string} [props.downloadFilename="document.pdf"] - Filename for secondary download
- */
+// In-app PDF Viewer Modal for embedded document viewing.
 function PdfViewerModal({
   isOpen,
   onClose,

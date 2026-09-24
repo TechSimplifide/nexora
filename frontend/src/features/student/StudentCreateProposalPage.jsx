@@ -5,40 +5,45 @@ import {
   ArrowLeft,
   UploadCloud,
   Users,
+  User,
+  Mail,
   AlertCircle,
   Loader2,
   CheckCircle2,
   ExternalLink,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { createProjectProposal } from "@/services/projectProposal.service";
 
 function StudentCreateProposalPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const fileInputRef = useRef(null);
 
   const [title, setTitle] = useState("");
   const [teamSize, setTeamSize] = useState(1);
-  const [members, setMembers] = useState([{ name: "" }]);
+  const [additionalMembers, setAdditionalMembers] = useState([]);
   const [abstractPdf, setAbstractPdf] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState(null);
   const [successData, setSuccessData] = useState(null);
 
-  // Handle Team Size adjustment
+  // Handle Team Size adjustment (teamSize = total members including lead)
   const handleTeamSizeChange = (newSize) => {
     const size = Math.max(1, Math.min(10, Number(newSize) || 1));
     setTeamSize(size);
 
-    setMembers((prev) => {
+    const neededAdditional = Math.max(0, size - 1);
+    setAdditionalMembers((prev) => {
       const next = [...prev];
-      if (next.length < size) {
-        while (next.length < size) {
+      if (next.length < neededAdditional) {
+        while (next.length < neededAdditional) {
           next.push({ name: "" });
         }
       } else {
-        return next.slice(0, size);
+        return next.slice(0, neededAdditional);
       }
       return next;
     });
@@ -49,7 +54,7 @@ function StudentCreateProposalPage() {
   };
 
   const handleMemberNameChange = (index, value) => {
-    setMembers((prev) => {
+    setAdditionalMembers((prev) => {
       const next = [...prev];
       next[index] = { ...next[index], name: value };
       return next;
@@ -105,15 +110,27 @@ function StudentCreateProposalPage() {
       newErrors.team = "Team size must be between 1 and 10 members.";
     }
 
-    // Member names validation
-    members.forEach((m, idx) => {
+    const creatorName = (user?.fullName || "").trim().toLowerCase();
+
+    // Additional member names validation
+    additionalMembers.forEach((m, idx) => {
       const name = m.name?.trim() || "";
       if (!name) {
-        newErrors[`member_${idx}`] = `Member ${idx + 1} name is required.`;
+        newErrors[`member_${idx}`] = `Team Member ${idx + 1} name is required.`;
       } else if (name.length < 2) {
         newErrors[`member_${idx}`] = "Name must be at least 2 characters.";
       } else if (name.length > 50) {
         newErrors[`member_${idx}`] = "Name cannot exceed 50 characters.";
+      } else if (creatorName && name.toLowerCase() === creatorName) {
+        newErrors[`member_${idx}`] = "You are already the Project Lead. Please enter a teammate's name.";
+      } else if (
+        additionalMembers.some(
+          (other, oIdx) =>
+            oIdx !== idx &&
+            (other.name?.trim().toLowerCase() || "") === name.toLowerCase()
+        )
+      ) {
+        newErrors[`member_${idx}`] = "Duplicate team member name entered.";
       }
     });
 
@@ -134,11 +151,17 @@ function StudentCreateProposalPage() {
 
     setIsSubmitting(true);
 
+    const leadName = (user?.fullName || "Student Lead").trim();
+    const members = [
+      { name: leadName },
+      ...additionalMembers.map((m) => ({ name: m.name.trim() })),
+    ];
+
     const payload = {
       title: title.trim(),
       team: {
         size: teamSize,
-        members: members.map((m) => ({ name: m.name.trim() })),
+        members,
       },
       abstractPdf,
     };
@@ -159,7 +182,7 @@ function StudentCreateProposalPage() {
   const handleResetForm = () => {
     setTitle("");
     setTeamSize(1);
-    setMembers([{ name: "" }]);
+    setAdditionalMembers([]);
     setAbstractPdf(null);
     setErrors({});
     setServerError(null);
@@ -298,7 +321,7 @@ function StudentCreateProposalPage() {
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-primary" aria-hidden="true" />
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                  Team Members
+                  Team Composition
                 </h2>
               </div>
 
@@ -308,7 +331,7 @@ function StudentCreateProposalPage() {
                   htmlFor="team-size-select"
                   className="text-xs font-medium text-muted-foreground whitespace-nowrap"
                 >
-                  Team Size:
+                  Total Team Size:
                 </label>
                 <select
                   id="team-size-select"
@@ -319,7 +342,7 @@ function StudentCreateProposalPage() {
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                     <option key={num} value={num}>
-                      {num} {num === 1 ? "Member (Individual)" : "Members"}
+                      {num} {num === 1 ? "Member (Individual / Solo)" : "Members"}
                     </option>
                   ))}
                 </select>
@@ -332,40 +355,84 @@ function StudentCreateProposalPage() {
               </p>
             )}
 
-            {/* Member Input Fields Grid */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {members.map((member, index) => (
-                <div key={index} className="space-y-1">
-                  <label
-                    htmlFor={`member-input-${index}`}
-                    className="block text-[11px] font-medium text-muted-foreground"
-                  >
-                    Member {index + 1} Name {index === 0 && "(Team Lead)"}{" "}
-                    <span className="text-danger-600">*</span>
-                  </label>
-                  <input
-                    id={`member-input-${index}`}
-                    type="text"
-                    value={member.name}
-                    onChange={(e) =>
-                      handleMemberNameChange(index, e.target.value)
-                    }
-                    placeholder={index === 0 ? "e.g. Rahul Sharma" : `Member ${index + 1} name`}
-                    disabled={isSubmitting}
-                    className={`w-full rounded-xl border bg-surface px-3 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-2 ${
-                      errors[`member_${index}`]
-                        ? "border-danger-300 focus:border-danger-500 focus:ring-danger-500/20"
-                        : "border-border focus:border-primary focus:ring-primary/20"
-                    }`}
-                  />
-                  {errors[`member_${index}`] && (
-                    <p className="text-[10px] font-medium text-danger-600">
-                      {errors[`member_${index}`]}
-                    </p>
-                  )}
+            {/* 1. Project Lead / Submitter Card (Automatic & Uneditable) */}
+            <div className="rounded-xl border border-border/80 bg-surface p-3.5 space-y-1.5 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                  <User className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  <span>Project Lead</span>
                 </div>
-              ))}
+                <span className="rounded-md bg-primary-50 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+                  Your Account
+                </span>
+              </div>
+              <div className="space-y-0.5 pl-5 text-xs">
+                <p className="font-semibold text-foreground">
+                  {user?.fullName || "Student Lead"}
+                </p>
+                {user?.email && (
+                  <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                    <Mail className="h-3 w-3 shrink-0" aria-hidden="true" />
+                    <span>{user.email}</span>
+                  </div>
+                )}
+                <p className="text-[11px] font-medium text-primary flex items-center gap-1 pt-1">
+                  <CheckCircle2 className="h-3 w-3 shrink-0" aria-hidden="true" />
+                  <span>Automatically included as Team Lead</span>
+                </p>
+              </div>
             </div>
+
+            {/* 2. Additional Team Members Section */}
+            {teamSize > 1 ? (
+              <div className="space-y-2.5 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Additional Team Members ({additionalMembers.length})
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Excluding project lead
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {additionalMembers.map((member, index) => (
+                    <div key={index} className="space-y-1">
+                      <label
+                        htmlFor={`member-input-${index}`}
+                        className="block text-[11px] font-medium text-muted-foreground"
+                      >
+                        Additional Team Member {index + 1} Name <span className="text-danger-600">*</span>
+                      </label>
+                      <input
+                        id={`member-input-${index}`}
+                        type="text"
+                        value={member.name}
+                        onChange={(e) =>
+                          handleMemberNameChange(index, e.target.value)
+                        }
+                        placeholder={`e.g. Teammate ${index + 1} Full Name`}
+                        disabled={isSubmitting}
+                        className={`w-full rounded-xl border bg-surface px-3 py-2 text-xs font-medium text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-2 ${
+                          errors[`member_${index}`]
+                            ? "border-danger-300 focus:border-danger-500 focus:ring-danger-500/20"
+                            : "border-border focus:border-primary focus:ring-primary/20"
+                        }`}
+                      />
+                      {errors[`member_${index}`] && (
+                        <p className="text-[10px] font-medium text-danger-600">
+                          {errors[`member_${index}`]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-border bg-surface/60 p-3.5 text-center text-xs text-muted-foreground">
+                Individual Project — No additional team members required.
+              </div>
+            )}
           </div>
 
           {/* Abstract PDF Document Upload */}

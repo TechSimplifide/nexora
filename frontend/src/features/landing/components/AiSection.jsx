@@ -10,13 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 
-/**
- * AiSection
- * Section 5: AI Intelligence
- * Focused, restrained demonstration of Nexora's 2 core AI capabilities:
- * 1. AI Project Recommendations (for students)
- * 2. AI Proposal Review (for institutions/faculty)
- */
+// Section 5: AI Intelligence capabilities.
 function AiSection() {
   return (
     <section

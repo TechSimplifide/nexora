@@ -1,9 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api/v1";
+import { API_BASE_URL } from "@/utils/api";
 
-/**
- * Fetch all notifications for the authenticated user.
- * @returns {Promise<Object>} API response data with notifications array in data
- */
+// Fetch all notifications for the authenticated user.
 export async function getMyNotifications() {
   const response = await fetch(`${API_BASE_URL}/notifications`, {
     method: "GET",
@@ -32,10 +29,7 @@ export async function getMyNotifications() {
   return data;
 }
 
-/**
- * Fetch the unread notification count for the authenticated user.
- * @returns {Promise<Object>} API response with { count: number } in data
- */
+// Fetch the unread notification count for the authenticated user.
 export async function getUnreadNotificationCount() {
   const response = await fetch(`${API_BASE_URL}/notifications/unread-count`, {
     method: "GET",
@@ -64,11 +58,7 @@ export async function getUnreadNotificationCount() {
   return data;
 }
 
-/**
- * Mark a single notification as read.
- * @param {string} notificationId
- * @returns {Promise<Object>} API response with updated notification
- */
+// Mark a single notification as read.
 export async function markNotificationAsRead(notificationId) {
   const response = await fetch(
     `${API_BASE_URL}/notifications/${encodeURIComponent(notificationId)}/read`,
@@ -100,10 +90,7 @@ export async function markNotificationAsRead(notificationId) {
   return data;
 }
 
-/**
- * Mark all notifications as read for the authenticated user.
- * @returns {Promise<Object>} API response
- */
+// Mark all notifications as read for the authenticated user.
 export async function markAllNotificationsAsRead() {
   const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
     method: "PATCH",
@@ -132,11 +119,7 @@ export async function markAllNotificationsAsRead() {
   return data;
 }
 
-/**
- * Delete a single notification.
- * @param {string} notificationId
- * @returns {Promise<Object>} API response
- */
+// Delete a single notification.
 export async function deleteNotification(notificationId) {
   const response = await fetch(
     `${API_BASE_URL}/notifications/${encodeURIComponent(notificationId)}`,

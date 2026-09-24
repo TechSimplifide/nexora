@@ -4,6 +4,7 @@ import { FolderKanban } from "lucide-react";
 import { motion } from "motion/react";
 import { getStudentDashboard } from "@/services/dashboard.service";
 import { getProjects } from "@/services/project.service";
+import { getMyProjectProposals } from "@/services/projectProposal.service";
 import StudentDashboardHeader from "@/features/student/components/StudentDashboardHeader";
 import StudentDashboardKpis from "@/features/student/components/StudentDashboardKpis";
 import StudentProposalCard from "@/features/student/components/StudentProposalCard";
@@ -34,6 +35,22 @@ const sectionVariants = {
   },
 };
 
+function formatProposalForDashboard(rawProposal) {
+  if (!rawProposal) {
+    return { exists: false };
+  }
+  return {
+    exists: true,
+    id: rawProposal._id || rawProposal.id,
+    title: rawProposal.title || "Untitled Proposal",
+    teamSize: rawProposal.team?.size || rawProposal.teamSize || 1,
+    status: rawProposal.status || "pending",
+    adminRemarks: rawProposal.adminRemarks || null,
+    createdAt: rawProposal.createdAt,
+    updatedAt: rawProposal.updatedAt,
+  };
+}
+
 function StudentDashboardPage() {
   const [dashboardData, setDashboardData] = useState(null);
   const [discoverProjectsList, setDiscoverProjectsList] = useState([]);
@@ -49,11 +66,28 @@ function StudentDashboardPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const [dashRes, projectsRes] = await Promise.all([
+      const [dashRes, projectsRes, myProposalsRes] = await Promise.all([
         getStudentDashboard(),
         getProjects({ limit: 12 }).catch(() => null),
+        getMyProjectProposals().catch(() => null),
       ]);
-      setDashboardData(dashRes?.data || null);
+
+      let resolvedProposal = { exists: false };
+      if (Array.isArray(myProposalsRes?.data)) {
+        if (myProposalsRes.data.length > 0) {
+          resolvedProposal = formatProposalForDashboard(myProposalsRes.data[0]);
+        } else {
+          resolvedProposal = { exists: false };
+        }
+      } else if (dashRes?.data?.proposal) {
+        resolvedProposal = dashRes.data.proposal;
+      }
+
+      setDashboardData({
+        ...(dashRes?.data || {}),
+        proposal: resolvedProposal,
+      });
+
       if (projectsRes?.data?.projects) {
         setDiscoverProjectsList(projectsRes.data.projects);
       } else if (dashRes?.data?.discoverProjects) {
@@ -74,12 +108,30 @@ function StudentDashboardPage() {
 
     async function loadInitialData() {
       try {
-        const [dashRes, projectsRes] = await Promise.all([
+        const [dashRes, projectsRes, myProposalsRes] = await Promise.all([
           getStudentDashboard(),
           getProjects({ limit: 12 }).catch(() => null),
+          getMyProjectProposals().catch(() => null),
         ]);
         if (isMounted) {
-          setDashboardData(dashRes?.data || null);
+          let resolvedProposal = { exists: false };
+          if (Array.isArray(myProposalsRes?.data)) {
+            if (myProposalsRes.data.length > 0) {
+              resolvedProposal = formatProposalForDashboard(
+                myProposalsRes.data[0]
+              );
+            } else {
+              resolvedProposal = { exists: false };
+            }
+          } else if (dashRes?.data?.proposal) {
+            resolvedProposal = dashRes.data.proposal;
+          }
+
+          setDashboardData({
+            ...(dashRes?.data || {}),
+            proposal: resolvedProposal,
+          });
+
           if (projectsRes?.data?.projects) {
             setDiscoverProjectsList(projectsRes.data.projects);
           } else if (dashRes?.data?.discoverProjects) {

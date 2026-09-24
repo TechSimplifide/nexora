@@ -8,12 +8,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 
-/**
- * ProductValueSection
- * Section 2: Platform Mental Model
- * A continuous project journey diagram communicating how academic work
- * moves through Nexora from student team formulation to permanent institutional discovery.
- */
+// Section 2: Platform mental model and project lifecycle journey.
 function ProductValueSection() {
   const steps = [
     {

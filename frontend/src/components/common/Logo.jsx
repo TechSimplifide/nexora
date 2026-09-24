@@ -1,15 +1,6 @@
 import nexoraLogo from "@/assets/logos/nexora-logo.png";
 
-/**
- * Nexora Brand Logo component.
- *
- * @param {Object} props
- * @param {"xs"|"sm"|"md"|"lg"|"xl"} [props.size="md"] - Size preset for logo icon
- * @param {boolean} [props.showText=true] - Whether to render the brand name text
- * @param {string} [props.textClassName=""] - Additional classes for brand name text
- * @param {string} [props.className=""] - Container classes
- * @param {string} [props.imageClassName=""] - Additional classes for the logo image
- */
+// Nexora Brand Logo component.
 function Logo({
   size = "md",
   showText = true,

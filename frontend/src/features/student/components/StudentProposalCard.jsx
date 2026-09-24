@@ -78,7 +78,7 @@ function StudentProposalCard({ proposal }) {
                 {proposal.teamSize ? (
                   <div className="flex items-center gap-1.5">
                     <Users className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                    <span>Team of {proposal.teamSize}</span>
+                    <span>{Number(proposal.teamSize) === 1 ? "Individual Project" : `Team of ${proposal.teamSize}`}</span>
                   </div>
                 ) : null}
 

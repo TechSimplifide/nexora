@@ -3,10 +3,7 @@ import { GraduationCap } from "lucide-react";
 import { motion } from "motion/react";
 import ChartFloatingTooltip from "./ChartFloatingTooltip";
 
-/**
- * AdminProjectsByAcademicYearChart
- * Institutional line chart visualizing project volume trend across academic years.
- */
+// Institutional line chart visualizing project volume trend across academic years.
 function AdminProjectsByAcademicYearChart({ data = [] }) {
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const chartContainerRef = useRef(null);

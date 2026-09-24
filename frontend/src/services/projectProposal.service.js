@@ -1,9 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api/v1";
+import { API_BASE_URL } from "@/utils/api";
 
-/**
- * Fetch all proposals created by the authenticated student.
- * @returns {Promise<Object>} API response data with proposals array in data
- */
+// Fetch all proposals created by the authenticated student.
 export async function getMyProjectProposals() {
   const response = await fetch(`${API_BASE_URL}/project-proposals/my`, {
     method: "GET",
@@ -32,14 +29,7 @@ export async function getMyProjectProposals() {
   return data;
 }
 
-/**
- * Create a new project proposal (multipart/form-data).
- * @param {Object} params
- * @param {string} params.title
- * @param {{ size: number, members: Array<{ name: string }> }} params.team
- * @param {File} params.abstractPdf
- * @returns {Promise<Object>} API response data with created proposal
- */
+// Create a new project proposal (multipart/form-data).
 export async function createProjectProposal({ title, team, abstractPdf }) {
   const formData = new FormData();
   formData.append("title", title.trim());
@@ -73,15 +63,7 @@ export async function createProjectProposal({ title, team, abstractPdf }) {
   return data;
 }
 
-/**
- * Update and resubmit a rejected project proposal (multipart/form-data).
- * @param {Object} params
- * @param {string} params.proposalId
- * @param {string} [params.title]
- * @param {{ size: number, members: Array<{ name: string }> }} [params.team]
- * @param {File} [params.abstractPdf]
- * @returns {Promise<Object>} API response data with updated proposal
- */
+// Update and resubmit a rejected project proposal (multipart/form-data).
 export async function updateRejectedProjectProposal({
   proposalId,
   title,
@@ -127,11 +109,7 @@ export async function updateRejectedProjectProposal({
   return data;
 }
 
-/**
- * Delete a pending or rejected project proposal.
- * @param {string} proposalId
- * @returns {Promise<Object>} API response data
- */
+// Delete a pending or rejected project proposal.
 export async function deleteProjectProposal(proposalId) {
   const response = await fetch(
     `${API_BASE_URL}/project-proposals/${encodeURIComponent(proposalId)}`,
@@ -163,10 +141,7 @@ export async function deleteProjectProposal(proposalId) {
   return data;
 }
 
-/**
- * Fetch all pending project proposals across the authenticated admin's college.
- * @returns {Promise<Object>} API response data with pending proposals array in data
- */
+// Fetch all pending project proposals across the authenticated admin's college.
 export async function getPendingProjectProposals() {
   const response = await fetch(`${API_BASE_URL}/project-proposals/pending`, {
     method: "GET",
@@ -195,11 +170,7 @@ export async function getPendingProjectProposals() {
   return data;
 }
 
-/**
- * Approve a pending project proposal (Admin only).
- * @param {string} proposalId
- * @returns {Promise<Object>} API response data with approved proposal
- */
+// Approve a pending project proposal (Admin only).
 export async function approveProjectProposal(proposalId) {
   const response = await fetch(
     `${API_BASE_URL}/project-proposals/${encodeURIComponent(proposalId)}/approve`,
@@ -231,13 +202,7 @@ export async function approveProjectProposal(proposalId) {
   return data;
 }
 
-/**
- * Reject a pending project proposal with required admin remarks (Admin only).
- * @param {Object} params
- * @param {string} params.proposalId
- * @param {string} params.adminRemarks
- * @returns {Promise<Object>} API response data with rejected proposal
- */
+// Reject a pending project proposal with required admin remarks (Admin only).
 export async function rejectProjectProposal({ proposalId, adminRemarks }) {
   const response = await fetch(
     `${API_BASE_URL}/project-proposals/${encodeURIComponent(proposalId)}/reject`,
@@ -272,11 +237,7 @@ export async function rejectProjectProposal({ proposalId, adminRemarks }) {
   return data;
 }
 
-/**
- * Analyze a pending project proposal using AI (Admin only).
- * @param {string} proposalId
- * @returns {Promise<Object>} API response data with AI review breakdown in data
- */
+// Analyze a pending project proposal using AI (Admin only).
 export async function analyzeProposalWithAI(proposalId) {
   const response = await fetch(
     `${API_BASE_URL}/ai-proposal-review/${encodeURIComponent(proposalId)}/analyze`,

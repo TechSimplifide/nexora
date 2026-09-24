@@ -1,14 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api/v1";
+import { API_BASE_URL } from "@/utils/api";
 
-/**
- * Register a new student account.
- * @param {Object} payload
- * @param {string} payload.fullName
- * @param {string} payload.email
- * @param {string} payload.password
- * @param {string} payload.collegeCode
- * @returns {Promise<Object>} API response data
- */
+// Register a new student account.
 export async function registerStudent({ fullName, email, password, collegeCode }) {
   const response = await fetch(`${API_BASE_URL}/auth/student/register`, {
     method: "POST",
@@ -43,15 +35,7 @@ export async function registerStudent({ fullName, email, password, collegeCode }
   return data;
 }
 
-/**
- * Register a new college account (Admin + College Workspace).
- * @param {Object} payload
- * @param {string} payload.collegeName
- * @param {string} payload.adminName
- * @param {string} payload.email
- * @param {string} payload.password
- * @returns {Promise<Object>} API response data
- */
+// Register a new college account (Admin + College Workspace).
 export async function registerCollege({ collegeName, adminName, email, password }) {
   const response = await fetch(`${API_BASE_URL}/auth/college/register`, {
     method: "POST",
@@ -83,11 +67,7 @@ export async function registerCollege({ collegeName, adminName, email, password 
   return data;
 }
 
-/**
- * Verify user email with token.
- * @param {string} token
- * @returns {Promise<Object>} API response data
- */
+// Verify user email with token.
 export async function verifyEmail(token) {
   const response = await fetch(`${API_BASE_URL}/auth/verify-email/${encodeURIComponent(token)}`, {
     method: "GET",
@@ -110,11 +90,7 @@ export async function verifyEmail(token) {
   return data;
 }
 
-/**
- * Resend verification email link.
- * @param {string} email
- * @returns {Promise<Object>} API response data
- */
+// Resend verification email link.
 export async function resendVerificationEmail(email) {
   const response = await fetch(`${API_BASE_URL}/auth/resend-verification-email`, {
     method: "POST",
@@ -146,13 +122,7 @@ export async function resendVerificationEmail(email) {
   return data;
 }
 
-/**
- * Log in a user.
- * @param {Object} credentials
- * @param {string} credentials.email
- * @param {string} credentials.password
- * @returns {Promise<Object>} API response data
- */
+// Log in a user.
 export async function login({ email, password }) {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
@@ -190,10 +160,7 @@ export async function login({ email, password }) {
   return data;
 }
 
-/**
- * Fetch current authenticated user profile.
- * @returns {Promise<Object>} API response data
- */
+// Fetch current authenticated user profile.
 export async function getCurrentUser() {
   const response = await fetch(`${API_BASE_URL}/auth/me`, {
     method: "GET",
@@ -217,10 +184,7 @@ export async function getCurrentUser() {
   return data;
 }
 
-/**
- * Refresh access token using cookie session.
- * @returns {Promise<Object>} API response data
- */
+// Refresh access token using cookie session.
 export async function refreshToken() {
   const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
     method: "POST",
@@ -244,10 +208,7 @@ export async function refreshToken() {
   return data;
 }
 
-/**
- * Log out user and clear cookie session.
- * @returns {Promise<Object>} API response data
- */
+// Log out user and clear cookie session.
 export async function logout() {
   const response = await fetch(`${API_BASE_URL}/auth/logout`, {
     method: "POST",

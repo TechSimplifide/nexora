@@ -16,12 +16,7 @@ function getStoredProfileImage(userId) {
   }
 }
 
-/**
- * Custom hook to manage persistent frontend-only profile images per user.
- * Subscribes to custom sync events using useSyncExternalStore for optimal performance.
- * @param {string} userId - Current authenticated user ID or role fallback
- * @returns {{ profileImage: string|null, saveImage: (dataUrl: string) => void, removeImage: () => void }}
- */
+// Hook to manage persistent frontend profile images per user.
 export function useProfileImage(userId) {
   const subscribe = useCallback(
     (onStoreChange) => {

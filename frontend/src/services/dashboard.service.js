@@ -1,9 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api/v1";
+import { API_BASE_URL } from "@/utils/api";
 
-/**
- * Fetch Student Dashboard data (KPIs, Active Proposal, Discover Projects).
- * @returns {Promise<Object>} API response data
- */
+// Fetch Student Dashboard data (KPIs, Active Proposal, Discover Projects).
 export async function getStudentDashboard() {
   const response = await fetch(`${API_BASE_URL}/dashboard/student`, {
     method: "GET",
@@ -30,10 +27,7 @@ export async function getStudentDashboard() {
   return data;
 }
 
-/**
- * Fetch Admin Dashboard analytics (KPIs, Academic Year breakdown, Proposal status, Technologies, Domains).
- * @returns {Promise<Object>} API response data
- */
+// Fetch Admin Dashboard analytics (KPIs, Academic Year breakdown, Proposal status, Technologies, Domains).
 export async function getAdminDashboardAnalytics() {
   const response = await fetch(`${API_BASE_URL}/dashboard/admin`, {
     method: "GET",

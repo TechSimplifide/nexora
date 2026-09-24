@@ -17,20 +17,35 @@ function AdminProposalCard({
   onInitiateApprove,
   onInitiateReject,
 }) {
-  const teamSize = proposal.team?.size || proposal.team?.members?.length || 1;
-  const members = Array.isArray(proposal.team?.members)
+  const creatorName = (proposal.createdBy?.fullName || "").trim().toLowerCase();
+  const rawMembers = Array.isArray(proposal.team?.members)
     ? proposal.team.members
     : [];
 
+  // Deduplicate creator from members list if present (handles legacy records)
+  const additionalMembers = rawMembers.filter((m) => {
+    const name = (m.name || "").trim().toLowerCase();
+    return name && name !== creatorName;
+  });
+
+  const totalTeamCount =
+    proposal.team?.size || Math.max(1, 1 + additionalMembers.length);
+
   return (
     <div className="rounded-2xl border border-border bg-surface p-6 shadow-nexora-sm transition-all hover:border-border-strong hover:shadow-nexora-md space-y-5">
-      {/* Header: Title, Pending Badge, Submission Date */}
+      {/* Header: Title, Pending Badge, Submission Date & Team Size */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1.5 min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2.5 py-0.5 text-xs font-semibold text-warning-800 border border-warning-200">
               <Clock className="h-3 w-3" aria-hidden="true" />
               Pending Review
+            </span>
+            <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+              <Users className="h-3 w-3" aria-hidden="true" />
+              {totalTeamCount === 1
+                ? "Individual Project"
+                : `${totalTeamCount} Members Total`}
             </span>
             {proposal.createdAt && (
               <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
@@ -75,13 +90,17 @@ function AdminProposalCard({
               <span>Project Team</span>
             </div>
             <span className="text-[11px] font-medium text-muted-foreground">
-              {teamSize === 1 ? "1 Member" : `${teamSize} Members`}
+              {additionalMembers.length === 0
+                ? "Individual Project"
+                : additionalMembers.length === 1
+                ? "1 Additional Member"
+                : `${additionalMembers.length} Additional Members`}
             </span>
           </div>
 
           <div className="flex flex-wrap gap-1.5 pl-5 pt-0.5">
-            {members.length > 0 ? (
-              members.map((member, idx) => (
+            {additionalMembers.length > 0 ? (
+              additionalMembers.map((member, idx) => (
                 <span
                   key={idx}
                   className="rounded-md border border-border/80 bg-surface px-2 py-0.5 text-[11px] font-medium text-foreground"
@@ -91,7 +110,7 @@ function AdminProposalCard({
               ))
             ) : (
               <span className="text-[11px] text-muted-foreground">
-                Individual Project
+                No additional members
               </span>
             )}
           </div>
