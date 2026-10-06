@@ -50,9 +50,10 @@ function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.08 }}
-            className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance"
+            className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl sm:-mx-8 lg:-mx-16"
           >
-            The project platform built for colleges.
+            <span className="sm:block">One platform for your college&apos;s</span>{" "}
+            <span className="sm:block">entire project lifecycle.</span>
           </motion.h1>
 
           {/* Supporting Copy */}
